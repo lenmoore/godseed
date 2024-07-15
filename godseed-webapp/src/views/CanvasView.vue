@@ -4,7 +4,7 @@
             v-for="(item, index) in items"
             :key="index"
             class="draggable-item"
-            :style="{ top: `${item.top}px`, left: `${item.left}px`, backgroundImage: `url(${item.image})` }"
+            :style="{ top: `${item.top}px`, left: `${item.left}px` }"
         >
             <AnimationBox :item="item" />
             <div class="drag-handle" @mousedown="startDrag($event, item)"></div>
@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import AnimationBox from '@/views/AnimationBox.vue'
+import AnimationBox from '@/views/AnimationBox.vue';
 
 export default {
     components: { AnimationBox },
@@ -39,10 +39,13 @@ export default {
     methods: {
         async loadImages(canvas) {
             const allImages = import.meta.glob('@/assets/animations/*/*/*.{png,jpg,jpeg,svg}');
+            const allJsons = import.meta.glob('@/assets/animations/*/*/animate.json');
             const imagePaths = Object.keys(allImages);
+            const jsonPaths = Object.keys(allJsons);
 
-            // Filter images based on the current canvas value
+            // Filter images and json files based on the current canvas value
             const filteredPaths = imagePaths.filter(path => path.includes(`/${canvas}/`));
+            const filteredJsons = jsonPaths.filter(path => path.includes(`/${canvas}/`));
 
             // Extract folders and remove duplicates
             const folders = filteredPaths.map(path => path.split('/')[5]);
@@ -54,11 +57,17 @@ export default {
                 const imageModule = await allImages[imagePath]();
                 const image = imageModule.default;
 
+                // Load the corresponding animate.json file
+                const jsonPath = filteredJsons.find(path => path.includes(folder));
+                const jsonModule = await allJsons[jsonPath]();
+                const animationData = jsonModule.default;
+
                 return {
                     id: index + 1,
                     top: Math.random() * window.innerHeight * 0.8,
                     left: Math.random() * window.innerWidth * 0.8,
                     image,
+                    animationData,
                 };
             }));
         },
