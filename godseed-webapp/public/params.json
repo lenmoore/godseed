@@ -1,0 +1,19 @@
+[
+  { "name": "dinosaurs_domesticated", "value": false, "description": "Dinosaurs are domesticated" },
+  { "name": "auras_real", "value": false, "description": "Auras are real" },
+  { "name": "insects_huge", "value": false, "description": "Insects are huge" },
+  { "name": "bears_domesticated", "value": false, "description": "Bears are domesticated" },
+  { "name": "transport_teleport", "value": false, "description": "Transport is teleportation" },
+  { "name": "wheel_is_square", "value": false, "description": "Wheels are square" },
+  { "name": "tomato_worship", "value": false, "description": "Tomatoes are worshipped" },
+  { "name": "fire_cold_ice_warm", "value": false, "description": "Fire is cold and ice is warm" },
+  { "name": "stars_sentient", "value": false, "description": "Stars are sentient" },
+  { "name": "sky_screen", "value": false, "description": "Sky is a screen" },
+  { "name": "sun_sentient", "value": false, "description": "Sun is sentient" },
+  { "name": "people_on_moon", "value": false, "description": "People live on the moon" },
+  { "name": "moon_is_hologram", "value": false, "description": "Moon is a hologram" },
+  { "name": "money_on_trees", "value": false, "description": "Money grows on trees" },
+  { "name": "trees_can_walk", "value": false, "description": "Trees can walk" },
+  { "name": "plants_glow_in_dark", "value": false, "description": "Plants glow in the dark" },
+  { "name": "zombies", "value": false, "description": "Zombies are real" }
+]

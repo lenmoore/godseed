@@ -1,104 +1,62 @@
 <template>
-  <div>
-    <h1>Canvas {{ $route.name }}</h1>
-    <div id="canvas">
-      <div
-        v-for="(animation, index) in animations"
-        :key="index"
-        :style="{ position: 'absolute', top: animation.y + 'px', left: animation.x + 'px', zIndex: index }"
-        :draggable="true"
-        @dragstart="onDragStart($event, index)"
-        @dragover="onDragOver($event)"
-        @drop="onDrop($event, index)"
-      >
-        <div class="animation-container">
-          <img :src="animation.frames[animation.currentFrame]" />
+    <div>
+        <h1>Drag and Drop Example</h1>
+        <div
+            v-for="(item, index) in items"
+            :key="item.id"
+            class="draggable"
+            :draggable="true"
+            @dragstart="onDragStart(index)"
+            @dragover.prevent
+            @drop="onDrop(index)"
+        >
+            {{ item.name }}
         </div>
-      </div>
     </div>
-  </div>
 </template>
 
 <script>
-import { defineComponent } from 'vue';
+import { draggable, dropTargetForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
 
-export default defineComponent({
-  data() {
-    return {
-      animations: []
-    };
-  },
-  methods: {
-    async loadAnimations() {
-      const images = import.meta.glob('../assets/animations/neolithic/**/*.png');
-      console.log(images);  // Verify that images are being imported correctly
-      const animations = [];
-
-      for (const path in images) {
-        const [, , folder] = path.split('/');
-        let animation = animations.find(anim => anim.folder === folder);
-
-        if (!animation) {
-          animation = { folder, frames: [], currentFrame: 0, x: 0, y: 0 };
-          animations.push(animation);
-        }
-
-        const module = await images[path]();
-        animation.frames.push(module.default);
-      }
-
-      this.animations = animations;
+export default {
+    data() {
+        return {
+            items: [
+                { id: 1, name: 'Item 1' },
+                { id: 2, name: 'Item 2' },
+                { id: 3, name: 'Item 3' }
+            ],
+            draggedItemIndex: null
+        };
     },
-    saveCoordinates() {
-      localStorage.setItem(`canvas-${this.$route.name}`, JSON.stringify(this.animations));
-    },
-    startAnimation() {
-      setInterval(() => {
-        this.animations.forEach(animation => {
-          animation.currentFrame = (animation.currentFrame + 1) % animation.frames.length;
+    mounted() {
+        this.items.forEach((item, index) => {
+            const element = this.$el.querySelectorAll('.draggable')[index];
+            draggable({ element });
+            dropTargetForElements({ element });
         });
-      }, 100); // Adjust the interval for animation speed
     },
-    onDragStart(event, index) {
-      event.dataTransfer.setData('index', index);
-    },
-    onDragOver(event) {
-      event.preventDefault();
-    },
-    onDrop(event, index) {
-      const draggedIndex = event.dataTransfer.getData('index');
-      const draggedItem = this.animations[draggedIndex];
-      this.animations.splice(draggedIndex, 1);
-      this.animations.splice(index, 0, draggedItem);
-      this.saveCoordinates();
+    methods: {
+        onDragStart(index) {
+            this.draggedItemIndex = index;
+        },
+        onDrop(targetIndex) {
+            const draggedItem = this.items[this.draggedItemIndex];
+            this.items.splice(this.draggedItemIndex, 1);
+            this.items.splice(targetIndex, 0, draggedItem);
+            this.draggedItemIndex = null;
+        }
     }
-  },
-  created() {
-    const savedAnimations = localStorage.getItem(`canvas-${this.$route.name}`);
-    if (savedAnimations) {
-      this.animations = JSON.parse(savedAnimations);
-    } else {
-      this.loadAnimations();
-    }
-  },
-  mounted() {
-    this.startAnimation();
-  }
-});
+};
 </script>
 
 <style>
-#canvas {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
-.animation-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100px;  /* Adjust as needed */
-  height: 100px;  /* Adjust as needed */
+.draggable {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 5px;
+    background-color: #f9f9f9;
+    cursor: move;
+    color: black;
 }
 </style>
