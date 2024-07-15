@@ -6,8 +6,12 @@ import HelloWorld from './components/HelloWorld.vue'
 <template>
     <div>
       <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/canvas1">1</RouterLink>
+        <RouterLink to="/">Params</RouterLink>
+        <RouterLink to="/neolithic">neolithic</RouterLink>
+        <RouterLink to="/antique">antique</RouterLink>
+        <RouterLink to="/industrial">industrial</RouterLink>
+        <RouterLink to="/contemporary">contemporary</RouterLink>
+        <RouterLink to="/future">future</RouterLink>
       </nav>
 
   <RouterView />

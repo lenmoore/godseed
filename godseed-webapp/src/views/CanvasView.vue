@@ -6,13 +6,17 @@
             class="draggable-item"
             :style="{ top: `${item.top}px`, left: `${item.left}px`, backgroundImage: `url(${item.image})` }"
         >
+            <AnimationBox :item="item" />
             <div class="drag-handle" @mousedown="startDrag($event, item)"></div>
         </div>
     </div>
 </template>
 
 <script>
+import AnimationBox from '@/views/AnimationBox.vue'
+
 export default {
+    components: { AnimationBox },
     data() {
         return {
             items: [],
@@ -22,23 +26,32 @@ export default {
         };
     },
     async created() {
-        await this.loadImages();
+        await this.loadImages(this.$route.name);
+    },
+    watch: {
+        '$route.name': {
+            immediate: true,
+            handler(newRouteName) {
+                this.loadImages(newRouteName);
+            }
+        }
     },
     methods: {
-        async loadImages() {
-            const images = import.meta.glob('@/assets/animations/neolithic/*/*.{png,jpg,jpeg,svg}');
-            console.log(images)
-            const imagePaths = Object.keys(images);
+        async loadImages(canvas) {
+            const allImages = import.meta.glob('@/assets/animations/*/*/*.{png,jpg,jpeg,svg}');
+            const imagePaths = Object.keys(allImages);
+
+            // Filter images based on the current canvas value
+            const filteredPaths = imagePaths.filter(path => path.includes(`/${canvas}/`));
 
             // Extract folders and remove duplicates
-            const folders = imagePaths.map(path => path.split('/')[5]);
+            const folders = filteredPaths.map(path => path.split('/')[5]);
             const uniqueFolders = [...new Set(folders)];
-            console.log(uniqueFolders)
 
             this.items = await Promise.all(uniqueFolders.map(async (folder, index) => {
                 // Find the first image in the folder
-                const imagePath = imagePaths.find(path => path.includes(folder));
-                const imageModule = await images[imagePath]();
+                const imagePath = filteredPaths.find(path => path.includes(folder));
+                const imageModule = await allImages[imagePath]();
                 const image = imageModule.default;
 
                 return {
@@ -48,7 +61,6 @@ export default {
                     image,
                 };
             }));
-            console.log(this.items)
         },
         startDrag(event, item) {
             this.currentItem = item;

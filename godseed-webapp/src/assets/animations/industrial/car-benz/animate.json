@@ -1,0 +1,65 @@
+{
+  "1": {
+    "bg": "bg.png",
+    "base": [
+      "benz-backwheel.png",
+      "benz-frontwheel.png",
+      "benz-body.png",
+      "benz-smoke.png",
+      "carriage-calm.png"
+    ],
+    "dinosaurs_domesticated": {
+      "false": [
+        "horse-calm.png"
+      ],
+      "true": [
+        "dino-calm.png"
+      ]
+    },
+    "auras_real": {
+      "false": [],
+      "true": [
+        "aura-calm.png",
+        "benz-aura.png"
+      ]
+    },
+    "insects_huge": {
+      "false": [],
+      "true": [
+        "big-car.png"
+      ]
+    }
+  },
+
+  "2": {
+    "bg": "bg.png",
+    "base": [
+      "benz-backwheel.png",
+      "benz-frontwheel.png",
+      "benz-body.png",
+      "benz-smoke.png",
+      "carriage-jump.png"
+    ],
+    "dinosaurs_domesticated": {
+      "false": [
+        "horse-jump.png"
+      ],
+      "true": [
+        "dino-jump.png"
+      ]
+    },
+    "auras_real": {
+      "false": [],
+      "true": [
+        "aura-jump.png",
+        "benz-aura.png"
+      ]
+    },
+    "insects_huge": {
+      "false": [],
+      "true": [
+        "big-car.png"
+      ]
+    }
+  }
+}
