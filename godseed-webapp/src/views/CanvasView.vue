@@ -1,72 +1,102 @@
 <template>
-    <div class="canvas">
+    <div class="canvas" ref="canvas">
         <div
-            v-for="(box, index) in boxes"
-            :key="box.id"
-            class="bounding-box"
-            :draggable="true"
-            @dragstart="(event) => onDragStart(event, index)"
-            @dragover.prevent
-            @drop="(event) => onDrop(event, index)"
-            :style="{ left: box.x + 'px', top: box.y + 'px', width: box.width + 'px', height: box.height + 'px' }"
+            v-for="(item, index) in items"
+            :key="index"
+            class="draggable-item"
+            :style="{ top: `${item.top}px`, left: `${item.left}px`, backgroundImage: `url(${item.image})` }"
         >
-            {{ box.content }}
+            <div class="drag-handle" @mousedown="startDrag($event, item)"></div>
         </div>
     </div>
 </template>
-<script>
-import { draggable, dropTargetForElements } from '@atlaskit/pragmatic-drag-and-drop/element/adapter';
 
+<script>
 export default {
     data() {
         return {
-            boxes: [
-                { id: 1, x: 50, y: 50, width: 200, height: 150, content: 'Box 1' },
-                { id: 2, x: 300, y: 100, width: 200, height: 150, content: 'Box 2' },
-                { id: 3, x: 600, y: 200, width: 200, height: 150, content: 'Box 3' }
-            ],
-            draggedBoxIndex: null,
-            dragStartX: 0,
-            dragStartY: 0
+            items: [],
+            currentItem: null,
+            offsetX: 0,
+            offsetY: 0,
         };
     },
-    mounted() {
-        this.boxes.forEach((box, index) => {
-            const element = this.$el.querySelectorAll('.bounding-box')[index];
-            draggable({ element });
-            dropTargetForElements({ element });
-        });
+    async created() {
+        await this.loadImages();
     },
     methods: {
-        onDragStart(event, index) {
-            this.draggedBoxIndex = index;
-            this.dragStartX = event.clientX - this.boxes[index].x;
-            this.dragStartY = event.clientY - this.boxes[index].y;
+        async loadImages() {
+            const images = import.meta.glob('@/assets/animations/neolithic/*/*.{png,jpg,jpeg,svg}');
+            console.log(images)
+            const imagePaths = Object.keys(images);
+
+            // Extract folders and remove duplicates
+            const folders = imagePaths.map(path => path.split('/')[5]);
+            const uniqueFolders = [...new Set(folders)];
+            console.log(uniqueFolders)
+
+            this.items = await Promise.all(uniqueFolders.map(async (folder, index) => {
+                // Find the first image in the folder
+                const imagePath = imagePaths.find(path => path.includes(folder));
+                const imageModule = await images[imagePath]();
+                const image = imageModule.default;
+
+                return {
+                    id: index + 1,
+                    top: Math.random() * window.innerHeight * 0.8,
+                    left: Math.random() * window.innerWidth * 0.8,
+                    image,
+                };
+            }));
+            console.log(this.items)
         },
-        onDrop(event, targetIndex) {
-            const draggedBox = this.boxes[this.draggedBoxIndex];
-            draggedBox.x = event.clientX - this.dragStartX;
-            draggedBox.y = event.clientY - this.dragStartY;
-            this.draggedBoxIndex = null;
-        }
-    }
+        startDrag(event, item) {
+            this.currentItem = item;
+            this.offsetX = event.clientX - item.left;
+            this.offsetY = event.clientY - item.top;
+            document.addEventListener('mousemove', this.onDrag);
+            document.addEventListener('mouseup', this.stopDrag);
+        },
+        onDrag(event) {
+            if (this.currentItem) {
+                this.currentItem.top = event.clientY - this.offsetY;
+                this.currentItem.left = event.clientX - this.offsetX;
+            }
+        },
+        stopDrag() {
+            this.currentItem = null;
+            document.removeEventListener('mousemove', this.onDrag);
+            document.removeEventListener('mouseup', this.stopDrag);
+        },
+    },
 };
 </script>
+
 <style>
 .canvas {
     position: relative;
-    width: 3840px;
-    height: 2160px;
-    border: 1px solid #000;
+    width: 100vw;
+    height: 100vh;
+    background-color: #f0f0f0;
+    overflow: hidden;
 }
 
-.bounding-box {
+.draggable-item {
     position: absolute;
-    border: 2px solid #000;
-    background-color: rgba(255, 255, 255, 0.8);
-    cursor: move;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    width: 400px;
+    height: 400px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 4px;
+}
+
+.drag-handle {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 20px;
+    height: 20px;
+    background-color: #ff0000;
+    cursor: pointer;
 }
 </style>
