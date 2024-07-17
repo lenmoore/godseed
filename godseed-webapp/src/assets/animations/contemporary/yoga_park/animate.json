@@ -1,0 +1,24 @@
+{
+  "1": {
+    "bg": "bg.png",
+    "base": [
+      "bear.mov"
+    ],
+    "dinosaurs_domesticated": {
+      "false": [
+      ],
+      "true": [
+      ]
+    },
+    "auras_real": {
+      "false": [],
+      "true": [
+      ]
+    },
+    "insects_huge": {
+      "false": [],
+      "true": [
+      ]
+    }
+  }
+}

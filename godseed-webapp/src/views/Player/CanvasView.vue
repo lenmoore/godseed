@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import AnimationBox from '@/views/AnimationBox.vue';
+import AnimationBox from '@/views/Player/AnimationBox.vue';
 
 export default {
     components: { AnimationBox },
@@ -57,10 +57,13 @@ export default {
                 const imageModule = await allImages[imagePath]();
                 const image = imageModule.default;
 
-                // Load the corresponding animate.json file
+                // Check if the corresponding animate.json file exists
                 const jsonPath = filteredJsons.find(path => path.includes(folder));
-                const jsonModule = await allJsons[jsonPath]();
-                const animationData = jsonModule.default;
+                let animationData = null;
+                if (jsonPath) {
+                    const jsonModule = await allJsons[jsonPath]();
+                    animationData = jsonModule.default;
+                }
 
                 return {
                     id: index + 1,

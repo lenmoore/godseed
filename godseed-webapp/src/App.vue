@@ -12,6 +12,7 @@ import HelloWorld from './components/HelloWorld.vue'
         <RouterLink to="/industrial">industrial</RouterLink>
         <RouterLink to="/contemporary">contemporary</RouterLink>
         <RouterLink to="/future">future</RouterLink>
+        <RouterLink to="/add">ADD</RouterLink>
       </nav>
 
   <RouterView />

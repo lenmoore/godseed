@@ -3,9 +3,10 @@
         <small style="color: black;">
             {{ item.id }}
         </small>
-        <div v-for="(src, idx) in currentFrame" :key="idx" class="frame">
+        <div v-if="item.animationData" v-for="(src, idx) in currentFrame" :key="idx" class="frame">
             <img :src="getImageUrl(src)" alt="" />
         </div>
+        <img v-else :src="getImageUrl(item.image)" alt="" />
     </div>
 </template>
 
@@ -23,8 +24,10 @@ export default {
         };
     },
     created() {
-        this.updateFrame();
-        this.startAnimation();
+        if (this.item.animationData) {
+            this.updateFrame();
+            this.startAnimation();
+        }
     },
     beforeDestroy() {
         this.stopAnimation();
@@ -33,7 +36,12 @@ export default {
         item: {
             immediate: true,
             handler() {
-                this.updateFrame();
+                if (this.item.animationData) {
+                    this.updateFrame();
+                    this.startAnimation();
+                } else {
+                    this.stopAnimation();
+                }
             }
         }
     },
@@ -52,13 +60,15 @@ export default {
             }
         },
         updateFrame() {
+            if (this.item.animationData) {
+
             const parameters = {
                 dinosaurs_domesticated: JSON.parse(localStorage.getItem('dinosaurs_domesticated')) || false,
                 insects_huge: JSON.parse(localStorage.getItem('insects_huge')) || false,
                 auras_real: JSON.parse(localStorage.getItem('auras_real')) || false
             };
 
-            const frameData = this.item.animationData[this.frameIndex];
+            const frameData = this.item?.animationData[this.frameIndex];
             const baseImages = frameData.base;
             const dinoImages = frameData.dinosaurs_domesticated[parameters.dinosaurs_domesticated];
             const insectImages = frameData.insects_huge[parameters.insects_huge];
@@ -71,10 +81,18 @@ export default {
                 ...insectImages,
                 ...auraImages
             ];
+            }
+
         },
         getImageUrl(src) {
+            if (this.item.animationData) {
+                console.log('has animation')
+            } else {
+                console.log('has no animation')
+            }
             const basePath = this.item.image.substring(0, this.item.image.lastIndexOf('/') + 1);
-            return new URL(`${basePath}${src}`, import.meta.url).href;
+            console.log(basePath)
+            return this.item.animationData ? new URL(`${basePath}${src}`, import.meta.url).href : src;
         }
     }
 };
