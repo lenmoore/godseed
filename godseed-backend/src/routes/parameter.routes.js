@@ -1,7 +1,8 @@
-const express = require('express');
-const router = express.Router();
-const Parameter = require('../models/parameter.schema'); // Adjust the path if necessary
 
+import express from 'express';
+import Parameter from '../models/parameter.schema.js'
+
+const router = express.Router();
 // Create a new parameter
 router.post('/', async (req, res) => {
   try {
@@ -62,4 +63,4 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

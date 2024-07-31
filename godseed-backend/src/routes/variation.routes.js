@@ -1,7 +1,8 @@
-const express = require('express');
-const router = express.Router();
-const Variation = require('../models/variation.model'); // Adjust the path if necessary
 
+import express from 'express';
+import Variation from '../models/variation.model.js'
+
+const router = express.Router();
 // Create a new variation
 router.post('/', async (req, res) => {
   try {
@@ -62,4 +63,4 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

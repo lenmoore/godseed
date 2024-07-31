@@ -1,12 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 import CheckboxView from '@/views/Player/CheckboxView.vue'
 import CanvasView from '@/views/Player/CanvasView.vue'
 import SceneSetup from '@/views/Creator/SceneSetup.vue'
+import AdminView from '@/views/Admin/AdminView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    { path: '/admin', name: 'admin', component: AdminView },
     { path: '/add', name: 'AddScene', component: SceneSetup },
     { path: '/', name: 'CheckboxView', component: CheckboxView },
     { path: '/neolithic', name: 'neolithic', component: CanvasView },

@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-
+import mongoose from 'mongoose';
+import { schemaOptions } from './options.js'
 const sceneSchema = new mongoose.Schema({
   era: {
     type: mongoose.Schema.Types.ObjectId,
@@ -39,4 +39,4 @@ const sceneSchema = new mongoose.Schema({
 
 const Scene = mongoose.model('Scene', sceneSchema);
 
-module.exports = Scene;
+export default Scene;

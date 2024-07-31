@@ -1,5 +1,4 @@
-const mongoose = require('mongoose');
-
+import mongoose from 'mongoose';
 const variationSchema = new mongoose.Schema({
   scene: {
     type: mongoose.Schema.Types.ObjectId,
@@ -18,4 +17,4 @@ const variationSchema = new mongoose.Schema({
 
 const Variation = mongoose.model('Variation', variationSchema);
 
-module.exports = Variation;
+export default  Variation;

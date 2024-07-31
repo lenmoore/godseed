@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const eraSchema = new mongoose.Schema({
   name: {
@@ -9,4 +9,4 @@ const eraSchema = new mongoose.Schema({
 
 const Era = mongoose.model('Era', eraSchema);
 
-module.exports = Era;
+export default Era;

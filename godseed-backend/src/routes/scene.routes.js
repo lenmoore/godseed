@@ -1,7 +1,8 @@
-const express = require('express');
-const router = express.Router();
-const Scene = require('../models/scene.model'); // Adjust the path if necessary
 
+import express from 'express';
+import Scene from '../models/scene.model.js'
+
+const router = express.Router();
 // Create a new scene
 router.post('/', async (req, res) => {
   try {
@@ -62,4 +63,4 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

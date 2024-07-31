@@ -1,6 +1,8 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
+console.log(import.meta.env.VITE_API_BASE_URL); // Add this line in your component or http.js
+
 </script>
 
 <template>
@@ -13,6 +15,7 @@ import HelloWorld from './components/HelloWorld.vue'
         <RouterLink to="/contemporary">contemporary</RouterLink>
         <RouterLink to="/future">future</RouterLink>
         <RouterLink to="/add">ADD</RouterLink>
+        <RouterLink to="/admin">admin</RouterLink>
       </nav>
 
   <RouterView />

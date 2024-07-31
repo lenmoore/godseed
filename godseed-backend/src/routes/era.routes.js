@@ -1,7 +1,8 @@
-const express = require('express');
-const router = express.Router();
-const Era = require('../models/era.schema'); // Adjust the path if necessary
 
+import express from 'express';
+import Era from '../models/era.schema.js'
+
+const router = express.Router();
 // Create a new era
 router.post('/', async (req, res) => {
   try {
@@ -17,7 +18,7 @@ router.post('/', async (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const eras = await Era.find();
-    res.status(200).send(eras);
+    res.status(200).json(eras);
   } catch (error) {
     res.status(500).send(error);
   }
@@ -62,4 +63,4 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
