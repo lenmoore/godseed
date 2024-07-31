@@ -1,14 +1,18 @@
-require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
+require('dotenv').config();
+
+const parameterRoutes = require('./src/routes/parameter.routes');
+const eraRoutes = require('./src/routes/era.routes');
+const sceneRoutes = require('./src/routes/scene.routes');
+const variationRoutes = require('./src/routes/variation.routes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware to parse JSON bodies
 app.use(express.json());
 
-// Connect to MongoDB
+// MongoDB connection
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -16,12 +20,12 @@ mongoose.connect(process.env.MONGODB_URI, {
   .then(() => console.log('MongoDB connected!'))
   .catch(err => console.error('MongoDB connection error:', err));
 
-// Define a simple route
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
+// Use routes
+app.use('/parameters', parameterRoutes);
+app.use('/eras', eraRoutes);
+app.use('/scenes', sceneRoutes);
+app.use('/variations', variationRoutes);
 
-// Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

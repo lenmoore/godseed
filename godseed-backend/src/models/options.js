@@ -1,0 +1,3 @@
+const schemaOptions = {
+  timestamps: true,
+};

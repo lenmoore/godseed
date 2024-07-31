@@ -1,0 +1,65 @@
+const express = require('express');
+const router = express.Router();
+const Parameter = require('../models/parameter.schema'); // Adjust the path if necessary
+
+// Create a new parameter
+router.post('/', async (req, res) => {
+  try {
+    const parameter = new Parameter(req.body);
+    await parameter.save();
+    res.status(201).send(parameter);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
+// Get all parameters
+router.get('/', async (req, res) => {
+  try {
+    const parameters = await Parameter.find();
+    res.status(200).send(parameters);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+// Get a single parameter by ID
+router.get('/:id', async (req, res) => {
+  try {
+    const parameter = await Parameter.findById(req.params.id);
+    if (!parameter) {
+      return res.status(404).send('Parameter not found');
+    }
+    res.status(200).send(parameter);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+// Update a parameter by ID
+router.put('/:id', async (req, res) => {
+  try {
+    const parameter = await Parameter.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    if (!parameter) {
+      return res.status(404).send('Parameter not found');
+    }
+    res.status(200).send(parameter);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
+// Delete a parameter by ID
+router.delete('/:id', async (req, res) => {
+  try {
+    const parameter = await Parameter.findByIdAndDelete(req.params.id);
+    if (!parameter) {
+      return res.status(404).send('Parameter not found');
+    }
+    res.status(200).send('Parameter deleted');
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+module.exports = router;
