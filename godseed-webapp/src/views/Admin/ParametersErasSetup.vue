@@ -20,6 +20,7 @@
             <ul>
                 <li v-for="era in eras" :key="era._id">
                     <input v-model="era.name" placeholder="Era Name" />
+                    <input v-model="era.imageURL" />
                     <button @click="saveEra(era)">Save</button>
                     <button @click="deleteEra(era._id)">Delete</button>
                 </li>

@@ -8,14 +8,8 @@ console.log(import.meta.env.VITE_API_BASE_URL); // Add this line in your compone
 <template>
     <div>
       <nav>
-        <RouterLink to="/">Params</RouterLink>
-        <RouterLink to="/neolithic">neolithic</RouterLink>
-        <RouterLink to="/antique">antique</RouterLink>
-        <RouterLink to="/industrial">industrial</RouterLink>
-        <RouterLink to="/contemporary">contemporary</RouterLink>
-        <RouterLink to="/future">future</RouterLink>
-        <RouterLink to="/add">ADD</RouterLink>
-        <RouterLink to="/admin">admin</RouterLink>
+        <RouterLink to="/admin">params, eras</RouterLink>
+        <RouterLink to="/scenes">scenes</RouterLink>
       </nav>
 
   <RouterView />

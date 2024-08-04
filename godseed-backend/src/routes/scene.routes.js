@@ -1,15 +1,31 @@
-
 import express from 'express';
-import Scene from '../models/scene.model.js'
+import Scene from '../models/scene.model.js';
+import Era from '../models/era.schema.js';
 
 const router = express.Router();
+
 // Create a new scene
 router.post('/', async (req, res) => {
   try {
-    const scene = new Scene(req.body);
+    console.log(req.body);
+
+    // Find the era by name (case-insensitive)
+    const era = await Era.findOne({ name: new RegExp('^' + req.body.era + '$', 'i') });
+
+    if (!era) {
+      return res.status(404).send('Era not found');
+    }
+
+    // Assign the era ID to the scene
+    const scene = new Scene({
+      ...req.body,
+      era: era._id
+    });
+
     await scene.save();
     res.status(201).send(scene);
   } catch (error) {
+    console.error('Error creating scene:', error);
     res.status(400).send(error);
   }
 });

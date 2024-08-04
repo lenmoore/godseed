@@ -35,6 +35,19 @@ const sceneSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  zIndex: {
+    type: Number,
+    required: true,
+  },
+  image_URL: {
+    type: String,
+    // validate: {
+    //   validator: function(v) {
+    //     return /https?:\/\/.+\.(png|jpg|jpeg|gif)$/.test(v); // Example regex for image URL validation
+    //   },
+    //   message: props => `${props.value} is not a valid image URL!`
+    // },
+  },
 }, schemaOptions);
 
 const Scene = mongoose.model('Scene', sceneSchema);
