@@ -1,8 +1,13 @@
 <template>
     <div>
         <h2>Scenes for {{ eraName }}</h2>
-        <div class="scenes-wrapper">
-            <div class="scene-item-wrapper" v-for="scene in filteredScenes" :key="scene._id">
+        <div v-if="filteredScenes.length" class="scenes-wrapper">
+            <div
+                v-for="scene in filteredScenes"
+                 :key="scene._id"
+                class="scene-item-wrapper"
+                :class="{ 'selected': scene.selected } "
+            >
                 {{ scene.name }} |
                 <small>
                     {{ scene.desc }}
@@ -11,7 +16,7 @@
                 <p>
                     x:{{ scene.coordX }}, y:{{ scene.coordY }} | z: {{ scene.zIndex }}
                 </p>
-                <img :src="`http://localhost:3000${scene.image_URL}`" alt="" height="400" width="500">
+                <img :src="`http://localhost:3000${scene.image_URL}`" alt="" >
                 <div class="actions">
                     <button @click="deleteScene(scene._id)">Delete</button>
                     <button>Edit variations</button>
@@ -35,10 +40,16 @@ const refreshScenes = async () => {
     await scenesStore.fetchScenes();
 };
 
-// Watch for changes in the route or the refreshKey prop
-watch([() => route.params.era, () => props.refreshKey], ([newEra, newKey]) => {
+// Initialize eraName with the prop value and update when the route changes
+eraName.value = props.eraName;
+watch([() => props.eraName, () => props.refreshKey], async () => {
+    await refreshScenes();
+});
+
+// Also, watch for route changes to update eraName and refresh scenes
+watch(() => route.params.era, async (newEra) => {
     eraName.value = newEra;
-    refreshScenes();
+    await refreshScenes();
 });
 
 // Filter scenes based on the era
@@ -50,4 +61,33 @@ const deleteScene = async (id) => {
     await scenesStore.deleteScene(id);
     await refreshScenes(); // Refresh scenes after deleting one
 };
+
+// Fetch scenes on component mount
+onMounted(async () => {
+    await refreshScenes();
+});
+
+function selectScene(scene) {
+    scene.selected = true;
+}
 </script>
+
+<style lang="scss">
+.scenes-wrapper {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+.scene-item-wrapper {
+    padding: 1rem;
+    margin: 1rem;
+    border: 1px solid whitesmoke;
+    width: 40rem;
+
+    img {
+        width: 100%;
+        height: auto;
+    }
+}
+</style>

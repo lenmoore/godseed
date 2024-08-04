@@ -14,10 +14,10 @@ onMounted(async () => {
 </script>
 
 <template>
-    <div>
+    <div class="dashboard-wrapper">
         <h1>Scenes</h1>
-        <ul>
-            <li v-for="era in eras" :key="era._id">
+        <ul style="display: flex">
+            <li style="width: 10rem;" v-for="era in eras" :key="era._id">
                 <router-link :to="{ name: 'era-canvas', params: { era: era.name }}">{{ era.name }}</router-link>
             </li>
         </ul>
@@ -25,3 +25,10 @@ onMounted(async () => {
         <router-view />
     </div>
 </template>
+
+<style>
+.dashboard-wrapper {
+    margin-left: 1rem;
+    margin-right: 1rem;
+}
+</style>

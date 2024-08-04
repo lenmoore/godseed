@@ -1,10 +1,19 @@
 <template>
     <div>
-        <h1>Era Canvas - {{ eraName }}</h1>
+        <h1>{{ eraName }}</h1>
 
+        <div class="toggle">
+            <button @click="showCompositionEditor = !showCompositionEditor">
+                {{ showCompositionEditor ? 'Hide' : 'Show' }} composition editor
+            </button>
+            <div v-if="showCompositionEditor">
+                <CompositionEditor />
+            </div>
+        </div>
         <button v-if="!addingScene" @click="addingScene=true">Add scene</button>
         <AddScene v-if="addingScene" :era-name="eraName" @sceneAdded="refreshScenes" />
-        <SceneList :era-name="eraName" :refreshKey="refreshKey" />
+
+        <SceneList v-if="!showCompositionEditor" :era-name="eraName" :refreshKey="refreshKey" />
     </div>
 </template>
 
@@ -13,6 +22,9 @@ import { ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import AddScene from '@/views/Admin/SceneSetup/AddScene.vue';
 import SceneList from '@/views/Admin/SceneSetup/SceneList.vue';
+import CompositionEditor from '@/views/Admin/SceneSetup/CompositionEditor.vue'
+
+const showCompositionEditor = ref(false);
 
 const route = useRoute();
 const eraName = ref(route.params.era);
