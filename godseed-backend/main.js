@@ -32,7 +32,6 @@ app.use('/api/eras', eraRoutes);
 app.use('/api/scenes', sceneRoutes);
 app.use('/api/variations', variationRoutes);
 app.use('/api/upload', uploadRoutes); // Register the upload routes
-console.log('Upload routes initialized');
 
 
 app.listen(PORT, () => {

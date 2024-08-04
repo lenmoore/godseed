@@ -1,6 +1,7 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue'
 import { useSetupStore } from '@/stores/parameterStore.js';
+import { useRoute } from 'vue-router'
 
 const setupStore = useSetupStore();
 const eras = ref([]);
