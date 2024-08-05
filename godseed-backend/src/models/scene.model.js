@@ -39,6 +39,14 @@ const sceneSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  displayHeight: {
+    type: Number,
+    required: false,
+  },
+  displayWidth: {
+    type: Number,
+    required: false,
+  },
   image_URL: {
     type: String,
     // validate: {

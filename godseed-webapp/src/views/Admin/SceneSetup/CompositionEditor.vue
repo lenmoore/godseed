@@ -5,34 +5,55 @@
             v-for="scene in scenes"
             :key="scene._id"
             class="scene"
-            :style="{ left: scene.coordX + 'px', top: scene.coordY + 'px', zIndex: scene.zIndex }"
-            draggable="true"
-            @dragstart="handleDragStart(scene)"
-            @dragend="handleDragEnd(scene, $event)"
-        >drag
+            :style="{
+                left: scene.coordX + 'px',
+                top: scene.coordY + 'px',
+                zIndex: scene.zIndex,
+                width: scene.displayWidth + 'px',
+                height: scene.displayHeight + 'px'
+            }"
+        >
             <div class="scene-content">
                 <img :src="`http://localhost:3000${scene.image_URL}`" alt="" class="scene-image" />
                 <div class="z-index-input">
                     <label>Z-index: </label>
                     <input type="number" v-model.number="scene.zIndex" @change="updateScene(scene)" />
                 </div>
+                <!-- Drag Handle in Top-Left Corner -->
+                <div
+                    class="drag-handle"
+                    @mousedown="startDrag(scene, $event)"
+                    draggable="true"
+                    @dragstart="handleDragStart(scene)"
+                    @dragend="handleDragEnd(scene, $event)"
+                >
+                    Drag
+                </div>
+                <!-- Resize Handle in Bottom-Right Corner -->
+                <div class="resize-handle" @mousedown="startResize(scene, $event)"></div>
             </div>
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { useScenesStore } from '@/stores/sceneStore.js';
-import { useRoute } from 'vue-router'
+import { useRoute } from 'vue-router';
 
 const route = useRoute();
 const eraName = ref(route.params.era);
 const scenesStore = useScenesStore();
 const scenes = ref([]);
-const canvas = ref(null); // Reference to the canvas element
+const canvas = ref(null);
 let startX = 0;
 let startY = 0;
+let initialWidth = 0;
+let initialHeight = 0;
+let aspectRatio = 1; // Variable to store the aspect ratio
+let isResizing = false;
+let isDragging = false;
+let currentScene = null;
 let initialX = 0;
 let initialY = 0;
 
@@ -42,7 +63,18 @@ onMounted(async () => {
 });
 
 const handleDragStart = (scene, event) => {
-    // Get the initial position relative to the canvas
+    const rect = canvas.value.getBoundingClientRect();
+    startX = event.clientX - rect.left;
+    startY = event.clientY - rect.top;
+
+    initialX = scene.coordX;
+    initialY = scene.coordY;
+};
+
+const startDrag = (scene, event) => {
+    isDragging = true;
+    currentScene = scene;
+
     const rect = canvas.value.getBoundingClientRect();
     startX = event.clientX - rect.left;
     startY = event.clientY - rect.top;
@@ -52,28 +84,101 @@ const handleDragStart = (scene, event) => {
 };
 
 const handleDragEnd = async (scene, event) => {
+    if (!isDragging) return;
+
     const rect = canvas.value.getBoundingClientRect();
     const endX = event.clientX - rect.left;
     const endY = event.clientY - rect.top;
 
-    // Calculate the new position
     scene.coordX = initialX + (endX - startX);
     scene.coordY = initialY + (endY - startY);
+
+    console.log("Updating Scene with new position:", {
+        coordX: scene.coordX,
+        coordY: scene.coordY,
+    });
 
     await scenesStore.updateScene(scene._id, {
         coordX: scene.coordX,
         coordY: scene.coordY,
         zIndex: scene.zIndex,
+        displayWidth: scene.displayWidth,
+        displayHeight: scene.displayHeight,
     });
+
+    isDragging = false;
 };
+
+const startResize = (scene, event) => {
+    isResizing = true;
+    currentScene = scene;
+
+    startX = event.clientX;
+    startY = event.clientY;
+
+    initialWidth = currentScene.displayWidth;
+    initialHeight = currentScene.displayHeight;
+    aspectRatio = initialWidth / initialHeight; // Calculate the initial aspect ratio
+
+    document.addEventListener('mousemove', resizeScene);
+    document.addEventListener('mouseup', stopResize);
+};
+
+const resizeScene = (event) => {
+    if (!isResizing || !currentScene) return;
+
+    const deltaX = event.clientX - startX;
+    const deltaY = event.clientY - startY;
+
+    // Calculate new width and height based on the aspect ratio
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        // Width change is more significant, adjust height based on width
+        currentScene.displayWidth = initialWidth + deltaX;
+        currentScene.displayHeight = currentScene.displayWidth / aspectRatio;
+    } else {
+        // Height change is more significant, adjust width based on height
+        currentScene.displayHeight = initialHeight + deltaY;
+        currentScene.displayWidth = currentScene.displayHeight * aspectRatio;
+    }
+
+    if (currentScene.displayWidth < 0) currentScene.displayWidth = 0;
+    if (currentScene.displayHeight < 0) currentScene.displayHeight = 0;
+};
+
+const stopResize = async () => {
+    isResizing = false;
+
+    if (currentScene) {
+        console.log("Updating Scene with new dimensions:", {
+            displayWidth: currentScene.displayWidth,
+            displayHeight: currentScene.displayHeight,
+        });
+        await scenesStore.updateScene(currentScene._id, {
+            displayWidth: currentScene.displayWidth,
+            displayHeight: currentScene.displayHeight,
+        });
+    }
+
+    document.removeEventListener('mousemove', resizeScene);
+    document.removeEventListener('mouseup', stopResize);
+    currentScene = null;
+};
+
 
 const updateScene = async (scene) => {
     await scenesStore.updateScene(scene._id, {
         coordX: scene.coordX,
         coordY: scene.coordY,
         zIndex: scene.zIndex,
+        displayWidth: scene.displayWidth,
+        displayHeight: scene.displayHeight,
     });
 };
+
+onBeforeUnmount(() => {
+    document.removeEventListener('mousemove', resizeScene);
+    document.removeEventListener('mouseup', stopResize);
+});
 </script>
 
 <style scoped>
@@ -88,18 +193,17 @@ const updateScene = async (scene) => {
     position: absolute;
     border: 2px solid red;
     padding: 10px;
-    cursor: move;
 }
 
 .scene-content {
     position: relative;
+    width: 100%;
+    height: 100%;
 }
 
 .scene-image {
     width: 100%;
-    height: auto;
-    max-width: 300px;
-    max-height: 200px;
+    height: 100%;
 }
 
 .z-index-input {
@@ -108,8 +212,22 @@ const updateScene = async (scene) => {
 
 .drag-handle {
     position: absolute;
-    top: 0;
-    right: 0;
+    top: -10px;
+    left: -10px;
+    width: 30px;
+    height: 30px;
+    background-color: #007BFF;
     cursor: grab;
+    z-index: 10;
+}
+
+.resize-handle {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 20px;
+    height: 20px;
+    background-color: #007BFF;
+    cursor: se-resize;
 }
 </style>
