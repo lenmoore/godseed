@@ -5,7 +5,7 @@
             <video
                 v-for="video in filteredVideos"
                 :key="video"
-                :src="`http://localhost:3000${video}`"
+                :src="`${apiBaseUrl}${video}`"
                 autoplay
                 class="absolute top-0 left-0 object-contain rounded-lg border border-gray-700"
                 loop
@@ -47,6 +47,8 @@ import { useScenesStore } from '@/stores/sceneStore.js'
 
 const scenesStore = useScenesStore()
 
+const apiBaseUrl = import.meta.env.VITE_SERVER_URL
+console.log(apiBaseUrl)
 // Make scene reactive to changes in scenesStore.currentScene
 const scene = computed(() => scenesStore.currentScene)
 

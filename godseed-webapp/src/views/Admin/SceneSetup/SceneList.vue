@@ -4,9 +4,9 @@
         <div v-if="filteredScenes.length" class="scenes-wrapper">
             <div
                 v-for="scene in filteredScenes"
-                 :key="scene._id"
-                class="scene-item-wrapper"
+                :key="scene._id"
                 :class="{ 'selected': scene.selected } "
+                class="scene-item-wrapper"
             >
                 {{ scene.name }} |
                 <small>
@@ -16,10 +16,12 @@
                 <p>
                     x:{{ scene.coordX }}, y:{{ scene.coordY }} | z: {{ scene.zIndex }}
                 </p>
-                <img :src="`http://localhost:3000${scene.image_URL}`" alt="" >
+                <img :src="`${apiBaseUrl}${scene.image_URL}`" alt="">
                 <div class="actions">
                     <button @click="deleteScene(scene._id)">Delete</button>
-                    <button @click="$router.push({ name: 'variations-editor', params: { scene: scene._id } })">Edit variations</button>
+                    <button @click="$router.push({ name: 'variations-editor', params: { scene: scene._id } })">Edit
+                        variations
+                    </button>
                 </div>
             </div>
         </div>
@@ -27,48 +29,49 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, watch } from 'vue';
-import { useRoute } from 'vue-router';
-import { useScenesStore } from '@/stores/sceneStore.js';
+import { computed, onMounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
+import { useScenesStore } from '@/stores/sceneStore.js'
 
-const props = defineProps(['eraName', 'refreshKey']);
-const scenesStore = useScenesStore();
-const route = useRoute();
-const eraName = ref(route.params.era);
+const apiBaseUrl = import.meta.env.VITE_SERVER_URL
+const props = defineProps(['eraName', 'refreshKey'])
+const scenesStore = useScenesStore()
+const route = useRoute()
+const eraName = ref(route.params.era)
 
 const refreshScenes = async () => {
-    await scenesStore.fetchScenes();
-};
+    await scenesStore.fetchScenes()
+}
 
 // Initialize eraName with the prop value and update when the route changes
-eraName.value = props.eraName;
+eraName.value = props.eraName
 watch([() => props.eraName, () => props.refreshKey], async () => {
-    await refreshScenes();
-});
+    await refreshScenes()
+})
 
 // Also, watch for route changes to update eraName and refresh scenes
 watch(() => route.params.era, async (newEra) => {
-    eraName.value = newEra;
-    await refreshScenes();
-});
+    eraName.value = newEra
+    await refreshScenes()
+})
 
 // Filter scenes based on the era
 const filteredScenes = computed(() => {
-    return scenesStore.scenes.filter(scene => scene.era.name === eraName.value);
-});
+    return scenesStore.scenes.filter(scene => scene.era.name === eraName.value)
+})
 
 const deleteScene = async (id) => {
-    await scenesStore.deleteScene(id);
-    await refreshScenes(); // Refresh scenes after deleting one
-};
+    await scenesStore.deleteScene(id)
+    await refreshScenes() // Refresh scenes after deleting one
+}
 
 // Fetch scenes on component mount
 onMounted(async () => {
-    await refreshScenes();
-});
+    await refreshScenes()
+})
 
 function selectScene(scene) {
-    scene.selected = true;
+    scene.selected = true
 }
 </script>
 

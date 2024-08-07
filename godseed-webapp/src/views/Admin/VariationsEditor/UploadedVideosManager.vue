@@ -27,7 +27,7 @@
             class="absolute z-10 p-2 rounded-lg bg-teal-500 shadow-lg"
         >
             <video
-                :src="`http://localhost:3000${previewVideo}`"
+                :src="`${apiBaseUrl}${previewVideo}`"
                 autoplay
                 class="rounded-lg border border-gray-700"
                 muted
@@ -47,6 +47,7 @@ import { useScenesStore } from '@/stores/sceneStore'
 const scenesStore = useScenesStore()
 const scene = computed(() => scenesStore.currentScene)
 
+const apiBaseUrl = import.meta.env.VITE_SERVER_URL
 const previewVideo = ref(null)
 const previewPosition = ref({ top: 0, left: 0 })
 
