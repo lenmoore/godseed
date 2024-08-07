@@ -10,7 +10,7 @@
             />
         </div>
         <h3 class="font-bold text-gray-200 mt-4">Scene videos</h3>
-        <small>Hover to see preview</small>
+        <small>Hover to see preview. Scroll to see the rest of them</small>
         <ul v-if="scene.uploaded_videos" class="space-y-2 overflow-y-scroll h-40 text-xs">
             <li
                 v-for="video in scene.uploaded_videos"
