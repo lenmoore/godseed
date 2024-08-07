@@ -114,7 +114,8 @@ export const useScenesStore = defineStore('scenesStore', {
 
     async fetchVariations(sceneId) {
       try {
-        const response = await http.get(`/variations?scene=${sceneId}`)
+        this.variations = []
+        const response = await http.get(`/variations/by-scene/${sceneId}`)
         this.variations = response.data
       } catch (error) {
         console.error('Failed to fetch variations:', error)

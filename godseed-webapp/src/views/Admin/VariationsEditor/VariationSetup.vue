@@ -226,7 +226,7 @@ const addVariation = async (parameter) => {
     showAddVariationDropdown.value = false
 
     const newVariation = {
-        scene: scenesStore.currentScene._id,
+        scene: scenesStore.currentScene._id, // Include the current scene ID here
         parameter: parameter._id,
         video_rows: [] // Start with an empty list of rows
     }

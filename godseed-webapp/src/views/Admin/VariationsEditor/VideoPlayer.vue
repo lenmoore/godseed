@@ -17,7 +17,14 @@
         </div>
 
         <div class="absolute right-0 top-0 p-4 bg-gray-800 rounded-lg">
-            <h4 class="text-lg font-bold text-gray-200">Parameters</h4>
+            <h4 class="text-lg font-bold text-gray-200">Display parameters</h4>
+            <small>
+                This is just like putting the wires in the globe. Wire in = checkbox ticked :)
+            </small>
+            <br>
+            <small>
+                If you press submit, the changes get saved on the server. It's ok :)
+            </small>
             <div v-for="parameter in activeParameters" :key="parameter._id" class="mb-2">
                 <label class="text-gray-200">
                     <input v-model="parameter.is_active" class="mr-2" type="checkbox">

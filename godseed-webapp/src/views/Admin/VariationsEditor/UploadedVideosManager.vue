@@ -1,6 +1,5 @@
 <template>
-    <div v-if="scene" class="uploaded-videos-manager border p-4 bg-gray-800 rounded-lg relative">
-
+    <div v-if="scene" class="uploaded-videos-manager border p-4 bg-gray-800 rounded-lg relative h-96">
         <div class="mt-4">
             Upload videos
             <input
@@ -12,7 +11,7 @@
         </div>
         <h3 class="font-bold text-gray-200 mt-4">Scene videos</h3>
         <small>Hover to see preview</small>
-        <ul v-if="scene.uploaded_videos" class="space-y-2">
+        <ul v-if="scene.uploaded_videos" class="space-y-2 overflow-y-scroll h-40 text-xs">
             <li
                 v-for="video in scene.uploaded_videos"
                 :key="video"
@@ -25,7 +24,7 @@
         </ul>
         <div
             v-if="previewVideo"
-            class="absolute z-10 p-2 rounded-lg shadow-lg"
+            class="absolute z-10 p-2 rounded-lg bg-teal-500 shadow-lg"
         >
             <video
                 :src="`http://localhost:3000${previewVideo}`"
@@ -38,9 +37,6 @@
                 Your browser does not support the video tag.
             </video>
         </div>
-
-        <!-- Floating video preview -->
-
     </div>
 </template>
 
