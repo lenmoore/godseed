@@ -1,51 +1,64 @@
 <template>
     <div class="variation-setup border p-4 m-4 bg-gray-800 rounded-lg">
-        <h3 class="text-xl font-bold text-gray-200 ">Configure variations</h3>
+        <h3 class="text-xl font-bold text-gray-200">Configure variations</h3>
         <small class="my-4">
             First add layers for the "normal" parameter. Then add replacements in different tabs.
         </small>
-        <div class="variation-tabs mb-4">
-            <button
-                v-for="(variation, index) in variations"
-                :key="variation._id"
-                :class="[
-          'py-2 px-4 rounded-md',
-          activeVariation === index
-            ? 'bg-blue-600 text-white'
-            : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-        ]"
-                @click="setActiveVariation(index)"
-            >
-                {{ variation.parameter.name }}
-            </button>
 
-            <div class="relative">
-                <button
-                    v-if="availableParameters.length"
-                    class="py-2 px-4 bg-gray-700 text-gray-300 rounded-md hover:bg-gray-600"
-                    @click="showAddVariationDropdown = !showAddVariationDropdown"
-                >
-                    Add Variation
-                </button>
-                <div
-                    v-if="showAddVariationDropdown"
-                    class="dropdown absolute bg-gray-700 rounded-lg shadow-lg p-2"
-                >
+        <!-- Variation Tabs -->
+        <div v-if="parameters.length" class="variation-tabs mb-4">
+            <div class="flex items-center mb-4">
+                <div v-if="variations.length" class="flex">
                     <button
-                        v-for="parameter in availableParameters"
-                        :key="parameter._id"
-                        class="block text-gray-200 hover:text-white px-4 py-2"
-                        @click="addVariation(parameter)"
+                        v-for="(variation, index) in variations"
+                        :key="variation._id"
+                        :class="[
+                            'py-2 px-4 rounded-md',
+                            activeVariation === index
+                                ? 'bg-blue-600 text-white'
+                                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                        ]"
+                        @click="setActiveVariation(index)"
                     >
-                        {{ parameter.name }}
+                        {{ variation.parameter.name || 'Unnamed' }}
                     </button>
+                </div>
+
+                <div class="relative ml-auto">
+                    <button
+                        v-if="availableParameters.length"
+                        class="py-2 px-4 bg-gray-700 text-gray-300 rounded-md hover:bg-gray-600"
+                        @click="showAddVariationDropdown = !showAddVariationDropdown"
+                    >
+                        Add Variation
+                    </button>
+                    <div
+                        v-if="showAddVariationDropdown"
+                        class="dropdown absolute bg-gray-700 rounded-lg shadow-lg p-2"
+                    >
+                        <button
+                            v-for="parameter in availableParameters"
+                            :key="parameter._id"
+                            class="block text-gray-200 hover:text-white px-4 py-2"
+                            @click="addVariation(parameter)"
+                        >
+                            {{ parameter.name }}
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div v-if="activeVariation !== null" class="variation-details">
+        <!-- No Variations Message -->
+        <div v-if="!variations.length" class="text-gray-300">
+            No variations exist. Start by adding a new variation.
+        </div>
+
+        <!-- Variation Details -->
+        <div v-if="activeVariation !== null && variations.length" class="variation-details">
             <h4 class="text-lg font-semibold text-gray-300 mb-4">
-                {{ variations[activeVariation].parameter.name }}</h4>
+                {{ variations[activeVariation].parameter.name || 'Unnamed' }}
+            </h4>
 
             <!-- Table Header -->
             <div class="grid grid-cols-4 gap-4 mb-2">
@@ -65,28 +78,32 @@
                     <input
                         v-model="row.name"
                         :class="[
-              'px-3 py-2 rounded-md border focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400',
-              isNormalVariation ? 'bg-gray-700 text-gray-200 border-gray-600' : 'bg-black text-gray-500 border-gray-700'
-            ]"
+                            'px-3 py-2 rounded-md border focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400',
+                            isNormalVariation ? 'bg-gray-700 text-gray-200 border-gray-600' : 'bg-black text-gray-500 border-gray-700'
+                        ]"
                         :readonly="!isNormalVariation"
                         placeholder="Row Name"
                     />
-                    <input
+                    <select
                         v-model="row.original_video"
+                        :disabled="!isNormalVariation"
                         class="px-3 py-2 bg-black text-gray-500 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
-                        placeholder="Original Video URL"
-                        readonly
-                    />
-                    <div v-if="!isNormalVariation" class="flex items-center justify-center">
+                    >
+                        <option v-for="video in allUploadedVideos" :key="video" :value="video">
+                            {{ video }}
+                        </option>
+                    </select>
+                    <div class="flex items-center justify-center">
                         <input
                             v-model="row.replace"
                             class="form-checkbox text-blue-500 h-5 w-5"
                             type="checkbox"
                         />
+                        {{ row.replace ? 'Yes' : 'No' }}
                     </div>
                     <select
-                        v-if="!isNormalVariation && row.replace"
                         v-model="row.replacement_video"
+                        :disabled="!row.replace"
                         class="px-3 py-2 bg-gray-700 text-gray-200 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
                     >
                         <option v-for="video in allUploadedVideos" :key="video" :value="video">
@@ -104,10 +121,13 @@
                     Add Row
                 </button>
                 <button
-                    class="py-2 px-4 bg-green-600 text-white rounded-md hover:bg-green-700"
+                    :class="[
+                        'py-2 px-4 rounded-md',
+                        'bg-green-600 text-white hover:bg-green-700'
+                    ]"
                     @click="saveVariation"
                 >
-                    Save Variation
+                    {{ saveButtonText }}
                 </button>
             </div>
         </div>
@@ -115,47 +135,67 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useScenesStore } from '@/stores/sceneStore.js'
 
 const scenesStore = useScenesStore()
 const showAddVariationDropdown = ref(false)
-const activeVariation = ref(null)
-
+const activeVariation = ref(0)
+const saveButtonText = ref('Save Variation')
 const parameters = ref([])
 const variations = ref([])
 
 const allUploadedVideos = computed(() => scenesStore.currentScene.uploaded_videos)
 
+const hasChanges = ref(false)
+
+// Watch for changes in the current variation and reset the save button text
+watch(
+    () => variations.value[activeVariation.value],
+    {
+        deep: true,
+        handler() {
+            saveButtonText.value = 'Save Variation'
+            hasChanges.value = true
+        }
+    }
+)
+
 // Get the normal variation (used to define the base rows)
 const normalVariation = computed(() =>
-    variations.value.find(variation => variation.parameter.name === 'normal')
+    variations.value.find(variation => variation?.parameter?.name === 'normal')
 )
 
 const isNormalVariation = computed(() => {
-    return variations.value[activeVariation.value].parameter.name === 'normal'
+    return variations.value[activeVariation.value]?.parameter?.name === 'normal'
 })
 
 // Get the video rows for the current variation
 const getVideoRowsForCurrentVariation = computed(() => {
     if (isNormalVariation.value) {
-        return variations.value[activeVariation.value].video_rows
-    } else {
-        return normalVariation.value.video_rows.map((row) => {
+        return variations.value[activeVariation.value]?.video_rows || []
+    } else if (normalVariation.value) {
+        return normalVariation.value?.video_rows?.map((row) => {
             // Find or create a corresponding row in the current variation
-            let existingRow = variations.value[activeVariation.value].video_rows.find(vr => vr.name === row.name)
+            let existingRow = variations.value[activeVariation.value]?.video_rows?.find(vr => vr.name === row.name)
+            console.log(existingRow)
             if (!existingRow) {
                 existingRow = {
                     name: row.name,
                     original_video: row.original_video,
                     replacement_video: '',
-                    replace: false
+                    replace: !!row?.replacement_video?.length
                 }
+                console.log(row)
+                console.log(existingRow)
                 variations.value[activeVariation.value].video_rows.push(existingRow)
+            } else {
+                existingRow.replace = true
             }
             return existingRow
         })
     }
+    return []
 })
 
 // Filter out parameters that are already used in variations
@@ -167,10 +207,20 @@ const availableParameters = computed(() =>
 )
 
 onMounted(async () => {
-    await scenesStore.fetchParameters()
-    await scenesStore.fetchVariations(scenesStore.currentScene._id)
-    parameters.value = scenesStore.parameters
-    variations.value = scenesStore.variations
+    try {
+        await scenesStore.fetchParameters()
+        await scenesStore.fetchVariations(scenesStore.currentScene._id)
+        parameters.value = scenesStore.parameters
+        variations.value = scenesStore.variations
+
+        if (variations.value.length > 0) {
+            activeVariation.value = 0
+        } else {
+            console.warn('No variations found. Add a new one.')
+        }
+    } catch (error) {
+        console.error('Error fetching parameters or variations:', error)
+    }
 })
 
 const addVariation = async (parameter) => {
@@ -182,22 +232,28 @@ const addVariation = async (parameter) => {
         video_rows: [] // Start with an empty list of rows
     }
 
-    await scenesStore.addVariation(newVariation)
+    try {
+        await scenesStore.addVariation(newVariation)
 
-    // Add the new variation to the variations list and set it as the active variation
-    variations.value.push({
-        ...newVariation,
-        _id: scenesStore.variations[scenesStore.variations.length - 1]._id,
-        parameter: {
-            _id: parameter._id,
-            name: parameter.name
-        }
-    })
-    activeVariation.value = variations.value.length - 1
+        // Add the new variation to the variations list and set it as the active variation
+        variations.value.push({
+            ...newVariation,
+            _id: scenesStore.variations[scenesStore.variations.length - 1]._id,
+            parameter: {
+                _id: parameter._id,
+                name: parameter.name
+            }
+        })
+        activeVariation.value = variations.value.length - 1
+    } catch (error) {
+        console.error('Error adding variation:', error)
+    }
 }
 
 const setActiveVariation = (index) => {
     activeVariation.value = index
+    saveButtonText.value = 'Save Variation'
+    hasChanges.value = false
 }
 
 const addRow = () => {
@@ -210,10 +266,6 @@ const addRow = () => {
     variations.value[activeVariation.value].video_rows.push(newRow)
 }
 
-const removeRow = (index) => {
-    variations.value[activeVariation.value].video_rows.splice(index, 1)
-}
-
 const saveVariation = async () => {
     const variationToSave = variations.value[activeVariation.value]
 
@@ -222,7 +274,11 @@ const saveVariation = async () => {
 
     try {
         await scenesStore.updateVariation(variationToSave._id, variationToSave)
-        alert('Variation saved successfully')
+        saveButtonText.value = 'Updated'
+        hasChanges.value = false
+        setTimeout(() => {
+            saveButtonText.value = 'Save Variation'
+        }, 2000)
     } catch (error) {
         console.error('Failed to save variation:', error)
         alert('Failed to save variation')
