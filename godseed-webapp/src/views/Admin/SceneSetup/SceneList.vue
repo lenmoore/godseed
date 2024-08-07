@@ -19,7 +19,7 @@
                 <img :src="`http://localhost:3000${scene.image_URL}`" alt="" >
                 <div class="actions">
                     <button @click="deleteScene(scene._id)">Delete</button>
-                    <button>Edit variations</button>
+                    <button @click="$router.push({ name: 'variations-editor', params: { scene: scene._id } })">Edit variations</button>
                 </div>
             </div>
         </div>
