@@ -1,11 +1,14 @@
 <template>
-    <div class="variations-editor flex-col h-full p-6 bg-gray-900 text-gray-200">
-        <SceneSettingsForm v-if="sceneLoaded" class="mb-6" />
-        <div v-if="sceneLoaded" class="middle-section flex justify-between space-x-6 mb-6">
-            <UploadedVideosManager class="flex-1 bg-gray-800 p-4 rounded-lg" />
-            <VideoPlayer class="flex-1 bg-gray-800 p-4 rounded-lg" />
+    <div v-if="sceneLoaded" class="variations-editor-wrapper">
+        <div class="top-wrapper">
+
+            <div class="left">
+                <SceneSettingsForm class="scene-settings-form border" />
+                <UploadedVideosManager class="videos-list rounded-lg" />
+            </div>
+            <VideoPlayer class="video-player rounded-lg" />
         </div>
-        <VariationSetup v-if="sceneLoaded" class="bg-gray-800 p-4 rounded-lg" />
+        <VariationSetup class="variation-setup rounded-lg" />
     </div>
 </template>
 
@@ -29,3 +32,41 @@ onMounted(async () => {
     sceneLoaded.value = true
 })
 </script>
+
+<style lang="scss">
+.left {
+    display: flex;
+    width: 30rem;
+    flex-direction: column;
+    gap: 1rem;
+
+    padding: 1rem;
+    border-radius: 1rem;
+}
+
+.scene-settings-form {
+    background-color: #2d2d2d;
+}
+
+.videos-list {
+    padding: 1rem;
+    background-color: #2d2d2d;
+    height: 100%;
+}
+
+.top-wrapper {
+    display: flex;
+    gap: 1rem;
+    height: 50rem;
+    width: 100%;
+
+    video {
+        border: 1px solid green;
+    }
+}
+
+.video-player {
+    margin: 1rem;
+    width: 100%;
+}
+</style>
