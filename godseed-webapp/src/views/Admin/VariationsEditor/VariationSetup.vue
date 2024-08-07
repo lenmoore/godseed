@@ -6,11 +6,11 @@
                 v-for="(variation, index) in variations"
                 :key="variation._id"
                 :class="[
-          'py-2 px-4 rounded-md',
-          activeVariation === index
-            ? 'bg-blue-600 text-white'
-            : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-        ]"
+                    'py-2 px-4 rounded-md',
+                    activeVariation === index
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                ]"
                 @click="setActiveVariation(index)"
             >
                 {{ variation.parameter.name }}
@@ -44,33 +44,40 @@
             <h4 class="text-lg font-semibold text-gray-300 mb-4">{{ variations[activeVariation].parameter.name }}</h4>
             <ul class="space-y-4">
                 <li
-                    v-for="(row, rowIndex) in variations[activeVariation].video_rows"
+                    v-for="(row, rowIndex) in getVideoRowsForCurrentVariation"
                     :key="rowIndex"
                     class="flex items-center"
                 >
                     <input
                         v-model="row.name"
+                        :readonly="!isNormalVariation"
                         class="mr-2 px-3 py-2 bg-gray-700 text-gray-200 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
                         placeholder="Row Name"
                     />
-                    <select
+                    <input
                         v-model="row.original_video"
+                        :readonly="true"
                         class="mr-2 px-3 py-2 bg-gray-700 text-gray-200 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
-                    >
-                        <option v-for="video in allUploadedVideos" :key="video" :value="video">
-                            {{ video }}
-                        </option>
-                    </select>
-                    <select
-                        v-if="variations[activeVariation].parameter.name !== 'normal'"
-                        v-model="row.replacement_video"
-                        class="mr-2 px-3 py-2 bg-gray-700 text-gray-200 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
-                    >
-                        <option v-for="video in allUploadedVideos" :key="video" :value="video">
-                            {{ video }}
-                        </option>
-                    </select>
+                        placeholder="Original Video URL"
+                    />
+                    <div v-if="!isNormalVariation" class="flex items-center">
+                        <input
+                            v-model="row.replace"
+                            class="mr-2"
+                            type="checkbox"
+                        />
+                        <select
+                            v-if="row.replace"
+                            v-model="row.replacement_video"
+                            class="mr-2 px-3 py-2 bg-gray-700 text-gray-200 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
+                        >
+                            <option v-for="video in allUploadedVideos" :key="video" :value="video">
+                                {{ video }}
+                            </option>
+                        </select>
+                    </div>
                     <button
+                        v-if="isNormalVariation"
                         class="text-red-500 hover:text-red-700"
                         @click="removeRow(rowIndex)"
                     >
@@ -80,6 +87,7 @@
             </ul>
             <div class="flex mt-4">
                 <button
+                    v-if="isNormalVariation"
                     class="py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 mr-4"
                     @click="addRow"
                 >
@@ -108,6 +116,37 @@ const parameters = ref([])
 const variations = ref([])
 
 const allUploadedVideos = computed(() => scenesStore.currentScene.uploaded_videos)
+
+// Get the normal variation (used to define the base rows)
+const normalVariation = computed(() =>
+    variations.value.find(variation => variation.parameter.name === 'normal')
+)
+
+const isNormalVariation = computed(() => {
+    return variations.value[activeVariation.value].parameter.name === 'normal'
+})
+
+// Get the video rows for the current variation
+const getVideoRowsForCurrentVariation = computed(() => {
+    if (isNormalVariation.value) {
+        return variations.value[activeVariation.value].video_rows
+    } else {
+        return normalVariation.value.video_rows.map((row) => {
+            // Find or create a corresponding row in the current variation
+            let existingRow = variations.value[activeVariation.value].video_rows.find(vr => vr.name === row.name)
+            if (!existingRow) {
+                existingRow = {
+                    name: row.name,
+                    original_video: row.original_video,
+                    replacement_video: '',
+                    replace: false
+                }
+                variations.value[activeVariation.value].video_rows.push(existingRow)
+            }
+            return existingRow
+        })
+    }
+})
 
 // Filter out parameters that are already used in variations
 const availableParameters = computed(() =>
@@ -155,7 +194,8 @@ const addRow = () => {
     const newRow = {
         name: '',
         original_video: '',
-        replacement_video: ''
+        replacement_video: '',
+        replace: false
     }
     variations.value[activeVariation.value].video_rows.push(newRow)
 }
@@ -166,6 +206,10 @@ const removeRow = (index) => {
 
 const saveVariation = async () => {
     const variationToSave = variations.value[activeVariation.value]
+
+    // Filter out rows that are not set to be replaced
+    variationToSave.video_rows = variationToSave.video_rows.filter(row => isNormalVariation.value || row.replace)
+
     try {
         await scenesStore.updateVariation(variationToSave._id, variationToSave)
         alert('Variation saved successfully')
