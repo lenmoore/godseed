@@ -6,9 +6,9 @@
                 <SceneSettingsForm class="scene-settings-form border" />
                 <UploadedVideosManager class="videos-list rounded-lg" />
             </div>
-            <VideoPlayer class="video-player rounded-lg" />
+            <VideoPlayer :selected-variation="selectedVariation" class="video-player rounded-lg" />
         </div>
-        <VariationSetup class="variation-setup rounded-lg" />
+        <VariationSetup class="variation-setup rounded-lg" @select-variation="selectVariation" />
     </div>
 </template>
 
@@ -25,6 +25,11 @@ import VariationSetup from '@/views/Admin/VariationsEditor/VariationSetup.vue'
 const route = useRoute()
 const scenesStore = useScenesStore()
 const sceneLoaded = ref(false)
+const selectedVariation = ref(null)
+
+function selectVariation(variation) {
+    console.log('Selected variation:', variation)
+}
 
 onMounted(async () => {
     const sceneId = route.params.scene // Assuming the route parameter is named 'scene'

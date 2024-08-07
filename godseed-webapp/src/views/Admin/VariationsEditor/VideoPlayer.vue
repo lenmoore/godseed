@@ -24,6 +24,13 @@ import { useScenesStore } from '@/stores/sceneStore.js'
 
 const scenesStore = useScenesStore()
 const scene = computed(() => scenesStore.currentScene)
+
+const props = defineProps({
+    selectedVariation: {
+        type: Object,
+        required: false
+    }
+})
 </script>
 
 <style scoped>
