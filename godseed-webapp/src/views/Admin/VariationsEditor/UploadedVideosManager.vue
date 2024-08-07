@@ -1,21 +1,31 @@
 <template>
     <div v-if="scene" class="uploaded-videos-manager border p-4 bg-gray-800 rounded-lg relative">
-        <h3 class="text-xl font-bold text-gray-200 mb-4">Your Uploaded Videos</h3>
+
+        <div class="mt-4">
+            Upload videos
+            <input
+                class="text-gray-300 bg-gray-700 rounded-lg border border-gray-600 p-2"
+                multiple
+                type="file"
+                @change="handleVideoUpload"
+            />
+        </div>
+        <h3 class="font-bold text-gray-200 mt-4">Scene videos</h3>
+        <small>Hover to see preview</small>
         <ul v-if="scene.uploaded_videos" class="space-y-2">
             <li
                 v-for="video in scene.uploaded_videos"
                 :key="video"
-                class="relative cursor-pointer text-blue-400 hover:underline"
+                class="relative font-mono text-blue-400 hover:underline"
                 @mouseenter="showPreview(video, $event)"
                 @mouseleave="hidePreview"
             >
                 {{ video }}
-
             </li>
         </ul>
         <div
             v-if="previewVideo"
-            class="absolute z-10 p-2 bg-gray-900 rounded-lg shadow-lg"
+            class="absolute z-10 p-2 rounded-lg shadow-lg"
         >
             <video
                 :src="`http://localhost:3000${previewVideo}`"
@@ -29,14 +39,6 @@
             </video>
         </div>
 
-        <div class="mt-4">
-            <input
-                class="text-gray-300 bg-gray-700 rounded-lg border border-gray-600 p-2"
-                multiple
-                type="file"
-                @change="handleVideoUpload"
-            />
-        </div>
         <!-- Floating video preview -->
 
     </div>

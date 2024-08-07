@@ -1,16 +1,19 @@
 <template>
-    <div class="variation-setup border p-4 bg-gray-800 rounded-lg">
-        <h3 class="text-xl font-bold text-gray-200 mb-4">Setup Variations</h3>
+    <div class="variation-setup border p-4 m-4 bg-gray-800 rounded-lg">
+        <h3 class="text-xl font-bold text-gray-200 ">Configure variations</h3>
+        <small class="my-4">
+            First add layers for the "normal" parameter. Then add replacements in different tabs.
+        </small>
         <div class="variation-tabs mb-4">
             <button
                 v-for="(variation, index) in variations"
                 :key="variation._id"
                 :class="[
-                    'py-2 px-4 rounded-md',
-                    activeVariation === index
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                ]"
+          'py-2 px-4 rounded-md',
+          activeVariation === index
+            ? 'bg-blue-600 text-white'
+            : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+        ]"
                 @click="setActiveVariation(index)"
             >
                 {{ variation.parameter.name }}
@@ -41,48 +44,55 @@
         </div>
 
         <div v-if="activeVariation !== null" class="variation-details">
-            <h4 class="text-lg font-semibold text-gray-300 mb-4">{{ variations[activeVariation].parameter.name }}</h4>
+            <h4 class="text-lg font-semibold text-gray-300 mb-4">
+                {{ variations[activeVariation].parameter.name }}</h4>
+
+            <!-- Table Header -->
+            <div class="grid grid-cols-4 gap-4 mb-2">
+                <div class="text-gray-400">Layer</div>
+                <div class="text-gray-400">Original Video</div>
+                <div class="text-gray-400">Replace This</div>
+                <div class="text-gray-400">Replacement Video</div>
+            </div>
+
+            <!-- Rows -->
             <ul class="space-y-4">
                 <li
                     v-for="(row, rowIndex) in getVideoRowsForCurrentVariation"
                     :key="rowIndex"
-                    class="flex items-center"
+                    class="grid grid-cols-4 gap-4 items-center"
                 >
                     <input
                         v-model="row.name"
+                        :class="[
+              'px-3 py-2 rounded-md border focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400',
+              isNormalVariation ? 'bg-gray-700 text-gray-200 border-gray-600' : 'bg-black text-gray-500 border-gray-700'
+            ]"
                         :readonly="!isNormalVariation"
-                        class="mr-2 px-3 py-2 bg-gray-700 text-gray-200 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
                         placeholder="Row Name"
                     />
                     <input
                         v-model="row.original_video"
-                        :readonly="true"
-                        class="mr-2 px-3 py-2 bg-gray-700 text-gray-200 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
+                        class="px-3 py-2 bg-black text-gray-500 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
                         placeholder="Original Video URL"
+                        readonly
                     />
-                    <div v-if="!isNormalVariation" class="flex items-center">
+                    <div v-if="!isNormalVariation" class="flex items-center justify-center">
                         <input
                             v-model="row.replace"
-                            class="mr-2"
+                            class="form-checkbox text-blue-500 h-5 w-5"
                             type="checkbox"
                         />
-                        <select
-                            v-if="row.replace"
-                            v-model="row.replacement_video"
-                            class="mr-2 px-3 py-2 bg-gray-700 text-gray-200 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
-                        >
-                            <option v-for="video in allUploadedVideos" :key="video" :value="video">
-                                {{ video }}
-                            </option>
-                        </select>
                     </div>
-                    <button
-                        v-if="isNormalVariation"
-                        class="text-red-500 hover:text-red-700"
-                        @click="removeRow(rowIndex)"
+                    <select
+                        v-if="!isNormalVariation && row.replace"
+                        v-model="row.replacement_video"
+                        class="px-3 py-2 bg-gray-700 text-gray-200 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
                     >
-                        Remove
-                    </button>
+                        <option v-for="video in allUploadedVideos" :key="video" :value="video">
+                            {{ video }}
+                        </option>
+                    </select>
                 </li>
             </ul>
             <div class="flex mt-4">

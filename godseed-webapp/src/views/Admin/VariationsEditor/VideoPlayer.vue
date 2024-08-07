@@ -1,5 +1,5 @@
 <template>
-    <div class="video-player p-6 bg-gray-800 shadow-md rounded-lg border relative">
+    <div class="video-player p-6 rounded-lg border relative">
         <h3 class="text-xl font-bold text-gray-200 mb-4">Playing Videos</h3>
         <div v-if="scene && scene.uploaded_videos" class="relative w-full h-0 pb-9/16" style="width: 600px;">
             <video
@@ -7,7 +7,7 @@
                 :key="video"
                 :src="`http://localhost:3000${video}`"
                 autoplay
-                class="absolute top-0 left-0 w-full h-full object-contain rounded-lg border border-gray-700"
+                class="absolute top-0 left-0 object-contain rounded-lg border border-gray-700"
                 loop
                 muted
                 playsinline
