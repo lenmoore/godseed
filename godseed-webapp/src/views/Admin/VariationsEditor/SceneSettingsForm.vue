@@ -4,7 +4,7 @@
             <h3 class="text-xl font-bold text-gray-200">{{ scene.name }}</h3>
             <p class="text-gray-400">{{ scene.era.name }}</p>
             <p class="text-gray-300">{{ scene.desc }}</p>
-            <img v-if="scene.image_URL" :src="scene.image_URL" alt="Scene Image"
+            <img v-if="scene.image_URL" :src="'http://localhost:3000' + scene.image_URL" alt="Scene Image"
                  class="mt-2 rounded-md w-full h-48 object-cover" />
             <div class="mt-4">
                 <button @click="toggleEditMode">edit</button>

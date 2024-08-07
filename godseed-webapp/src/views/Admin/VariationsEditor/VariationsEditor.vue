@@ -6,7 +6,7 @@
                 <SceneSettingsForm class="scene-settings-form border" />
                 <UploadedVideosManager class="videos-list rounded-lg" />
             </div>
-            <VideoPlayer :selected-variation="selectedVariation" class="video-player rounded-lg" />
+            <VideoPlayer class="video-player rounded-lg" />
         </div>
         <VariationSetup class="variation-setup rounded-lg" @select-variation="selectVariation" />
     </div>

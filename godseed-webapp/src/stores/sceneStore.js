@@ -74,6 +74,23 @@ export const useScenesStore = defineStore('scenesStore', {
       }
     },
 
+    async updateParametersBatch(updatedParameters) {
+      try {
+        const response = await http.put('/parameters', updatedParameters)
+        // Update local store with the updated parameters
+        updatedParameters.forEach(updatedParam => {
+          const index = this.parameters.findIndex(p => p._id === updatedParam._id)
+          if (index !== -1) {
+            this.parameters[index].is_active = updatedParam.is_active
+          }
+        })
+        return response.data
+      } catch (error) {
+        console.error('Failed to update parameters:', error)
+        throw error
+      }
+    },
+
     async addVariation(variation) {
       try {
         const response = await http.post('/variations', variation)
