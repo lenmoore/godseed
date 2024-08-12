@@ -24,12 +24,12 @@
         </ul>
         <div
             v-if="previewVideo"
-            class="absolute z-10 p-2 rounded-lg bg-teal-500 shadow-lg"
+            class="absolute-video-wrapper"
         >
             <video
                 :src="`${apiBaseUrl}${previewVideo}`"
                 autoplay
-                class="rounded-lg border border-gray-700"
+                class=""
                 muted
                 playsinline
                 width="300"
@@ -81,5 +81,14 @@ const hidePreview = () => {
 </script>
 
 <style scoped>
-/* Add any necessary styling */
+
+.absolute-video-wrapper {
+    position: absolute;
+    top: 40vh;
+    background-color: darkgreen;
+    left: 0;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    color: white;
+}
 </style>

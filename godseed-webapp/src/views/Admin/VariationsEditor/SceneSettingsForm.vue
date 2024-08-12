@@ -4,8 +4,10 @@
             <h3 class="text-xl font-bold text-gray-200">{{ scene.name }}</h3>
             <p class="text-gray-400">{{ scene.era.name }}</p>
             <p class="text-gray-300">{{ scene.desc }}</p>
-            <img v-if="scene.image_URL" :src="apiBaseUrl + scene.image_URL" alt="Scene Image"
-                 class="mt-2 rounded-md w-full h-48 object-cover" />
+            <img v-if="scene.image_URL" :src="apiBaseUrl + scene.image_URL"
+                 alt="Scene Image"
+                 class="mt-2 rounded-md h-48 object-cover"
+                 width="400px" />
             <div class="mt-4">
                 <button @click="toggleEditMode">edit</button>
             </div>

@@ -13,29 +13,36 @@
                         v-for="(variation, index) in variations"
                         :key="variation._id"
                         :class="[
-                            'py-2 px-4 rounded-md',
+                            'variation-tab',
                             activeVariation === index
-                                ? 'bg-blue-600 text-white'
-                                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                                ? 'active'
+                                : ' '
                         ]"
                         @click="setActiveVariation(index)"
                     >
                         {{ variation.parameter.name || 'Unnamed' }}
                     </button>
                 </div>
+            </div>
 
-                <div class="relative ml-auto">
-                    <button
-                        v-if="availableParameters.length"
-                        class="py-2 px-4 bg-gray-700 text-gray-300 rounded-md hover:bg-gray-600"
-                        @click="showAddVariationDropdown = !showAddVariationDropdown"
-                    >
-                        Add Variation
-                    </button>
-                    <div
-                        v-if="showAddVariationDropdown"
-                        class="dropdown absolute bg-gray-700 rounded-lg shadow-lg p-2"
-                    >
+            <div class="relative ml-auto">
+                <button
+                    v-if="availableParameters.length"
+                    class="py-2 px-4 bg-gray-700 text-gray-300 rounded-md hover:bg-gray-600"
+                    @click="showAddVariationDropdown = !showAddVariationDropdown"
+                >
+                    Add Variation
+                </button>
+                <div
+                    v-if="showAddVariationDropdown"
+                    class="dropdown absolute bg-gray-700 rounded-lg shadow-lg p-2"
+                >
+                    <div v-if="variations.length === 0">
+                        <button @click="addVariation(normalParameter)">
+                            <span class="text-blue-500">Add normal</span>
+                        </button>
+                    </div>
+                    <div v-else>
                         <button
                             v-for="parameter in availableParameters"
                             :key="parameter._id"
@@ -45,6 +52,7 @@
                             {{ parameter.name }}
                         </button>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -57,23 +65,15 @@
         <!-- Variation Details -->
         <div v-if="activeVariation !== null && variations.length" class="variation-details">
             <h4 class="text-lg font-semibold text-gray-300 mb-4">
-                {{ variations[activeVariation].parameter.name || 'Unnamed' }}
+                {{ variations[activeVariation].parameter.name || 'Refresh the page' }}
             </h4>
-
-            <!-- Table Header -->
-            <div class="grid grid-cols-4 gap-4 mb-2">
-                <div class="text-gray-400">Layer</div>
-                <div class="text-gray-400">Original Video</div>
-                <div class="text-gray-400">Replacement Video</div>
-                <div class="text-gray-400"></div>
-            </div>
 
             <!-- Rows -->
             <ul class="space-y-4">
                 <li
                     v-for="(row, rowIndex) in getVideoRowsForCurrentVariation"
                     :key="rowIndex"
-                    class="grid grid-cols-4 gap-4 items-center"
+                    class="var-row"
                 >
                     <input
                         v-model="row.name"
@@ -94,6 +94,7 @@
                         </option>
                     </select>
                     <div v-if="!isNormalVariation" class="relative">
+                        Replace with
                         <select
                             v-model="row.replacement_video"
                             class="px-3 py-2 bg-gray-700 text-gray-200 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
@@ -141,9 +142,10 @@ import { useScenesStore } from '@/stores/sceneStore.js'
 const scenesStore = useScenesStore()
 const showAddVariationDropdown = ref(false)
 const activeVariation = ref(0)
-const saveButtonText = ref('Save Variation')
+const saveButtonText = ref('Save changes')
 const parameters = ref([])
 const variations = ref([])
+const normalParameter = ref(null)
 
 const allUploadedVideos = computed(() => scenesStore.currentScene.uploaded_videos)
 
@@ -217,6 +219,7 @@ onMounted(async () => {
         } else {
             console.warn('No variations found. Add a new one.')
         }
+        normalParameter.value = parameters.value.find(param => param.name === 'normal')
     } catch (error) {
         console.error('Error fetching parameters or variations:', error)
     }
@@ -233,16 +236,17 @@ const addVariation = async (parameter) => {
 
     try {
         await scenesStore.addVariation(newVariation)
-
+        await scenesStore.fetchVariations(scenesStore.currentScene._id)
+        variations.value = scenesStore.variations
         // Add the new variation to the variations list and set it as the active variation
-        variations.value.push({
-            ...newVariation,
-            _id: scenesStore.variations[scenesStore.variations.length - 1]._id,
-            parameter: {
-                _id: parameter._id,
-                name: parameter.name
-            }
-        })
+        // variations.value.push({
+        //     ...newVariation,
+        //     _id: scenesStore.variations[scenesStore.variations.length - 1]._id,
+        //     parameter: {
+        //         _id: parameter._id,
+        //         name: parameter.name
+        //     }
+        // })
         activeVariation.value = variations.value.length - 1
     } catch (error) {
         console.error('Error adding variation:', error)
@@ -312,5 +316,21 @@ const saveVariation = async () => {
 
 .dropdown button:last-child {
     margin-bottom: 0;
+}
+
+.var-row {
+    display: flex;
+    gap: 1rem;
+}
+
+.variation-tab {
+    padding: 0.5rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 0.25rem;
+    cursor: pointer;
+
+    &.active {
+        background-color: darkgreen;
+    }
 }
 </style>

@@ -4,11 +4,16 @@
 
             <div class="left">
                 <SceneSettingsForm class="scene-settings-form border" />
-                <UploadedVideosManager class="videos-list rounded-lg" />
             </div>
             <VideoPlayer class="video-player rounded-lg" />
         </div>
-        <VariationSetup class="variation-setup rounded-lg" @select-variation="selectVariation" />
+
+        <div class="bottom-wrapper">
+
+            <UploadedVideosManager class="videos-list rounded-lg" />
+
+            <VariationSetup class="variation-setup rounded-lg" @select-variation="selectVariation" />
+        </div>
     </div>
 </template>
 
@@ -65,13 +70,17 @@ onMounted(async () => {
     height: 50rem;
     width: 100%;
 
-    video {
-        border: 1px solid green;
-    }
 }
 
 .video-player {
     margin: 1rem;
     width: 100%;
+}
+
+.bottom-wrapper {
+    display: flex;
+    padding: 1rem;
+    gap: 1rem;
+    background-color: #282828;
 }
 </style>

@@ -1,32 +1,33 @@
 <template>
     <div class="video-player p-6 rounded-lg border relative">
-        <h3 class="text-xl font-bold text-gray-200 mb-4">Playing Videos</h3>
-        <div v-if="scene && filteredVideos.length" class="relative w-full h-0 pb-9/16" style="width: 600px;">
+        <div v-if="scene && filteredVideos.length" class="relative w-full h-0 pb-9 " style="width: 600px;">
             <video
                 v-for="video in filteredVideos"
                 :key="video"
                 :src="`${apiBaseUrl}${video}`"
                 autoplay
-                class="absolute top-0 left-0 object-contain rounded-lg border border-gray-700"
+                class="absolute top-0 left-0 object-contain "
                 loop
                 muted
                 playsinline
+                style="border: 1px solid pink; height: auto; width: 100%;"
             >
                 Your browser does not support the video tag.
             </video>
         </div>
 
-        <div class="absolute right-0 top-0 p-4 bg-gray-800 rounded-lg">
+        <div class="display-params">
             <h4 class="text-lg font-bold text-gray-200">Display parameters</h4>
             <small>
                 This is just like putting the wires in the globe. Wire in = checkbox ticked :)
+                <br>
+                If you press submit, the changes get saved on the server. If you just toggle them, you toggle the views
+                locally.
             </small>
             <br>
-            <small>
-                If you press submit, the changes get saved on the server. It's ok :)
-            </small>
-            <div v-for="parameter in activeParameters" :key="parameter._id" class="mb-2">
-                <label class="text-gray-200">
+            <br>
+            <div v-for="parameter in activeParameters" :key="parameter._id" class="parameter-input">
+                <label class="text-gray-200 font-mono">
                     <input v-model="parameter.is_active" class="mr-2" type="checkbox">
                     {{ parameter.name }}
                 </label>
@@ -35,7 +36,7 @@
                 class="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
                 @click="submitChanges"
             >
-                Submit
+                Update in server
             </button>
         </div>
     </div>
@@ -48,14 +49,11 @@ import { useScenesStore } from '@/stores/sceneStore.js'
 const scenesStore = useScenesStore()
 
 const apiBaseUrl = import.meta.env.VITE_SERVER_URL
-console.log(apiBaseUrl)
-// Make scene reactive to changes in scenesStore.currentScene
+
 const scene = computed(() => scenesStore.currentScene)
 
-// Filter out "normal" and only return other parameters
 const activeParameters = computed(() => scenesStore.parameters.filter(param => param.name !== 'normal'))
 
-// Compute the videos based on active parameters with "normal" as the base
 const filteredVideos = computed(() => {
     const normalVariation = scenesStore.variations.find(variation => variation.parameter.name === 'normal')
     const activeVariations = scenesStore.variations.filter(variation =>
@@ -64,10 +62,8 @@ const filteredVideos = computed(() => {
 
     if (!normalVariation) return []
 
-    // Start with the normal variation videos
     let videos = normalVariation.video_rows.map(row => ({ name: row.name, video: row.original_video }))
 
-    // Replace normal videos with active variations where applicable
     activeVariations.forEach(variation => {
         variation.video_rows.forEach(row => {
             const videoToReplace = videos.find(v => v.name === row.name)
@@ -80,7 +76,6 @@ const filteredVideos = computed(() => {
     return videos.map(v => v.video)
 })
 
-// Function to submit the parameter changes
 const submitChanges = async () => {
     try {
         await scenesStore.updateParametersBatch(activeParameters.value)
@@ -92,6 +87,36 @@ const submitChanges = async () => {
 }
 </script>
 
-<style scoped>
-/* Add any necessary styling */
+<style lang="scss" scoped>
+.video-player {
+    display: flex;
+
+    small {
+        font-weight: bold;
+    }
+}
+
+.display-params {
+    background-color: darkgreen;
+    padding: 1rem;
+}
+
+.parameter-input {
+    font-family: monospace;
+    font-size: 0.8rem;
+}
+
+.relative.w-full.h-0.pb-9 {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+}
+
+video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
 </style>
