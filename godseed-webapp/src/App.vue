@@ -1,5 +1,5 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterView } from 'vue-router'
 
 console.log(import.meta.env.VITE_API_BASE_URL) // Add this line in your component or http.js
 
@@ -7,11 +7,6 @@ console.log(import.meta.env.VITE_API_BASE_URL) // Add this line in your componen
 
 <template>
     <div>
-        <nav>
-            <RouterLink to="/admin">params, eras</RouterLink>
-            <RouterLink to="/scenes">scenes</RouterLink>
-        </nav>
-
         <RouterView />
     </div>
 </template>

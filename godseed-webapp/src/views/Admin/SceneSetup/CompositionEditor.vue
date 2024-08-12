@@ -1,6 +1,11 @@
 <template>
     <div ref="canvas" class="composition-editor">
-        <h2>Composition Editor</h2>
+        <h2>
+            Zoom out the browser window to use this page. Drag and resize scenes by cover images. Use z-index to move
+            them in
+            front of each other
+        </h2>
+        <router-link :to="`/godseed/${eraName}`" target="_blank">real canvas for expo</router-link>
         <div
             v-for="scene in scenes"
             :key="scene._id"

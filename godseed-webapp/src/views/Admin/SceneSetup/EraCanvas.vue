@@ -32,7 +32,9 @@ const refreshKey = ref(0) // This key will be used to trigger a re-render in Sce
 const addingScene = ref(false)
 
 watch(() => route.params.era, (newEra) => {
+    refreshKey.value += 1 // Update the refresh key to trigger re-fetch in SceneList
     eraName.value = newEra // Update the era name whenever the route changes
+    showCompositionEditor.value = false // Hide the composition editor when the era changes
 })
 
 const refreshScenes = () => {

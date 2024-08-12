@@ -1,5 +1,11 @@
 <template>
     <div>
+
+        <nav>
+            <RouterLink to="/admin">params, eras</RouterLink>
+            <RouterLink to="/scenes">scenes</RouterLink>
+        </nav>
+
         <h1>Admin View</h1>
 
         <section>
@@ -53,6 +59,7 @@
 <script setup>
 import { onMounted, ref, toRefs } from 'vue'
 import { useSetupStore } from '@/stores/parameterStore.js'
+import { RouterLink } from 'vue-router'
 
 const setupStore = useSetupStore()
 const { parameters, eras } = toRefs(setupStore) // Make sure reactive properties stay reactive
