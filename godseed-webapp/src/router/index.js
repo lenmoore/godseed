@@ -8,6 +8,10 @@ import GodseedPlayer from '@/views/Player/GodseedPlayer.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    {
+      path: '/',
+      redirect: '/scenes' // or any other route you want as the default
+    },
 
     {
       path: '/godseed/:eraName',
@@ -17,7 +21,8 @@ const router = createRouter({
 
     { path: '/admin', name: 'admin', component: AdminView },
     {
-      path: '/scenes', name: 'scenes', component: ScenesDashboard, children: [
+      path: '/scenes', name: 'scenes', component: ScenesDashboard,
+      children: [
         {
           path: ':era',
           name: 'era-canvas',

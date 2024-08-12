@@ -3,6 +3,8 @@
         <div class="top-wrapper">
 
             <div class="left">
+
+                <button @click="$router.go(-1)">back</button>
                 <SceneSettingsForm class="scene-settings-form border" />
             </div>
             <VideoPlayer class="video-player rounded-lg" />

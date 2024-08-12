@@ -14,7 +14,8 @@ onMounted(async () => {
 
 <template>
     <div class="dashboard-wrapper">
-        <ul class="era-list">
+        Select era:
+        <ul v-if="eras.length" class="era-list">
             <li
                 v-for="era in eras"
                 :key="era._id"

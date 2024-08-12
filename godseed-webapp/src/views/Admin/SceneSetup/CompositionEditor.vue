@@ -5,7 +5,7 @@
             them in
             front of each other
         </h2>
-        <router-link :to="`/godseed/${eraName}`" target="_blank">real canvas for expo</router-link>
+        <!--        <router-link :to="`/godseed/${eraName}`" target="_blank">real canvas for expo</router-link>-->
         <div
             v-for="scene in scenes"
             :key="scene._id"
