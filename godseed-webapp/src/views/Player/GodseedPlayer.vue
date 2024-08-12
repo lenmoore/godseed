@@ -76,25 +76,24 @@ const getFilteredVideos = (scene) => {
     const normalVideos = scene.variations?.find(variation => variation.parameter === normalParameterId.value)
     console.log('normal videos', normalVideos)
     console.log('Scene-> ', scene)
-    const displayVideos = normalVideos.video_rows
+    const displayVideos = normalVideos.video_rows || []
 
     console.log('displayVideos: ', displayVideos)
 
     scene.variations.forEach(variation => {
         const parameter = activeParameters.value.find(param => param._id === variation.parameter)
         if (parameter) {
-
             console.log('replacing a video for param ', parameter.name)
-            variation.video_rows.forEach(row => {
-                const videoToReplace = displayVideos.find(v => v.name === row.name)
+            variation.video_rows?.forEach(row => {
+                const videoToReplace = displayVideos?.find(v => v.name === row.name)
                 if (videoToReplace) {
                     videoToReplace.video = row.replacement_video || videoToReplace.video
                 }
             })
         } else {
             // add the original video
-            variation.video_rows.forEach(row => {
-                const videoToReplace = displayVideos.find(v => v.name === row.name)
+            variation.video_rows?.forEach(row => {
+                const videoToReplace = displayVideos?.find(v => v.name === row.name)
                 if (videoToReplace) {
                     videoToReplace.video = row.original_video || videoToReplace.video
                 }
