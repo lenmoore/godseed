@@ -112,7 +112,20 @@ export const useScenesStore = defineStore('scenesStore', {
       }
     },
 
-    async fetchVariations(sceneId) {
+    async fetchVariationsByEra(eraName) {
+      try {
+
+        console.log(eraName)
+        // this.variations = []
+        const response = await http.get(`/variations/by-era/${eraName}`)
+        // this.variations = response.data
+        return response.data
+      } catch (error) {
+        console.error('Failed to fetch variations:', error)
+      }
+    },
+
+    async fetchVariationsForScene(sceneId) {
       try {
         this.variations = []
         const response = await http.get(`/variations/by-scene/${sceneId}`)

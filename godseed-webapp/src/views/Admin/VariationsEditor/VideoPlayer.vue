@@ -4,7 +4,6 @@
             <video
                 v-for="video in filteredVideos"
                 :key="video"
-                :src="`${apiBaseUrl}${video}`"
                 autoplay
                 class="absolute top-0 left-0 object-contain "
                 loop
@@ -12,7 +11,9 @@
                 playsinline
                 style="border: 1px solid pink; height: auto; width: 100%;"
             >
-                Your browser does not support the video tag.
+                <source
+                    :src="`${apiBaseUrl}${video}`" type="video/mp4"
+                >
             </video>
         </div>
 
@@ -56,10 +57,9 @@ const activeParameters = computed(() => scenesStore.parameters.filter(param => p
 
 const filteredVideos = computed(() => {
     const normalVariation = scenesStore.variations.find(variation => variation.parameter.name === 'normal')
-    const activeVariations = scenesStore.variations.filter(variation =>
-        activeParameters.value.some(param => param.is_active && param._id === variation.parameter._id)
-    )
+    const activeVariations = scenesStore.variations.filter(variation => variation.parameter.is_active)
 
+    console.log(activeVariations)
     if (!normalVariation) return []
 
     let videos = normalVariation.video_rows.map(row => ({ name: row.name, video: row.original_video }))

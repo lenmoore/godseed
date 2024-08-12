@@ -210,7 +210,7 @@ const availableParameters = computed(() =>
 onMounted(async () => {
     try {
         await scenesStore.fetchParameters()
-        await scenesStore.fetchVariations(scenesStore.currentScene._id)
+        await scenesStore.fetchVariationsForScene(scenesStore.currentScene._id)
         parameters.value = scenesStore.parameters
         variations.value = scenesStore.variations
 
@@ -236,7 +236,7 @@ const addVariation = async (parameter) => {
 
     try {
         await scenesStore.addVariation(newVariation)
-        await scenesStore.fetchVariations(scenesStore.currentScene._id)
+        await scenesStore.fetchVariationsForScene(scenesStore.currentScene._id)
         variations.value = scenesStore.variations
         // Add the new variation to the variations list and set it as the active variation
         // variations.value.push({

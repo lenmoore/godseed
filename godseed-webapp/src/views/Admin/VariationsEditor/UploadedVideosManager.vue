@@ -32,6 +32,7 @@
                 class=""
                 muted
                 playsinline
+                type="video/mp4"
                 width="300"
             >
                 Your browser does not support the video tag.
@@ -85,7 +86,7 @@ const hidePreview = () => {
 .absolute-video-wrapper {
     position: absolute;
     top: 40vh;
-    background-color: darkgreen;
+    //background-color: darkgreen;
     left: 0;
     padding: 1rem;
     border-radius: 0.5rem;

@@ -619,6 +619,10 @@ video {
   display: flex;
 }
 
+.hidden {
+  display: none;
+}
+
 .h-0 {
   height: 0px;
 }
@@ -677,6 +681,10 @@ video {
 
 .overflow-y-scroll {
   overflow-y: scroll;
+}
+
+.text-wrap {
+  text-wrap: wrap;
 }
 
 .rounded {
