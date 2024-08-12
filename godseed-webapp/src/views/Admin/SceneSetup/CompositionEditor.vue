@@ -24,7 +24,7 @@
                     class="drag-handle"
                     draggable="true"
                     @dragend="handleDragEnd(scene, $event)"
-                    @dragstart="handleDragStart(scene)"
+                    @dragstart="handleDragStart(scene, $event)"
                     @mousedown="startDrag(scene, $event)"
                 >
                     Drag
@@ -57,10 +57,46 @@ let isDragging = false
 let currentScene = null
 let initialX = 0
 let initialY = 0
-
 onMounted(async () => {
     await scenesStore.fetchScenes()
-    scenes.value = scenesStore.scenes.filter(scene => scene.era.name === eraName.value)
+    scenes.value = await Promise.all(
+        scenesStore.scenes
+            .filter(scene => scene.era.name === eraName.value)
+            .map(async scene => {
+                const image = new Image()
+                const imageURL = `${apiBaseUrl}${scene.image_URL}`
+
+                // Load the image to get its dimensions
+                const loadImageDimensions = () =>
+                    new Promise((resolve, reject) => {
+                        image.onload = () => {
+                            resolve({
+                                width: image.width,
+                                height: image.height
+                            })
+                        }
+                        image.onerror = reject
+                        image.src = imageURL
+                    })
+
+                let dimensions = { width: 400, height: 400 } // Default dimensions
+
+                try {
+                    dimensions = await loadImageDimensions()
+                } catch (error) {
+                    console.error('Failed to load image:', imageURL, error)
+                }
+
+                return {
+                    ...scene,
+                    coordX: scene.coordX || 0,
+                    coordY: scene.coordY || 0,
+                    displayWidth: scene.displayWidth || dimensions.width,  // Use image dimensions if not set
+                    displayHeight: scene.displayHeight || dimensions.height, // Use image dimensions if not set
+                    zIndex: scene.zIndex || 1
+                }
+            })
+    )
 })
 
 const handleDragStart = (scene, event) => {
@@ -83,7 +119,6 @@ const startDrag = (scene, event) => {
     initialX = scene.coordX
     initialY = scene.coordY
 }
-
 const handleDragEnd = async (scene, event) => {
     if (!isDragging) return
 
@@ -91,8 +126,8 @@ const handleDragEnd = async (scene, event) => {
     const endX = event.clientX - rect.left
     const endY = event.clientY - rect.top
 
-    scene.coordX = initialX + (endX - startX)
-    scene.coordY = initialY + (endY - startY)
+    scene.coordX = Math.max(0, initialX + (endX - startX)) || 0
+    scene.coordY = Math.max(0, initialY + (endY - startY)) || 0
 
     console.log('Updating Scene with new position:', {
         coordX: scene.coordX,
@@ -109,6 +144,7 @@ const handleDragEnd = async (scene, event) => {
 
     isDragging = false
 }
+
 
 const startResize = (scene, event) => {
     isResizing = true
@@ -128,23 +164,21 @@ const startResize = (scene, event) => {
 const resizeScene = (event) => {
     if (!isResizing || !currentScene) return
 
-    const deltaX = event.clientX - startX
-    const deltaY = event.clientY - startY
+    const deltaX = (event.clientX - startX) || 0  // Sanitize the deltaX
+    const deltaY = (event.clientY - startY) || 0  // Sanitize the deltaY
 
     // Calculate new width and height based on the aspect ratio
     if (Math.abs(deltaX) > Math.abs(deltaY)) {
         // Width change is more significant, adjust height based on width
-        currentScene.displayWidth = initialWidth + deltaX
+        currentScene.displayWidth = Math.max(0, initialWidth + deltaX)
         currentScene.displayHeight = currentScene.displayWidth / aspectRatio
     } else {
         // Height change is more significant, adjust width based on height
-        currentScene.displayHeight = initialHeight + deltaY
+        currentScene.displayHeight = Math.max(0, initialHeight + deltaY)
         currentScene.displayWidth = currentScene.displayHeight * aspectRatio
     }
-
-    if (currentScene.displayWidth < 0) currentScene.displayWidth = 0
-    if (currentScene.displayHeight < 0) currentScene.displayHeight = 0
 }
+
 
 const stopResize = async () => {
     isResizing = false
@@ -165,14 +199,15 @@ const stopResize = async () => {
     currentScene = null
 }
 
+const sanitizeValue = (value) => isNaN(value) ? 0 : value
 
 const updateScene = async (scene) => {
     await scenesStore.updateScene(scene._id, {
-        coordX: scene.coordX,
-        coordY: scene.coordY,
-        zIndex: scene.zIndex,
-        displayWidth: scene.displayWidth,
-        displayHeight: scene.displayHeight
+        coordX: sanitizeValue(scene.coordX),
+        coordY: sanitizeValue(scene.coordY),
+        zIndex: sanitizeValue(scene.zIndex),
+        displayWidth: sanitizeValue(scene.displayWidth),
+        displayHeight: sanitizeValue(scene.displayHeight)
     })
 }
 
