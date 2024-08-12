@@ -25,6 +25,9 @@
                 </div>
             </div>
         </div>
+        <div v-else>
+            <p>No scenes found for {{ eraName }}</p>
+        </div>
     </div>
 </template>
 
@@ -85,12 +88,17 @@ function selectScene(scene) {
 .scene-item-wrapper {
     padding: 1rem;
     margin: 1rem;
-    border: 1px solid whitesmoke;
-    width: 40rem;
+    border: 1px solid lightgreen;
+    border-radius: 1rem;
+    width: 24rem;
 
     img {
         width: 100%;
         height: auto;
+    }
+
+    &:hover {
+        background-color: rgba(0, 255, 0, 0.1);
     }
 }
 </style>
