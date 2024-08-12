@@ -73,7 +73,7 @@
                 <li
                     v-for="(row, rowIndex) in getVideoRowsForCurrentVariation"
                     :key="rowIndex"
-                    class="var-row"
+                    class="var-row flex items-center"
                 >
                     <input
                         v-model="row.name"
@@ -111,8 +111,27 @@
                             Clear
                         </button>
                     </div>
+
+                    <!-- Up/Down Arrows -->
+                    <div class="flex flex-col ml-4">
+                        <button
+                            :disabled="rowIndex === 0"
+                            class="text-gray-300 hover:text-white"
+                            @click="moveRowUp(rowIndex)"
+                        >
+                            ▲
+                        </button>
+                        <button
+                            :disabled="rowIndex === getVideoRowsForCurrentVariation.length - 1"
+                            class="text-gray-300 hover:text-white"
+                            @click="moveRowDown(rowIndex)"
+                        >
+                            ▼
+                        </button>
+                    </div>
                 </li>
             </ul>
+
             <div class="flex mt-4">
                 <button
                     v-if="isNormalVariation"
@@ -238,15 +257,6 @@ const addVariation = async (parameter) => {
         await scenesStore.addVariation(newVariation)
         await scenesStore.fetchVariationsForScene(scenesStore.currentScene._id)
         variations.value = scenesStore.variations
-        // Add the new variation to the variations list and set it as the active variation
-        // variations.value.push({
-        //     ...newVariation,
-        //     _id: scenesStore.variations[scenesStore.variations.length - 1]._id,
-        //     parameter: {
-        //         _id: parameter._id,
-        //         name: parameter.name
-        //     }
-        // })
         activeVariation.value = variations.value.length - 1
     } catch (error) {
         console.error('Error adding variation:', error)
@@ -266,6 +276,26 @@ const addRow = () => {
         replacement_video: ''
     }
     variations.value[activeVariation.value].video_rows.push(newRow)
+}
+
+// Move row up
+const moveRowUp = (index) => {
+    if (index > 0) {
+        const rows = variations.value[activeVariation.value].video_rows
+        const temp = rows[index - 1]
+        rows[index - 1] = rows[index]
+        rows[index] = temp
+    }
+}
+
+// Move row down
+const moveRowDown = (index) => {
+    const rows = variations.value[activeVariation.value].video_rows
+    if (index < rows.length - 1) {
+        const temp = rows[index + 1]
+        rows[index + 1] = rows[index]
+        rows[index] = temp
+    }
 }
 
 const saveVariation = async () => {
@@ -321,6 +351,7 @@ const saveVariation = async () => {
 .var-row {
     display: flex;
     gap: 1rem;
+    align-items: center;
 }
 
 .variation-tab {

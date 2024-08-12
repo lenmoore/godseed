@@ -6,6 +6,15 @@
                     {{ showCompositionEditor ? 'Hide' : 'Show' }} composition editor
                 </button>
                 <div v-if="showCompositionEditor">
+                    <h2>
+                        Zoom out the browser window to use this page. Drag and resize scenes by cover images. Use
+                        z-index to move
+                        them in
+                        front of each other
+                    </h2>
+                    <router-link :to="`/godseed/${eraName}`" target="_blank">Open real canvas for expo -></router-link>
+
+
                     <CompositionEditor />
                 </div>
             </div>
