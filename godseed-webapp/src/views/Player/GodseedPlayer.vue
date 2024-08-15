@@ -130,7 +130,7 @@ const getFilteredVideos = (scene) => {
 }
 
 .scene-video {
-    object-fit: contain;
+    object-fit: cover;
     pointer-events: none; /* Prevent interaction with videos */
 }
 </style>
