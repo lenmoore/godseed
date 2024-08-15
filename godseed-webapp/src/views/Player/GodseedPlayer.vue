@@ -7,10 +7,10 @@
                 left: scene.coordX + 'px',
                 top: scene.coordY + 'px',
                 zIndex: scene.zIndex,
-                    width: scene.displayWidth + 'px',
-                    height: scene.displayHeight + 'px',
-                    position: 'absolute',
-                    border: '1px solid green',
+                width: scene.displayWidth + 'px',
+                height: scene.displayHeight + 'px',
+                position: 'absolute',
+                border: '1px solid green',
             }"
             class="scene"
         >
@@ -18,8 +18,8 @@
                 v-for="(video, index) in scene.displayVideos"
                 :key="index"
                 :style="{
-                    width: scene.displayWidth + 'px',
-                    height: scene.displayHeight + 'px',
+                    width: '100%',
+                    height: '100%',
                     position: 'absolute',
                 }"
                 autoplay
