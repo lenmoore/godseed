@@ -7,6 +7,10 @@
                 left: scene.coordX + 'px',
                 top: scene.coordY + 'px',
                 zIndex: scene.zIndex,
+                    width: scene.displayWidth + 'px',
+                    height: scene.displayHeight + 'px',
+                    position: 'absolute',
+                    border: '1px solid green',
             }"
             class="scene"
         >
@@ -49,20 +53,35 @@ onMounted(async () => {
     await scenesStore.fetchParameters()
     normalParameterId.value = scenesStore.parameters.find(param => param.name === 'normal')._id
 
+    // Initial fetch and setting of active parameters
+    updateActiveParameters()
+
+    // Initial filter of scenes by era
+    updateScenes()
+
+    // Refresh parameters every 10 seconds
+    setInterval(async () => {
+        await scenesStore.fetchParameters()
+        updateActiveParameters()
+        updateScenes()
+    }, 10000) // 10 seconds
+})
+
+// Function to update active parameters
+const updateActiveParameters = () => {
     activeParameters.value = (scenesStore.parameters)
         .filter(param => param.is_active)
+}
 
-    console.log('active parameters', activeParameters.value)
-    // Filter scenes by era and prepare display videos for each scene
+// Function to update scenes based on the current active parameters
+const updateScenes = () => {
     scenes.value = scenesStore.scenes
         .filter(scene => scene.era.name === eraName.value)
         .map(scene => ({
             ...scene,
             displayVideos: getFilteredVideos(scene)
         }))
-
-    console.log('Final scenes: ', scenes.value)
-})
+}
 
 // Computed property to sort scenes by zIndex
 const sortedScenes = computed(() => {
@@ -71,19 +90,12 @@ const sortedScenes = computed(() => {
 
 // Get filtered videos based on the active parameters
 const getFilteredVideos = (scene) => {
-    // Create a map of videos by name for quick lookup and replacement
-    console.log(scene.variations)
     const normalVideos = scene.variations?.find(variation => variation.parameter === normalParameterId.value)
-    console.log('normal videos', normalVideos)
-    console.log('Scene-> ', scene)
     const displayVideos = normalVideos.video_rows || []
-
-    console.log('displayVideos: ', displayVideos)
 
     scene.variations.forEach(variation => {
         const parameter = activeParameters.value.find(param => param._id === variation.parameter)
         if (parameter) {
-            console.log('replacing a video for param ', parameter.name)
             variation.video_rows?.forEach(row => {
                 const videoToReplace = displayVideos?.find(v => v.name === row.name)
                 if (videoToReplace) {
@@ -91,7 +103,6 @@ const getFilteredVideos = (scene) => {
                 }
             })
         } else {
-            // add the original video
             variation.video_rows?.forEach(row => {
                 const videoToReplace = displayVideos?.find(v => v.name === row.name)
                 if (videoToReplace) {
@@ -101,9 +112,9 @@ const getFilteredVideos = (scene) => {
         }
     })
 
-
     return displayVideos
 }
+
 </script>
 
 <style scoped>
