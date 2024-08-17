@@ -1,7 +1,7 @@
 <template>
     <div ref="canvas" class="godseed-player">
         <div
-            v-for="scene in sortedScenes"
+            v-for="scene in scenes"
             :key="scene._id"
             :style="{
                 left: scene.coordX + 'px',
@@ -82,7 +82,6 @@ const updateScenes = () => {
             ...scene,
             displayVideos: getFilteredVideos(scene)
         }))
-    console.log(scenes)
 }
 
 // Computed property to sort scenes by zIndex
