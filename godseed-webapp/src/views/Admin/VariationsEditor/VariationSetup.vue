@@ -222,6 +222,8 @@ const getVideoRowsForCurrentVariation = computed(() => {
 
 // Get only the videos specific to the current variation (not in normal)
 const getVideosOnlyForThisVariationNotNormal = computed(() => {
+    console.log(activeVariation)
+    if (activeVariation.value === 0) return []
     return variations.value[activeVariation.value]?.video_rows.filter(row => row.original_video.length === 0) || []
 })
 console.log(variations)
