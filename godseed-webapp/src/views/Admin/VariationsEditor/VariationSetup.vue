@@ -230,6 +230,11 @@ onMounted(async () => {
     try {
         await scenesStore.fetchParameters()
         await scenesStore.fetchVariationsForScene(scenesStore.currentScene._id)
+
+        // Check the structure of fetched data
+        console.log('Parameters:', scenesStore.parameters)
+        console.log('Variations:', scenesStore.variations)
+
         parameters.value = scenesStore.parameters
         variations.value = scenesStore.variations
 
@@ -238,6 +243,7 @@ onMounted(async () => {
         } else {
             console.warn('No variations found. Add a new one.')
         }
+
         normalParameter.value = parameters.value.find(param => param.name === 'normal')
     } catch (error) {
         console.error('Error fetching parameters or variations:', error)
