@@ -59,10 +59,12 @@ const displayParameters = ref(allParameters.value)
 const filteredVideos = computed(() => {
     const normalVariation = scenesStore.variations.find(variation => variation.parameter.name === 'normal')
     const localActiveParameters = displayParameters.value.filter(param => param.is_active)
+    console.log(localActiveParameters)
     const activeVariations = scenesStore.variations.filter(variation => localActiveParameters.find(
         param => param._id === variation.parameter._id
     ))
 
+    console.log(activeVariations)
     if (!normalVariation) return []
 
     let videos = normalVariation.video_rows.map(row => ({ name: row.name, video: row.original_video }))
