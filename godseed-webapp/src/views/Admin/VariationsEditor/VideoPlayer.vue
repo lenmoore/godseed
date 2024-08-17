@@ -1,8 +1,8 @@
 <template>
     <div class="video-player p-6 rounded-lg border relative">
-        <div v-if="scene && filteredVideos.length" class="relative w-full h-0 pb-9 " style="width: 600px;">
+        <div v-if="scene && displayedVideos.length" class="relative w-full h-0 pb-9 " style="width: 600px;">
             <video
-                v-for="video in filteredVideos"
+                v-for="video in displayedVideos"
                 :key="video"
                 autoplay
                 class="absolute top-0 left-0 object-contain "
@@ -42,7 +42,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useScenesStore } from '@/stores/sceneStore.js'
 
 const scenesStore = useScenesStore()
@@ -51,21 +51,26 @@ const apiBaseUrl = import.meta.env.VITE_SERVER_URL
 
 const scene = computed(() => scenesStore.currentScene)
 
+// Array of all parameters except 'normal'
 const allParameters = computed(() =>
     scenesStore.parameters.filter(param => param.name !== 'normal')
 )
-const displayParameters = ref(allParameters.value)
 
-const filteredVideos = computed(() => {
+// Ref for displayed videos
+const displayedVideos = ref([])
+
+// Function to update displayed videos based on active parameters
+const updateDisplayedVideos = () => {
     const normalVariation = scenesStore.variations.find(variation => variation.parameter.name === 'normal')
-    const localActiveParameters = displayParameters.value.filter(param => param.is_active)
-    console.log(localActiveParameters)
-    const activeVariations = scenesStore.variations.filter(variation => localActiveParameters.find(
-        param => param._id === variation.parameter._id
-    ))
+    if (!normalVariation) {
+        displayedVideos.value = []
+        return
+    }
 
-    console.log(activeVariations)
-    if (!normalVariation) return []
+    const activeParameters = allParameters.value.filter(param => param.is_active)
+    const activeVariations = scenesStore.variations.filter(variation =>
+        activeParameters.find(param => param._id === variation.parameter._id)
+    )
 
     let videos = normalVariation.video_rows.map(row => ({ name: row.name, video: row.original_video }))
 
@@ -78,10 +83,15 @@ const filteredVideos = computed(() => {
         })
     })
 
-    return videos.map(v => v.video)
-})
+    // Update the ref for displayed videos
+    displayedVideos.value = videos.map(v => v.video)
+}
 
+// Watch for changes in allParameters to update displayed videos
+watch(allParameters, updateDisplayedVideos, { deep: true })
 
+// Initial call to populate displayed videos
+updateDisplayedVideos()
 const submitChanges = async () => {
     try {
         await scenesStore.updateParametersBatch(allParameters.value)
