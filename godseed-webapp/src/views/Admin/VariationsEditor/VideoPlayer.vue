@@ -72,6 +72,7 @@ const updateDisplayedVideos = () => {
         activeParameters.find(param => param._id === variation.parameter._id)
     )
 
+    console.log(activeVariations)
     let videos = normalVariation.video_rows.map(row => ({ name: row.name, video: row.original_video }))
 
     activeVariations.forEach(variation => {
@@ -79,6 +80,9 @@ const updateDisplayedVideos = () => {
             const videoToReplace = videos.find(v => v.name === row.name)
             if (videoToReplace) {
                 videoToReplace.video = row.replacement_video || videoToReplace.video
+            }
+            if (row.original_video.length === 0) {
+                videos.push({ name: row.name, video: row.replacement_video })
             }
         })
     })

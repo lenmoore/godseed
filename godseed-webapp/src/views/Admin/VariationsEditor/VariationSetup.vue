@@ -71,7 +71,7 @@
             <!-- Rows -->
             <ul style="padding-left: 0;">
                 <li
-                    v-for="(row, rowIndex) in getVideoRowsForCurrentVariation"
+                    v-for="(row, rowIndex) in getAllVideoRows"
                     :key="rowIndex"
                     class="var-row flex items-center"
                 >
@@ -81,7 +81,7 @@
                             'px-3 py-2 rounded-md border focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400',
                             isNormalVariation ? 'bg-gray-700 text-gray-200 border-gray-600' : 'bg-black text-gray-500 border-gray-700'
                         ]"
-                        :readonly="!isNormalVariation"
+                        :disabled="row.disabledEditingOriginal"
                         placeholder="Row Name"
                     />
                     <select
@@ -93,7 +93,7 @@
                             {{ video }}
                         </option>
                     </select>
-                    <div v-if="!isNormalVariation" class="relative">
+                    <div v-if="!isNormalVariation" class="replace-row">
                         <small>
                             Replace with:
                         </small>
@@ -115,7 +115,7 @@
                     </div>
 
                     <!-- Up/Down Arrows -->
-                    <div class="flex flex-col ml-4">
+                    <div class="arrows">
                         <button
                             :disabled="rowIndex === 0"
                             class="arrow-button"
@@ -141,6 +141,10 @@
                     @click="addRow"
                 >
                     Add Row
+                </button>
+
+                <button v-else @click="addVariationRow">
+                    Add a row to only this variation
                 </button>
                 <button
                     :class="[
@@ -191,7 +195,6 @@ const normalVariation = computed(() =>
 const isNormalVariation = computed(() => {
     return variations.value[activeVariation.value]?.parameter?.name === 'normal'
 })
-
 // Get the video rows for the current variation
 const getVideoRowsForCurrentVariation = computed(() => {
     if (isNormalVariation.value) {
@@ -206,13 +209,31 @@ const getVideoRowsForCurrentVariation = computed(() => {
                     original_video: row.original_video,
                     replacement_video: ''
                 }
-                variations.value[activeVariation.value].video_rows.push(existingRow)
+                variations.value[activeVariation.value].video_rows.push({
+                    ...existingRow,
+                    disabledEditingOriginal: true
+                })
             }
-            return existingRow
-        })
+            return { ...existingRow, disabledEditingOriginal: true }
+        }) || []
     }
     return []
 })
+
+// Get only the videos specific to the current variation (not in normal)
+const getVideosOnlyForThisVariationNotNormal = computed(() => {
+    return variations.value[activeVariation.value]?.video_rows.filter(row => row.original_video.length === 0) || []
+})
+console.log(variations)
+// Combine all video rows from the normal variation and the current variation
+const getAllVideoRows = computed(() => {
+    return [
+        ...getVideoRowsForCurrentVariation.value,
+        ...getVideosOnlyForThisVariationNotNormal.value
+    ]
+})
+
+console.log(getVideoRowsForCurrentVariation, getVideosOnlyForThisVariationNotNormal, getAllVideoRows)
 
 // Clear the replacement video URL
 const clearReplacement = (row) => {
@@ -284,6 +305,17 @@ const addRow = () => {
         replacement_video: ''
     }
     variations.value[activeVariation.value].video_rows.push(newRow)
+}
+
+const addVariationRow = () => {
+    console.log('add to only this')
+    const newRow = {
+        name: '',
+        original_video: '',
+        replacement_video: ''
+    }
+    variations.value[activeVariation.value].video_rows.push(newRow)
+    console.log(variations.value)
 }
 
 // Move row up
@@ -360,6 +392,8 @@ const saveVariation = async () => {
     display: flex;
     gap: 1rem;
     align-items: center;
+    background-color: rgba(0, 0, 0, 0.2);
+    margin-bottom: 0.25rem;
 }
 
 .variation-tab {
@@ -390,7 +424,6 @@ const saveVariation = async () => {
 
     &:hover {
         background-color: #ff3737;
-
     }
 }
 
@@ -400,8 +433,13 @@ const saveVariation = async () => {
     border: none;
     cursor: pointer;
 
+
     &:hover {
         background-color: #aaa;
     }
+}
+
+.arrows, .replace-row {
+    display: flex;
 }
 </style>

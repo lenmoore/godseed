@@ -102,12 +102,18 @@ const getFilteredVideos = (scene) => {
                 if (videoToReplace) {
                     videoToReplace.video = row.replacement_video || videoToReplace.video
                 }
+                if (row.original_video.length === 0) {
+                    displayVideos.push({ name: row.name, video: row.replacement_video })
+                }
             })
         } else {
             variation.video_rows?.forEach(row => {
                 const videoToReplace = displayVideos?.find(v => v.name === row.name)
                 if (videoToReplace) {
                     videoToReplace.video = row.original_video || videoToReplace.video
+                }
+                if (row.original_video.length === 0) {
+                    displayVideos.push({ name: row.name, video: row.replacement_video })
                 }
             })
         }
