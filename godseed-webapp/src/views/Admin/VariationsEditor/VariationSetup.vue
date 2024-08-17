@@ -69,7 +69,7 @@
             </h4>
 
             <!-- Rows -->
-            <ul class="space-y-4">
+            <ul style="padding-left: 0;">
                 <li
                     v-for="(row, rowIndex) in getVideoRowsForCurrentVariation"
                     :key="rowIndex"
@@ -94,7 +94,9 @@
                         </option>
                     </select>
                     <div v-if="!isNormalVariation" class="relative">
-                        Replace with
+                        <small>
+                            Replace with:
+                        </small>
                         <select
                             v-model="row.replacement_video"
                             class="px-3 py-2 bg-gray-700 text-gray-200 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
@@ -105,10 +107,10 @@
                         </select>
                         <button
                             v-if="row.replacement_video"
-                            class="absolute right-0 top-0 mt-2 text-sm text-red-600 hover:text-red-800"
+                            class="remove-button"
                             @click="clearReplacement(row)"
                         >
-                            Clear
+                            X
                         </button>
                     </div>
 
@@ -116,14 +118,14 @@
                     <div class="flex flex-col ml-4">
                         <button
                             :disabled="rowIndex === 0"
-                            class="text-gray-300 hover:text-white"
+                            class="arrow-button"
                             @click="moveRowUp(rowIndex)"
                         >
                             ▲
                         </button>
                         <button
                             :disabled="rowIndex === getVideoRowsForCurrentVariation.length - 1"
-                            class="text-gray-300 hover:text-white"
+                            class="arrow-button"
                             @click="moveRowDown(rowIndex)"
                         >
                             ▼
@@ -142,8 +144,7 @@
                 </button>
                 <button
                     :class="[
-                        'py-2 px-4 rounded-md',
-                        'bg-green-600 text-white hover:bg-green-700'
+                        'py-2 px-4 rounded-md save-btn',
                     ]"
                     @click="saveVariation"
                 >
@@ -369,6 +370,38 @@ const saveVariation = async () => {
 
     &.active {
         background-color: darkgreen;
+    }
+}
+
+.save-btn {
+    background-color: purple;
+
+    &:hover {
+        background-color: #bd04bd;
+    }
+}
+
+.remove-button {
+    padding: 0.5rem;
+    background-color: red;
+    color: white;
+    border: none;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #ff3737;
+
+    }
+}
+
+.arrow-button {
+    padding: 0.5rem;
+    background-color: #ccc;
+    border: none;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #aaa;
     }
 }
 </style>
