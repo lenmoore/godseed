@@ -20,14 +20,12 @@
         <div class="display-params">
             <h4 class="text-lg font-bold text-gray-200">Display parameters</h4>
             <small>
-                This is just like putting the wires in the globe. Wire in = checkbox ticked :)
-                <br>
-                If you press submit, the changes get saved on the server. If you just toggle them, you toggle the views
-                locally.
+                Press submit - params change in the server -> you can see them in the real player
             </small>
             <br>
             <br>
-            <div v-for="parameter in activeParameters" :key="parameter._id" class="parameter-input">
+
+            <div v-for="parameter in allParameters" :key="parameter._id" class="parameter-input">
                 <label class="text-gray-200 font-mono">
                     <input v-model="parameter.is_active" class="mr-2" type="checkbox">
                     {{ parameter.name }}
@@ -44,7 +42,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useScenesStore } from '@/stores/sceneStore.js'
 
 const scenesStore = useScenesStore()
@@ -53,13 +51,18 @@ const apiBaseUrl = import.meta.env.VITE_SERVER_URL
 
 const scene = computed(() => scenesStore.currentScene)
 
-const activeParameters = computed(() => scenesStore.parameters.filter(param => param.name !== 'normal'))
+const allParameters = computed(() =>
+    scenesStore.parameters.filter(param => param.name !== 'normal')
+)
+const displayParameters = ref(allParameters.value)
 
 const filteredVideos = computed(() => {
     const normalVariation = scenesStore.variations.find(variation => variation.parameter.name === 'normal')
-    const activeVariations = scenesStore.variations.filter(variation => variation.parameter.is_active)
+    const localActiveParameters = displayParameters.value.filter(param => param.is_active)
+    const activeVariations = scenesStore.variations.filter(variation => localActiveParameters.find(
+        param => param._id === variation.parameter._id
+    ))
 
-    console.log(activeVariations)
     if (!normalVariation) return []
 
     let videos = normalVariation.video_rows.map(row => ({ name: row.name, video: row.original_video }))
@@ -76,9 +79,10 @@ const filteredVideos = computed(() => {
     return videos.map(v => v.video)
 })
 
+
 const submitChanges = async () => {
     try {
-        await scenesStore.updateParametersBatch(activeParameters.value)
+        await scenesStore.updateParametersBatch(allParameters.value)
         alert('Parameters updated successfully')
     } catch (error) {
         console.error('Failed to update parameters:', error)

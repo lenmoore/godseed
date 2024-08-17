@@ -13,13 +13,19 @@
         <small>Hover to see preview. Scroll to see the rest of them</small>
         <ul v-if="scene.uploaded_videos" class="space-y-2 overflow-y-scroll h-40 text-xs">
             <li
-                v-for="video in scene.uploaded_videos"
+                v-for="(video, index) in scene.uploaded_videos"
                 :key="video"
-                class="relative font-mono text-blue-400 hover:underline"
+                class="relative font-mono text-blue-400 hover:underline flex justify-between items-center"
                 @mouseenter="showPreview(video, $event)"
                 @mouseleave="hidePreview"
             >
                 {{ video }}
+                <button
+                    class="text-red-500 hover:text-red-700 ml-4"
+                    @click="deleteVideo(index)"
+                >
+                    Delete
+                </button>
             </li>
         </ul>
         <div
@@ -29,7 +35,6 @@
             <video
                 :src="`${apiBaseUrl}${previewVideo}`"
                 autoplay
-                class=""
                 muted
                 playsinline
                 type="video/mp4"
@@ -40,6 +45,7 @@
         </div>
     </div>
 </template>
+
 
 <script setup>
 import { computed, ref } from 'vue'
@@ -67,6 +73,19 @@ const handleVideoUpload = async (event) => {
     }
 }
 
+const deleteVideo = async (index) => {
+    if (!scene.value) return
+
+    try {
+        // Remove the video from the array
+        scene.value.uploaded_videos.splice(index, 1)
+        // Update the scene in the store
+        await scenesStore.updateScene(scene.value._id, scene.value)
+    } catch (error) {
+        console.error('Failed to delete video:', error)
+    }
+}
+
 const showPreview = (video, event) => {
     previewVideo.value = video
     const rect = event.target.getBoundingClientRect()
@@ -81,7 +100,7 @@ const hidePreview = () => {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 
 .absolute-video-wrapper {
     position: absolute;

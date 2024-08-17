@@ -270,6 +270,7 @@ const addVariation = async (parameter) => {
 }
 
 const setActiveVariation = (index) => {
+    console.log(index)
     activeVariation.value = index
     saveButtonText.value = 'Save Variation'
     hasChanges.value = false

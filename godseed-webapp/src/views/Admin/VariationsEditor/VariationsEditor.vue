@@ -7,7 +7,7 @@
                 <button @click="$router.go(-1)">back</button>
                 <SceneSettingsForm class="scene-settings-form border" />
             </div>
-            <VideoPlayer class="video-player rounded-lg" />
+            <VideoPlayer :selected-variation="selectedVariation" class="video-player rounded-lg" />
         </div>
 
         <div class="bottom-wrapper">
@@ -35,7 +35,8 @@ const sceneLoaded = ref(false)
 const selectedVariation = ref(null)
 
 function selectVariation(variation) {
-    console.log('Selected variation:', variation)
+    selectedVariation.value = variation
+    console.log('Selected variation:', selectedVariation)
 }
 
 onMounted(async () => {
