@@ -92,34 +92,40 @@ const sortedScenes = computed(() => {
 // Get filtered videos based on the active parameters
 const getFilteredVideos = (scene) => {
     const normalVideos = scene.variations?.find(variation => variation.parameter === normalParameterId.value)
-    const displayVideos = normalVideos.video_rows || []
 
-    scene.variations.forEach(variation => {
-        const parameter = activeParameters.value.find(param => param._id === variation.parameter)
-        if (parameter) {
-            variation.video_rows?.forEach(row => {
-                const videoToReplace = displayVideos?.find(v => v.name === row.name)
-                if (videoToReplace) {
-                    videoToReplace.video = row.replacement_video || videoToReplace.video
-                }
-                if (row.original_video.length === 0) {
-                    displayVideos.push({ name: row.name, video: row.replacement_video })
-                }
-            })
-        } else {
-            variation.video_rows?.forEach(row => {
-                const videoToReplace = displayVideos?.find(v => v.name === row.name)
-                if (videoToReplace) {
-                    videoToReplace.video = row.original_video || videoToReplace.video
-                }
-                if (row.original_video.length === 0) {
-                    displayVideos.push({ name: row.name, video: row.replacement_video })
-                }
-            })
-        }
-    })
+    if (normalVideos) {
 
-    return displayVideos
+        const displayVideos = normalVideos.video_rows || []
+
+        scene.variations.forEach(variation => {
+            const parameter = activeParameters.value.find(param => param._id === variation.parameter)
+            if (parameter) {
+                variation.video_rows?.forEach(row => {
+                    const videoToReplace = displayVideos?.find(v => v.name === row.name)
+                    if (videoToReplace) {
+                        videoToReplace.video = row.replacement_video || videoToReplace.video
+                    }
+                    if (row.original_video.length === 0) {
+                        displayVideos.push({ name: row.name, video: row.replacement_video })
+                    }
+                })
+            } else {
+                variation.video_rows?.forEach(row => {
+                    const videoToReplace = displayVideos?.find(v => v.name === row.name)
+                    if (videoToReplace) {
+                        videoToReplace.video = row.original_video || videoToReplace.video
+                    }
+                    if (row.original_video.length === 0) {
+                        displayVideos.push({ name: row.name, video: row.replacement_video })
+                    }
+                })
+            }
+        })
+        return displayVideos
+    }
+
+
+    return []
 }
 
 </script>
