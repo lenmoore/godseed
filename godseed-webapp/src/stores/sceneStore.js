@@ -93,8 +93,7 @@ export const useScenesStore = defineStore('scenesStore', {
 
     async addVariation(variation) {
       try {
-        const response = await http.post('/variations', variation)
-        this.variations.push(response.data)
+        return await http.post('/variations', variation)
       } catch (error) {
         console.error('Failed to add variation:', error)
       }
@@ -102,11 +101,9 @@ export const useScenesStore = defineStore('scenesStore', {
 
     async updateVariation(id, updatedVariation) {
       try {
-        const response = await http.put(`/variations/${id}`, updatedVariation)
-        const index = this.variations.findIndex(v => v._id === id)
-        if (index !== -1) {
-          this.variations[index] = response.data
-        }
+        await http.put(`/variations/${id}`, updatedVariation)
+
+
       } catch (error) {
         console.error('Failed to update variation:', error)
       }

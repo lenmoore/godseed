@@ -209,12 +209,9 @@ const getVideoRowsForCurrentVariation = computed(() => {
                     original_video: row.original_video,
                     replacement_video: ''
                 }
-                variations.value[activeVariation.value].video_rows.push({
-                    ...existingRow,
-                    disabledEditingOriginal: true
-                })
+                variations.value[activeVariation.value].video_rows.push(existingRow)
             }
-            return { ...existingRow, disabledEditingOriginal: true }
+            return existingRow
         }) || []
     }
     return []
@@ -284,10 +281,11 @@ const addVariation = async (parameter) => {
     }
 
     try {
-        await scenesStore.addVariation(newVariation)
-        await scenesStore.fetchVariationsForScene(scenesStore.currentScene._id)
-        variations.value = scenesStore.variations
-        activeVariation.value = variations.value.length - 1
+        if (await scenesStore.addVariation(newVariation)) {
+            await scenesStore.fetchVariationsForScene(scenesStore.currentScene._id)
+            variations.value = scenesStore.variations
+            activeVariation.value = variations.value.length - 1
+        }
     } catch (error) {
         console.error('Error adding variation:', error)
     }
@@ -343,10 +341,12 @@ const moveRowDown = (index) => {
 const saveVariation = async () => {
     const variationToSave = variations.value[activeVariation.value]
 
+    console.log('variationToSave', variationToSave)
     try {
         await scenesStore.updateVariation(variationToSave._id, variationToSave)
         saveButtonText.value = 'Updated'
         hasChanges.value = false
+        await scenesStore.fetchVariationsForScene(scenesStore.currentScene._id)
         setTimeout(() => {
             saveButtonText.value = 'Save Variation'
         }, 2000)
