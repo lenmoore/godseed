@@ -49,6 +49,7 @@ const activeParameters = ref([])
 const normalParameterId = ref('')
 
 onMounted(async () => {
+    console.log(apiBaseUrl)
     await scenesStore.fetchScenes()
     await scenesStore.fetchParameters()
     normalParameterId.value = scenesStore.parameters.find(param => param.name === 'normal')._id
@@ -81,6 +82,7 @@ const updateScenes = () => {
             ...scene,
             displayVideos: getFilteredVideos(scene)
         }))
+    console.log(scenes)
 }
 
 // Computed property to sort scenes by zIndex
