@@ -59,7 +59,6 @@ const specialParameters = {
             document.querySelectorAll('.scene').forEach(scene => {
                 scene.classList.add(`gravity-down-${count}`)
                 count++
-            })
 
                 console.log(scene)
                 if (count === 4) {
