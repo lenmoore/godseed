@@ -20,7 +20,7 @@
                         ]"
                         @click="setActiveVariation(index)"
                     >
-                        {{ variation.parameter.name || 'Unnamed' }}
+                        {{ variation.parameter && variation.parameter.name || 'Unnamed' }}
                     </button>
                 </div>
             </div>
@@ -243,7 +243,7 @@ const clearReplacement = (row) => {
 const availableParameters = computed(() =>
     parameters.value.filter(
         (param) =>
-            !variations.value.some((variation) => variation.parameter._id === param._id)
+            !variations.value.some((variation) => variation.parameter?._id === param._id)
     )
 )
 

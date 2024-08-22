@@ -1,5 +1,7 @@
 <template>
     <div ref="canvas" class="godseed-player">
+        <h1 style="z-index: 4000; color: white;position: absolute">
+        </h1>
         <div
             v-for="scene in scenes"
             :key="scene._id"
@@ -14,21 +16,23 @@
             }"
             class="scene"
         >
+            {{ scene.displayVideos }}
             <video
                 v-for="(video, index) in scene.displayVideos"
-                :key="index"
+                :key="video.video"
                 :style="{
-                    width: '100%',
-                    height: '100%',
-                    position: 'absolute',
-                }"
+            width: '100%',
+            height: '100%',
+            position: 'absolute',
+            }"
                 autoplay
                 class="scene-video"
                 loop
                 muted
                 playsinline
             >
-                <source :src="`${apiBaseUrl}${video.video}`" type="video/mp4">
+                <source :key="video.video" :src="`${apiBaseUrl}${video.video}`" type="video/mp4">
+                <!-- Use video URL as key -->
                 Your browser does not support the video tag.
             </video>
         </div>
@@ -38,7 +42,7 @@
 <script setup>
 import { useScenesStore } from '@/stores/sceneStore.js'
 import { useRoute } from 'vue-router'
-import { computed, onMounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
 const apiBaseUrl = import.meta.env.VITE_SERVER_URL
 const route = useRoute()
@@ -60,18 +64,18 @@ onMounted(async () => {
     // Initial filter of scenes by era
     updateScenes()
 
-    // Refresh parameters every 10 seconds
+    // Refresh parameters every 3 seconds
     setInterval(async () => {
+        console.log('updating parameters')
         await scenesStore.fetchParameters()
         updateActiveParameters()
         updateScenes()
-    }, 10000) // 10 seconds
+    }, 3000) // 3 seconds
 })
 
 // Function to update active parameters
 const updateActiveParameters = () => {
-    activeParameters.value = (scenesStore.parameters)
-        .filter(param => param.is_active)
+    activeParameters.value = scenesStore.parameters.filter(param => param.is_active)
 }
 
 // Function to update scenes based on the current active parameters
@@ -82,26 +86,25 @@ const updateScenes = () => {
             ...scene,
             displayVideos: getFilteredVideos(scene)
         }))
+    // Force videos to change in the template
+    scenes.value = [...scenes.value]
 }
-
-// Computed property to sort scenes by zIndex
-const sortedScenes = computed(() => {
-    return scenes.value.sort((a, b) => a.zIndex - b.zIndex)
-})
 
 // Get filtered videos based on the active parameters
 const getFilteredVideos = (scene) => {
     const normalVideos = scene.variations?.find(variation => variation.parameter === normalParameterId.value)
 
     if (normalVideos) {
+        const displayVideos = normalVideos.video_rows ? [...normalVideos.video_rows.map(
+            (videoRow) => ({ ...videoRow, video: videoRow.original_video })
+        )] : []
 
-        const displayVideos = normalVideos.video_rows || []
-
-        scene.variations.forEach(variation => {
-            const parameter = activeParameters.value.find(param => param._id === variation.parameter)
-            if (parameter) {
-                variation.video_rows?.forEach(row => {
-                    const videoToReplace = displayVideos?.find(v => v.name === row.name)
+        console.log(displayVideos)
+        activeParameters.value.forEach(param => {
+            const variation = scene.variations?.find(variation => variation.parameter === param._id)
+            if (variation) {
+                variation.video_rows.forEach(row => {
+                    const videoToReplace = displayVideos.find(v => v.name === row.name)
                     if (videoToReplace) {
                         videoToReplace.video = row.replacement_video || videoToReplace.video
                     }
@@ -109,25 +112,15 @@ const getFilteredVideos = (scene) => {
                         displayVideos.push({ name: row.name, video: row.replacement_video })
                     }
                 })
-            } else {
-                variation.video_rows?.forEach(row => {
-                    const videoToReplace = displayVideos?.find(v => v.name === row.name)
-                    if (videoToReplace) {
-                        videoToReplace.video = row.original_video || videoToReplace.video
-                    }
-                    if (row.original_video.length === 0) {
-                        displayVideos.push({ name: row.name, video: row.replacement_video })
-                    }
-                })
             }
+
         })
+
         return displayVideos
     }
 
-
     return []
 }
-
 </script>
 
 <style scoped>
