@@ -16,7 +16,6 @@
             }"
             class="scene"
         >
-            {{ scene.displayVideos }}
             <video
                 v-for="(video, index) in scene.displayVideos"
                 :key="video.video"
