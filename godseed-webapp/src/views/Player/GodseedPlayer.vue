@@ -1,6 +1,6 @@
 <template>
     <div ref="canvas" class="godseed-player">
-        <h1 style="z-index: 4000; color: white;position: absolute">
+        <h1 style="z-index: 4000; color: white; position: absolute">
         </h1>
         <div
             v-for="scene in scenes"
@@ -8,7 +8,6 @@
             :class="['scene', { 'gravity-down': isGravityDownActive }]"
             :style="{
                 left: scene.coordX + 'px',
-                top: scene.coordY + 'px',
                 zIndex: scene.zIndex,
                 width: scene.displayWidth + 'px',
                 height: scene.displayHeight + 'px',
@@ -157,19 +156,20 @@ watch(activeParameters, applySpecialEffects, { deep: true })
 
 .scene {
     position: absolute;
-    transition: transform 10s linear; /* Slow downward movement */
+    bottom: 0; /* Start from the bottom */
+    transition: transform 10s linear; /* Smooth downward movement */
 }
 
 .gravity-down {
-    animation: gravityDown 10s linear infinite; /* Infinite gravity animation */
+    animation: gravityDown 10s linear forwards; /* Fall down and stay at the bottom */
 }
 
 @keyframes gravityDown {
     from {
-        transform: translateY(0);
+        transform: translateY(-100vh); /* Start above the viewport */
     }
     to {
-        transform: translateY(100vh); /* Move down by the viewport height */
+        transform: translateY(0); /* Move down to the bottom */
     }
 }
 
