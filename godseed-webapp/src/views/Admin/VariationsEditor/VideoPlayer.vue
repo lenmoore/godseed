@@ -99,7 +99,6 @@ updateDisplayedVideos()
 const submitChanges = async () => {
     try {
         await scenesStore.updateParametersBatch(allParameters.value)
-        alert('Parameters updated successfully')
     } catch (error) {
         console.error('Failed to update parameters:', error)
         alert('Failed to update parameters')

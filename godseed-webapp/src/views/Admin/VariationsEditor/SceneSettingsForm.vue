@@ -4,6 +4,7 @@
             <h3 class="text-xl font-bold text-gray-200">{{ scene.name }}</h3>
             <p class="text-gray-400">{{ scene.era.name }}</p>
             <p class="text-gray-300">{{ scene.desc }}</p>
+            {{ scene.gravity ? 'gravity affects it' : 'gravity does not affect it' }}
             <img v-if="scene.image_URL" :src="apiBaseUrl + scene.image_URL"
                  alt="Scene Image"
                  class="mt-2 rounded-md h-48 object-cover"
@@ -43,9 +44,9 @@
                 />
             </div>
             <div class="mb-4">
-                <label class="block text-gray-200 font-bold mb-2">Is Saved:</label>
+                <label class="block text-gray-200 font-bold mb-2">Gravity</label>
                 <input
-                    v-model="scene.is_saved"
+                    v-model="scene.gravity"
                     class="h-4 w-4 text-blue-500 border-gray-600 rounded focus:ring-blue-500"
                     type="checkbox"
                 />
@@ -93,7 +94,6 @@ const handleImageUpload = async (event) => {
 const submitForm = async () => {
     try {
         await scenesStore.updateScene(scene.value._id, scene.value)
-        alert('Scene saved successfully')
         isReadOnly.value = true // Return to read-only mode after saving
     } catch (error) {
         console.error('Failed to save scene:', error)

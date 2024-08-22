@@ -103,7 +103,6 @@ const submitScene = async () => {
     try {
         console.log(scene.value)
         await scenesStore.addScene(scene.value)
-        alert('Scene added successfully!')
         // Emit event to notify parent component (EraCanvas) to refresh the scene list
         emit('sceneAdded')
         // Reset the form

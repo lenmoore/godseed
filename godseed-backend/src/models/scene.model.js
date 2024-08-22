@@ -48,6 +48,10 @@ const sceneSchema = new mongoose.Schema({
     type: Number,
     required: false
   },
+  gravity: {
+    type: Boolean,
+    default: true
+  },
   image_URL: {
     type: String
     // validate: {
