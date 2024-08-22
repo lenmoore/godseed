@@ -7,6 +7,9 @@ console.log(import.meta.env.VITE_API_BASE_URL) // Add this line in your componen
 
 <template>
     <div>
+        <a href="/params">Toggle parameters</a>
+        -|-
+        <a href="/scenes">Edit scenes</a>
         <RouterView />
     </div>
 </template>
