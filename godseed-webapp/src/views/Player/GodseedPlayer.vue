@@ -19,10 +19,10 @@
                 v-for="(video, index) in scene.displayVideos"
                 :key="video.video"
                 :style="{
-            width: '100%',
-            height: '100%',
-            position: 'absolute',
-            }"
+                    width: '100%',
+                    height: '100%',
+                    position: 'absolute',
+                }"
                 autoplay
                 class="scene-video"
                 loop
@@ -40,7 +40,7 @@
 <script setup>
 import { useScenesStore } from '@/stores/sceneStore.js'
 import { useRoute } from 'vue-router'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 
 const apiBaseUrl = import.meta.env.VITE_SERVER_URL
 const route = useRoute()
@@ -49,6 +49,14 @@ const scenesStore = useScenesStore()
 const scenes = ref([])
 const activeParameters = ref([])
 const normalParameterId = ref('')
+
+// Special parameters list
+const specialParameters = {
+    light_mode: (isActive) => {
+        document.documentElement.style.filter = isActive ? 'invert(1)' : 'invert(0)'
+    }
+    // Add more special parameters here in the future
+}
 
 onMounted(async () => {
     console.log(apiBaseUrl)
@@ -74,6 +82,7 @@ onMounted(async () => {
 // Function to update active parameters
 const updateActiveParameters = () => {
     activeParameters.value = scenesStore.parameters.filter(param => param.is_active)
+    applySpecialEffects()
 }
 
 // Function to update scenes based on the current active parameters
@@ -86,6 +95,14 @@ const updateScenes = () => {
         }))
     // Force videos to change in the template
     scenes.value = [...scenes.value]
+}
+
+// Function to apply special effects based on active parameters
+const applySpecialEffects = () => {
+    for (const [paramName, effectFn] of Object.entries(specialParameters)) {
+        const isActive = activeParameters.value.some(param => param.name === paramName)
+        effectFn(isActive)
+    }
 }
 
 // Get filtered videos based on the active parameters
@@ -119,6 +136,10 @@ const getFilteredVideos = (scene) => {
 
     return []
 }
+
+// Watch for changes in active parameters to apply effects
+watch(activeParameters, applySpecialEffects, { deep: true })
+
 </script>
 
 <style scoped>
