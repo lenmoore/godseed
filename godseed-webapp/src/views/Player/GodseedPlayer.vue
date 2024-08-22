@@ -184,97 +184,127 @@ watch(activeParameters, applySpecialEffects, { deep: true })
 </style>
 
 <style>
-/* Gravity animation 1 - Start from initial position, gentle fall and settle at bottom */
+
+/* Gravity animation 1 - Gentle fall, minimal bounce, significant horizontal drift */
 @keyframes gravityDown-1 {
     0% {
         transform: translateY(0) translateX(0); /* Start at the current position */
     }
-    70% {
-        transform: translateY(calc(100vh - 100%)) translateX(10px); /* Fall down to the bottom */
-        animation-timing-function: ease-in;
-    }
-    80% {
-        transform: translateY(calc(100vh - 130%)) translateX(15px); /* Gentle bounce up */
-        animation-timing-function: ease-out;
-    }
-    100% {
-        transform: translateY(calc(100vh - 100%)) translateX(10px); /* Settle at the bottom */
-    }
-}
-
-/* Gravity animation 2 - Faster fall, stronger bounce, settle at bottom */
-@keyframes gravityDown-2 {
-    0% {
-        transform: translateY(0) translateX(-10px); /* Start at the current position */
+    20% {
+        transform: translateY(20vh) translateX(100px); /* Start falling with horizontal drift */
+        animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
     }
     60% {
-        transform: translateY(calc(100vh - 100%)) translateX(-20px); /* Fall down to the bottom */
-        animation-timing-function: ease-in;
-    }
-    75% {
-        transform: translateY(calc(100vh - 140%)) translateX(-25px); /* Stronger bounce up */
-        animation-timing-function: ease-out;
-    }
-    100% {
-        transform: translateY(calc(100vh - 100%)) translateX(-20px); /* Settle at the bottom */
-    }
-}
-
-/* Gravity animation 3 - Slow fall, multiple small bounces, settle at bottom */
-@keyframes gravityDown-3 {
-    0% {
-        transform: translateY(0) translateX(5px); /* Start at the current position */
-    }
-    65% {
-        transform: translateY(calc(100vh - 100%)) translateX(0px); /* Fall down to the bottom */
-        animation-timing-function: ease-in;
-    }
-    70% {
-        transform: translateY(calc(100vh - 120%)) translateX(5px); /* First small bounce */
-        animation-timing-function: ease-out;
+        transform: translateY(80vh) translateX(-150px); /* Continue falling */
+        animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
     }
     80% {
-        transform: translateY(calc(100vh - 110%)) translateX(0px); /* Second small bounce */
-        animation-timing-function: ease-out;
+        transform: translateY(calc(100vh - 100%)) translateX(100px); /* Reach the bottom */
+        animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+    }
+    90% {
+        transform: translateY(calc(100vh - 105%)) translateX(90px); /* Small bounce up */
+        animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
     }
     100% {
-        transform: translateY(calc(100vh - 100%)) translateX(0px); /* Settle at the bottom */
+        transform: translateY(calc(100vh - 100%)) translateX(90px); /* Settle at the bottom */
     }
 }
 
-/* Gravity animation 4 - Quick fall, long bounce, settle at bottom */
-@keyframes gravityDown-4 {
+/* Gravity animation 2 - Slightly faster fall, subtle bounce, larger horizontal drift */
+@keyframes gravityDown-2 {
     0% {
-        transform: translateY(0) translateX(-5px); /* Start at the current position */
+        transform: translateY(0) translateX(0);
     }
-    75% {
-        transform: translateY(calc(100vh - 100%)) translateX(15px); /* Fall down to the bottom */
-        animation-timing-function: ease-in;
+    25% {
+        transform: translateY(25vh) translateX(-200px); /* Fall with a noticeable horizontal shift */
+        animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+    }
+    55% {
+        transform: translateY(75vh) translateX(200px); /* Continue falling */
+        animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+    }
+    80% {
+        transform: translateY(calc(100vh - 100%)) translateX(-150px); /* Reach the bottom */
+        animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+    }
+    90% {
+        transform: translateY(calc(100vh - 103%)) translateX(-140px); /* Smaller bounce */
+        animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+    }
+    100% {
+        transform: translateY(calc(100vh - 100%)) translateX(-140px); /* Settle at the bottom */
+    }
+}
+
+/* Gravity animation 3 - Slow, smooth fall with slight horizontal drift and minimal bounce */
+@keyframes gravityDown-3 {
+    0% {
+        transform: translateY(0) translateX(0);
+    }
+    30% {
+        transform: translateY(30vh) translateX(150px); /* Slow fall with smooth horizontal drift */
+        animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+    }
+    65% {
+        transform: translateY(80vh) translateX(-100px); /* Continue falling */
+        animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
     }
     85% {
-        transform: translateY(calc(100vh - 150%)) translateX(-15px); /* Strong bounce up */
-        animation-timing-function: ease-out;
+        transform: translateY(calc(100vh - 100%)) translateX(80px); /* Reach the bottom */
+        animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+    }
+    95% {
+        transform: translateY(calc(100vh - 102%)) translateX(70px); /* Very small bounce */
+        animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
     }
     100% {
-        transform: translateY(calc(100vh - 100%)) translateX(15px); /* Settle at the bottom */
+        transform: translateY(calc(100vh - 100%)) translateX(70px); /* Settle at the bottom */
     }
 }
 
-/* Apply different durations, delays, and timing for each animation */
+/* Gravity animation 4 - Quick fall, small bounce, with more prominent horizontal drift */
+@keyframes gravityDown-4 {
+    0% {
+        transform: translateY(0) translateX(0);
+    }
+    20% {
+        transform: translateY(20vh) translateX(200px); /* Quick fall with significant horizontal drift */
+        animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+    }
+    55% {
+        transform: translateY(70vh) translateX(-150px); /* Continue falling */
+        animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+    }
+    80% {
+        transform: translateY(calc(100vh - 100%)) translateX(100px); /* Reach the bottom */
+        animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+    }
+    90% {
+        transform: translateY(calc(100vh - 101%)) translateX(90px); /* Minimal bounce */
+        animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
+    }
+    100% {
+        transform: translateY(calc(100vh - 100%)) translateX(90px); /* Settle at the bottom */
+    }
+}
+
+/* Apply the animations with adjusted durations and delays */
 .gravity-down-1 {
-    animation: gravityDown-1 14s ease-in-out forwards;
+    animation: gravityDown-1 12s cubic-bezier(0.42, 0, 0.58, 1) forwards 4s;
 }
 
 .gravity-down-2 {
-    animation: gravityDown-2 10s ease-in-out forwards 2s;
+    animation: gravityDown-2 10s cubic-bezier(0.42, 0, 0.58, 1) forwards 6s;
 }
 
 .gravity-down-3 {
-    animation: gravityDown-3 16s ease-in-out forwards 1s;
+    animation: gravityDown-3 14s cubic-bezier(0.42, 0, 0.58, 1) forwards 5s;
 }
 
 .gravity-down-4 {
-    animation: gravityDown-4 12s ease-in-out forwards 3s;
+    animation: gravityDown-4 11s cubic-bezier(0.42, 0, 0.58, 1) forwards 7s;
 }
+
 
 </style>
