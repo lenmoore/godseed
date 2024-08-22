@@ -5,6 +5,7 @@
         <div
             v-for="scene in scenes"
             :key="scene._id"
+            :class="['scene', { 'gravity-down': isGravityDownActive }]"
             :style="{
                 left: scene.coordX + 'px',
                 top: scene.coordY + 'px',
@@ -13,7 +14,6 @@
                 height: scene.displayHeight + 'px',
                 position: 'absolute',
             }"
-            class="scene"
         >
             <video
                 v-for="(video, index) in scene.displayVideos"
@@ -54,9 +54,14 @@ const normalParameterId = ref('')
 const specialParameters = {
     light_mode: (isActive) => {
         document.documentElement.style.filter = isActive ? 'invert(1)' : 'invert(0)'
+    },
+    gravity_down: (isActive) => {
+        isGravityDownActive.value = isActive
     }
     // Add more special parameters here in the future
 }
+
+const isGravityDownActive = ref(false) // State to control the gravity effect
 
 onMounted(async () => {
     console.log(apiBaseUrl)
@@ -152,6 +157,20 @@ watch(activeParameters, applySpecialEffects, { deep: true })
 
 .scene {
     position: absolute;
+    transition: transform 10s linear; /* Slow downward movement */
+}
+
+.gravity-down {
+    animation: gravityDown 10s linear infinite; /* Infinite gravity animation */
+}
+
+@keyframes gravityDown {
+    from {
+        transform: translateY(0);
+    }
+    to {
+        transform: translateY(100vh); /* Move down by the viewport height */
+    }
 }
 
 .scene-video {
