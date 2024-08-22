@@ -1,17 +1,17 @@
 <template>
     <div ref="canvas" class="godseed-player">
-        <h1 style="z-index: 4000; color: white; position: absolute">
-        </h1>
         <div
-            v-for="scene in scenes"
+            v-for="(scene, index) in scenes"
             :key="scene._id"
-            :class="['scene', { 'gravity-down': isGravityDownActive }]"
+            :class="['scene', isGravityDownActive ? `gravity-down-${index % 5}` : '' ]"
             :style="{
                 left: scene.coordX + 'px',
+                top: scene.coordY + 'px',
                 zIndex: scene.zIndex,
                 width: scene.displayWidth + 'px',
                 height: scene.displayHeight + 'px',
                 position: 'absolute',
+                border: '1px solid red'
             }"
         >
             <video
@@ -49,13 +49,29 @@ const scenes = ref([])
 const activeParameters = ref([])
 const normalParameterId = ref('')
 
-// Special parameters list
 const specialParameters = {
     light_mode: (isActive) => {
         document.documentElement.style.filter = isActive ? 'invert(1)' : 'invert(0)'
     },
     gravity_down: (isActive) => {
-        isGravityDownActive.value = isActive
+        if (isActive) {
+            let count = 1
+            document.querySelectorAll('.scene').forEach(scene => {
+                scene.classList.add(`gravity-down-${count}`)
+                count++
+            })
+
+            if (count === 4) {
+                count = 1
+            }
+        } else {
+            document.querySelectorAll('.scene').forEach(scene => {
+                scene.classList.remove('gravity-down-1')
+                scene.classList.remove('gravity-down-2')
+                scene.classList.remove('gravity-down-3')
+                scene.classList.remove('gravity-down-4')
+            })
+        }
     }
     // Add more special parameters here in the future
 }
@@ -148,6 +164,7 @@ watch(activeParameters, applySpecialEffects, { deep: true })
 
 <style scoped>
 .godseed-player {
+    border: 1px solid rgba(255, 255, 255, 0.25);
     position: relative;
     width: 3840px; /* UHD width */
     height: 2160px; /* UHD height */
@@ -160,21 +177,104 @@ watch(activeParameters, applySpecialEffects, { deep: true })
     transition: transform 10s linear; /* Smooth downward movement */
 }
 
-.gravity-down {
-    animation: gravityDown 10s linear forwards; /* Fall down and stay at the bottom */
-}
-
-@keyframes gravityDown {
-    from {
-        transform: translateY(-100vh); /* Start above the viewport */
-    }
-    to {
-        transform: translateY(0); /* Move down to the bottom */
-    }
-}
-
 .scene-video {
     object-fit: cover;
     pointer-events: none; /* Prevent interaction with videos */
 }
+</style>
+
+<style>
+/* Gravity animation 1 - Start from initial position, gentle fall and settle at bottom */
+@keyframes gravityDown-1 {
+    0% {
+        transform: translateY(0) translateX(0); /* Start at the current position */
+    }
+    70% {
+        transform: translateY(calc(100vh - 100%)) translateX(10px); /* Fall down to the bottom */
+        animation-timing-function: ease-in;
+    }
+    80% {
+        transform: translateY(calc(100vh - 130%)) translateX(15px); /* Gentle bounce up */
+        animation-timing-function: ease-out;
+    }
+    100% {
+        transform: translateY(calc(100vh - 100%)) translateX(10px); /* Settle at the bottom */
+    }
+}
+
+/* Gravity animation 2 - Faster fall, stronger bounce, settle at bottom */
+@keyframes gravityDown-2 {
+    0% {
+        transform: translateY(0) translateX(-10px); /* Start at the current position */
+    }
+    60% {
+        transform: translateY(calc(100vh - 100%)) translateX(-20px); /* Fall down to the bottom */
+        animation-timing-function: ease-in;
+    }
+    75% {
+        transform: translateY(calc(100vh - 140%)) translateX(-25px); /* Stronger bounce up */
+        animation-timing-function: ease-out;
+    }
+    100% {
+        transform: translateY(calc(100vh - 100%)) translateX(-20px); /* Settle at the bottom */
+    }
+}
+
+/* Gravity animation 3 - Slow fall, multiple small bounces, settle at bottom */
+@keyframes gravityDown-3 {
+    0% {
+        transform: translateY(0) translateX(5px); /* Start at the current position */
+    }
+    65% {
+        transform: translateY(calc(100vh - 100%)) translateX(0px); /* Fall down to the bottom */
+        animation-timing-function: ease-in;
+    }
+    70% {
+        transform: translateY(calc(100vh - 120%)) translateX(5px); /* First small bounce */
+        animation-timing-function: ease-out;
+    }
+    80% {
+        transform: translateY(calc(100vh - 110%)) translateX(0px); /* Second small bounce */
+        animation-timing-function: ease-out;
+    }
+    100% {
+        transform: translateY(calc(100vh - 100%)) translateX(0px); /* Settle at the bottom */
+    }
+}
+
+/* Gravity animation 4 - Quick fall, long bounce, settle at bottom */
+@keyframes gravityDown-4 {
+    0% {
+        transform: translateY(0) translateX(-5px); /* Start at the current position */
+    }
+    75% {
+        transform: translateY(calc(100vh - 100%)) translateX(15px); /* Fall down to the bottom */
+        animation-timing-function: ease-in;
+    }
+    85% {
+        transform: translateY(calc(100vh - 150%)) translateX(-15px); /* Strong bounce up */
+        animation-timing-function: ease-out;
+    }
+    100% {
+        transform: translateY(calc(100vh - 100%)) translateX(15px); /* Settle at the bottom */
+    }
+}
+
+/* Apply different durations, delays, and timing for each animation */
+.gravity-down-1 {
+    animation: gravityDown-1 14s ease-in-out forwards;
+}
+
+.gravity-down-2 {
+    animation: gravityDown-2 10s ease-in-out forwards 2s;
+}
+
+.gravity-down-3 {
+    animation: gravityDown-3 16s ease-in-out forwards 1s;
+}
+
+.gravity-down-4 {
+    animation: gravityDown-4 12s ease-in-out forwards 3s;
+}
+
 </style>
