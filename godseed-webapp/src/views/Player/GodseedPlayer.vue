@@ -12,7 +12,6 @@
                 width: scene.displayWidth + 'px',
                 height: scene.displayHeight + 'px',
                 position: 'absolute',
-                border: '1px solid green',
             }"
             class="scene"
         >
