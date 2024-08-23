@@ -1,0 +1,14 @@
+{
+  "name": "your-project-name",
+  "version": "1.0.0",
+  "description": "",
+  "main": "your-script-name.js",
+  "type": "module",
+  "scripts": {
+    "start": "node your-script-name.js"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "serialport": "^10.4.0"
+  }
+}
