@@ -2,6 +2,9 @@ import SerialPortPkg from 'serialport'
 import ReadlinePkg from '@serialport/parser-readline'
 import axios from 'axios'
 
+// first add
+// node checkPorts.js
+// node godSeeder.js
 const { SerialPort } = SerialPortPkg
 const { ReadlineParser } = ReadlinePkg
 
