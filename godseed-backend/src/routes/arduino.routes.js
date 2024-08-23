@@ -18,10 +18,11 @@ router.post('/create', async (req, res) => {
 
       // Find each parameter by name and update its is_active status
       await Parameter.findOneAndUpdate(
-        { name: name },
+        { name: new RegExp(`^${name}`) }, // Matches documents where 'name' starts with the value of 'name'
         { is_active: is_active },
         { new: true }
       )
+
     }
 
     // After updating all parameters, set the state to created = true
