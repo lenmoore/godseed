@@ -131,7 +131,7 @@ onMounted(async () => {
                 isGenerating.value = false
                 await nextTick() // Ensure DOM updates before scenes load
                 updateScenes() // Update scenes based on the current state
-            }, 10000) // 10 seconds
+            }, 1000)
         } else if (!currentStateIsCreated.value) {
             isGenerating.value = false
         }
