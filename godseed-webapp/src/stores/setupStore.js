@@ -3,6 +3,8 @@ import http from '@/stores/http.js' // Import the axios instance
 
 export const useSetupStore = defineStore('setupStore', {
   state: () => ({
+    creationState: false,
+    continuousUpdates: false,
     parameters: [],
     parametersWithoutNormal: [],
     eras: []

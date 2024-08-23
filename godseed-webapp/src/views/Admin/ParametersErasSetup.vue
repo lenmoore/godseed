@@ -58,7 +58,7 @@
 
 <script setup>
 import { onMounted, ref, toRefs } from 'vue'
-import { useSetupStore } from '@/stores/parameterStore.js'
+import { useSetupStore } from '@/stores/setupStore.js'
 import { RouterLink } from 'vue-router'
 
 const setupStore = useSetupStore()

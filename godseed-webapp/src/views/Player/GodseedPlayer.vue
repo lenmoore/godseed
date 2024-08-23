@@ -1,5 +1,8 @@
 <template>
-    <div ref="canvas" class="godseed-player">
+    <div v-if="currentStateIsCreated.value">
+        hello
+    </div>
+    <div v-else ref="canvas" class="godseed-player">
         <div
             v-for="(scene, index) in scenes"
             :key="scene._id"
@@ -40,6 +43,7 @@
 import { useScenesStore } from '@/stores/sceneStore.js'
 import { useRoute } from 'vue-router'
 import { onMounted, ref, watch } from 'vue'
+import http from '@/stores/http.js'
 
 const apiBaseUrl = import.meta.env.VITE_SERVER_URL
 const route = useRoute()
@@ -81,6 +85,7 @@ const specialParameters = {
 }
 
 const isGravityDownActive = ref(false) // State to control the gravity effect
+const currentStateIsCreated = ref(false)
 
 onMounted(async () => {
     console.log(apiBaseUrl)
@@ -96,7 +101,10 @@ onMounted(async () => {
 
     // Refresh parameters every 3 seconds
     setInterval(async () => {
-        console.log('updating parameters')
+        console.log('Fetching if status is created')
+        const status = await http.get('/arduino/status')
+        currentStateIsCreated.value = status.data.state.created
+
         await scenesStore.fetchParameters()
         updateActiveParameters()
         updateScenes()

@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, ref } from 'vue'
-import { useSetupStore } from '@/stores/parameterStore.js'
+import { useSetupStore } from '@/stores/setupStore.js'
 
 const setupStore = useSetupStore()
 const eras = ref([])
