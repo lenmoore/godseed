@@ -1,5 +1,10 @@
 <template>
-    <div ref="canvas" class="composition-editor">
+    <div
+        ref="canvas"
+        :class="widthClass"
+        class="composition-editor"
+    >
+        {{ widthClass }}
         <div
             v-for="scene in scenes"
             :key="scene._id"
@@ -36,7 +41,7 @@
 </template>
 
 <script setup>
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { useScenesStore } from '@/stores/sceneStore.js'
 import { useRoute } from 'vue-router'
 
@@ -56,6 +61,16 @@ let isDragging = false
 let currentScene = null
 let initialX = 0
 let initialY = 0
+const widthClass = computed(() => {
+    console.log(eraName)
+    if (eraName.value.toString() === '1920') {
+        return 'full-hd'
+    } else if (eraName.value.toString() === '2560') {
+        return 'two-k'
+    } else {
+        return ''
+    }
+})
 onMounted(async () => {
     await scenesStore.fetchScenes()
     scenes.value = await Promise.all(
@@ -222,6 +237,16 @@ onBeforeUnmount(() => {
     width: 3840px; /* UHD width */
     height: 2160px; /* UHD height */
     border: 1px solid #ccc;
+
+    &.two-k {
+        width: 2560px; /* 2K width */
+        height: 1440px; /* 2K height */
+    }
+
+    &.full-hd {
+        width: 1920px; /* Full HD width */
+        height: 1080px; /* Full HD height */
+    }
 }
 
 .scene {

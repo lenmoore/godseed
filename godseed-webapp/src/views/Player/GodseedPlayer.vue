@@ -5,7 +5,12 @@
     <div v-else-if="isGenerating" class="generating-wrapper">
         <p>Generating...</p>
     </div>
-    <div v-else ref="canvas" class="godseed-player">
+    <div
+        v-else
+        ref="canvas"
+        :class="widthClass"
+        class="godseed-player"
+    >
         <div
             v-for="(scene, index) in scenes"
             :key="scene._id"
@@ -43,7 +48,7 @@
 <script setup>
 import { useScenesStore } from '@/stores/sceneStore.js'
 import { useRoute } from 'vue-router'
-import { nextTick, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import http from '@/stores/http.js'
 
 const apiBaseUrl = import.meta.env.VITE_SERVER_URL
@@ -56,6 +61,17 @@ const normalParameterId = ref('')
 const isGravityDownActive = ref(false) // State to control the gravity effect
 const currentStateIsCreated = ref(false)
 const isGenerating = ref(false) // State to control the "Generating..." text
+
+const widthClass = computed(() => {
+    console.log(eraName)
+    if (eraName.value.toString() === '1920') {
+        return 'full-hd'
+    } else if (eraName.value.toString() === '2560') {
+        return 'two-k'
+    } else {
+        return ''
+    }
+})
 
 const specialParameters = {
     light_mode: (isActive) => {
@@ -195,6 +211,16 @@ watch(activeParameters, applySpecialEffects, { deep: true })
     width: 3840px; /* UHD width */
     height: 2160px; /* UHD height */
     overflow: hidden;
+
+    &.two-k {
+        width: 2560px; /* 2K width */
+        height: 1440px; /* 2K height */
+    }
+
+    &.full-hd {
+        width: 1920px; /* Full HD width */
+        height: 1080px; /* Full HD height */
+    }
 }
 
 .scene {
