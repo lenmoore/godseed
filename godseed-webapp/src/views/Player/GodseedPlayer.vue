@@ -1,6 +1,9 @@
 <template>
-    <div v-if="currentStateIsCreated.value">
-        hello
+    <div v-if="!currentStateIsCreated && !isGenerating" class="instructions">
+        <p>Choose parameters by inserting jacks. Then, press the [colour] button to seed your world.</p>
+    </div>
+    <div v-else-if="isGenerating" class="generating-wrapper">
+        <p>Generating...</p>
     </div>
     <div v-else ref="canvas" class="godseed-player">
         <div
@@ -8,23 +11,22 @@
             :key="scene._id"
             :class="['scene', isGravityDownActive ? `gravity-down-${index % 5}` : '' ]"
             :style="{
-                left: scene.coordX + 'px',
-                top: scene.coordY + 'px',
-                zIndex: scene.zIndex,
-                width: scene.displayWidth + 'px',
-                height: scene.displayHeight + 'px',
-                position: 'absolute',
-                border: '1px solid red'
-            }"
+        left: scene.coordX + 'px',
+        top: scene.coordY + 'px',
+        zIndex: scene.zIndex,
+        width: scene.displayWidth + 'px',
+        height: scene.displayHeight + 'px',
+        position: 'absolute',
+      }"
         >
             <video
                 v-for="(video, index) in scene.displayVideos"
                 :key="video.video"
                 :style="{
-                    width: '100%',
-                    height: '100%',
-                    position: 'absolute',
-                }"
+          width: '100%',
+          height: '100%',
+          position: 'absolute',
+        }"
                 autoplay
                 class="scene-video"
                 loop
@@ -32,7 +34,6 @@
                 playsinline
             >
                 <source :key="video.video" :src="`${apiBaseUrl}${video.video}`" type="video/mp4">
-                <!-- Use video URL as key -->
                 Your browser does not support the video tag.
             </video>
         </div>
@@ -42,7 +43,7 @@
 <script setup>
 import { useScenesStore } from '@/stores/sceneStore.js'
 import { useRoute } from 'vue-router'
-import { onMounted, ref, watch } from 'vue'
+import { nextTick, onMounted, ref, watch } from 'vue'
 import http from '@/stores/http.js'
 
 const apiBaseUrl = import.meta.env.VITE_SERVER_URL
@@ -52,6 +53,9 @@ const scenesStore = useScenesStore()
 const scenes = ref([])
 const activeParameters = ref([])
 const normalParameterId = ref('')
+const isGravityDownActive = ref(false) // State to control the gravity effect
+const currentStateIsCreated = ref(false)
+const isGenerating = ref(false) // State to control the "Generating..." text
 
 const specialParameters = {
     light_mode: (isActive) => {
@@ -84,9 +88,6 @@ const specialParameters = {
     // Add more special parameters here in the future
 }
 
-const isGravityDownActive = ref(false) // State to control the gravity effect
-const currentStateIsCreated = ref(false)
-
 onMounted(async () => {
     console.log(apiBaseUrl)
     await scenesStore.fetchScenes()
@@ -103,11 +104,24 @@ onMounted(async () => {
     setInterval(async () => {
         console.log('Fetching if status is created')
         const status = await http.get('/arduino/status')
+        const wasCreated = currentStateIsCreated.value
         currentStateIsCreated.value = status.data.state.created
+
+        if (currentStateIsCreated.value && !wasCreated) {
+            // If the state just changed to created, show "Generating..." for 10 seconds
+            isGenerating.value = true
+            await nextTick() // Ensure DOM updates with "Generating..."
+            setTimeout(async () => {
+                isGenerating.value = false
+                await nextTick() // Ensure DOM updates before scenes load
+                updateScenes() // Update scenes based on the current state
+            }, 10000) // 10 seconds
+        } else if (!currentStateIsCreated.value) {
+            isGenerating.value = false
+        }
 
         await scenesStore.fetchParameters()
         updateActiveParameters()
-        updateScenes()
     }, 3000) // 3 seconds
 })
 
@@ -193,130 +207,13 @@ watch(activeParameters, applySpecialEffects, { deep: true })
     object-fit: cover;
     pointer-events: none; /* Prevent interaction with videos */
 }
-</style>
 
-<style>
-
-/* Gravity animation 1 - Gentle fall, minimal bounce, significant horizontal drift */
-@keyframes gravityDown-1 {
-    0% {
-        transform: translateY(0) translateX(0); /* Start at the current position */
-    }
-    20% {
-        transform: translateY(20vh) translateX(100px); /* Start falling with horizontal drift */
-        animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
-    }
-    60% {
-        transform: translateY(80vh) translateX(-150px); /* Continue falling */
-        animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
-    }
-    80% {
-        transform: translateY(calc(100vh - 100%)) translateX(100px); /* Reach the bottom */
-        animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
-    }
-    90% {
-        transform: translateY(calc(100vh - 105%)) translateX(90px); /* Small bounce up */
-        animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
-    }
-    100% {
-        transform: translateY(calc(100vh - 100%)) translateX(90px); /* Settle at the bottom */
-    }
+.instructions {
+    font-size: 6rem;
 }
 
-/* Gravity animation 2 - Slightly faster fall, subtle bounce, larger horizontal drift */
-@keyframes gravityDown-2 {
-    0% {
-        transform: translateY(0) translateX(0);
-    }
-    25% {
-        transform: translateY(25vh) translateX(-200px); /* Fall with a noticeable horizontal shift */
-        animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
-    }
-    55% {
-        transform: translateY(75vh) translateX(200px); /* Continue falling */
-        animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
-    }
-    80% {
-        transform: translateY(calc(100vh - 100%)) translateX(-150px); /* Reach the bottom */
-        animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
-    }
-    90% {
-        transform: translateY(calc(100vh - 103%)) translateX(-140px); /* Smaller bounce */
-        animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
-    }
-    100% {
-        transform: translateY(calc(100vh - 100%)) translateX(-140px); /* Settle at the bottom */
-    }
+.generating-wrapper {
+    color: red;
+    font-size: 6rem;
 }
-
-/* Gravity animation 3 - Slow, smooth fall with slight horizontal drift and minimal bounce */
-@keyframes gravityDown-3 {
-    0% {
-        transform: translateY(0) translateX(0);
-    }
-    30% {
-        transform: translateY(30vh) translateX(150px); /* Slow fall with smooth horizontal drift */
-        animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
-    }
-    65% {
-        transform: translateY(80vh) translateX(-100px); /* Continue falling */
-        animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
-    }
-    85% {
-        transform: translateY(calc(100vh - 100%)) translateX(80px); /* Reach the bottom */
-        animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
-    }
-    95% {
-        transform: translateY(calc(100vh - 102%)) translateX(70px); /* Very small bounce */
-        animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
-    }
-    100% {
-        transform: translateY(calc(100vh - 100%)) translateX(70px); /* Settle at the bottom */
-    }
-}
-
-/* Gravity animation 4 - Quick fall, small bounce, with more prominent horizontal drift */
-@keyframes gravityDown-4 {
-    0% {
-        transform: translateY(0) translateX(0);
-    }
-    20% {
-        transform: translateY(20vh) translateX(200px); /* Quick fall with significant horizontal drift */
-        animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
-    }
-    55% {
-        transform: translateY(70vh) translateX(-150px); /* Continue falling */
-        animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
-    }
-    80% {
-        transform: translateY(calc(100vh - 100%)) translateX(100px); /* Reach the bottom */
-        animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
-    }
-    90% {
-        transform: translateY(calc(100vh - 101%)) translateX(90px); /* Minimal bounce */
-        animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
-    }
-    100% {
-        transform: translateY(calc(100vh - 100%)) translateX(90px); /* Settle at the bottom */
-    }
-}
-
-/* Apply the animations with adjusted durations and delays */
-.gravity-down-1 {
-    animation: gravityDown-1 12s cubic-bezier(0.42, 0, 0.58, 1) forwards 4s;
-}
-
-.gravity-down-2 {
-    animation: gravityDown-2 10s cubic-bezier(0.42, 0, 0.58, 1) forwards 6s;
-}
-
-.gravity-down-3 {
-    animation: gravityDown-3 14s cubic-bezier(0.42, 0, 0.58, 1) forwards 5s;
-}
-
-.gravity-down-4 {
-    animation: gravityDown-4 11s cubic-bezier(0.42, 0, 0.58, 1) forwards 7s;
-}
-
-
 </style>
