@@ -3,12 +3,12 @@ import ReadlinePkg from '@serialport/parser-readline'
 import axios from 'axios'
 
 const { SerialPort } = SerialPortPkg
-
 const { ReadlineParser } = ReadlinePkg
 
 const portPath = '/dev/tty.usbmodem11101' // Use the correct port path
 console.log(`Using port path: ${portPath}`)
 const apiBaseUrl = 'http://3.65.248.203/api' // Use the correct API base URL
+
 try {
   const port = new SerialPort({ path: portPath, baudRate: 9600 })
 
@@ -31,18 +31,33 @@ try {
 
       const parametersWithoutNormal = parameters.filter(param => param.name !== 'normal')
 
-      console.log('should be sending this: ')
+      console.log('Should be sending this:')
       console.log(parametersWithoutNormal)
-      // Send API requests
-      await axios.post(`${apiBaseUrl}/arduino/create-initial-state`)
-      await axios.post(`${apiBaseUrl}/arduino/create`, { parameters: parametersWithoutNormal })
 
-      // console.log('Requests sent successfully.')
+      // Send API requests
+      try {
+        await axios.post(`${apiBaseUrl}/arduino/create-initial-state`)
+        console.log('Sent: /arduino/create-initial-state')
+      } catch (error) {
+        console.error('Error sending /arduino/create-initial-state:', error.message, '. It is probably because there already is an active state.')
+      }
+
+      try {
+        await axios.post(`${apiBaseUrl}/arduino/create`, { parameters: parametersWithoutNormal })
+        console.log('Sent: /arduino/create')
+      } catch (error) {
+        console.error('Error sending /arduino/create:', error.message, '. It is probably because there already is an active state.')
+      }
 
     } catch (error) {
       if (dataString === 'DESTROY') {
         console.log('Destroy button pressed, sending destroy request...')
-        await axios.post(`${apiBaseUrl}/arduino/destroy`)
+        try {
+          await axios.post(`${apiBaseUrl}/arduino/destroy`)
+          console.log('Sent: /arduino/destroy')
+        } catch (error) {
+          console.error('Error sending /arduino/destroy:', error.message, '. It is probably because there are no more active states to remove.')
+        }
       } else {
         console.error('Error parsing JSON:', error.message)
       }
