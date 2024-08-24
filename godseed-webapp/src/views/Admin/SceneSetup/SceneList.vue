@@ -60,7 +60,9 @@ watch(() => route.params.era, async (newEra) => {
 
 // Filter scenes based on the era
 const filteredScenes = computed(() => {
-    return scenesStore.scenes.filter(scene => scene.era.name === eraName.value)
+    console.log(eraName.value)
+    console.log(scenesStore.scenes)
+    return scenesStore.scenes.filter(scene => scene?.era?.name === eraName.value)
 })
 
 const deleteScene = async (id) => {
