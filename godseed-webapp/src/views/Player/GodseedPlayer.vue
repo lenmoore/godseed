@@ -131,6 +131,7 @@ onMounted(async () => {
                 isGenerating.value = false
                 await nextTick() // Ensure DOM updates before scenes load
                 updateScenes() // Update scenes based on the current state
+                await nextTick() // Ensure DOM updates before scenes load
             }, 1000)
         } else if (!currentStateIsCreated.value) {
             isGenerating.value = false
@@ -138,6 +139,8 @@ onMounted(async () => {
 
         await scenesStore.fetchParameters()
         updateActiveParameters()
+
+        await nextTick() // Ensure DOM updates before scenes load
     }, 3000) // 3 seconds
 })
 
