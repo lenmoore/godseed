@@ -40,9 +40,8 @@
         </div>
     </div>
 </template>
-
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useScenesStore } from '@/stores/sceneStore.js'
 
 const scenesStore = useScenesStore()
@@ -62,26 +61,26 @@ const displayedVideos = ref([])
 // Function to update displayed videos based on active parameters
 const updateDisplayedVideos = () => {
     const normalVariation = scenesStore.variations.find(variation => variation.parameter.name === 'normal')
-    if (!normalVariation) {
-        displayedVideos.value = []
-        return
-    }
 
+    // Ensure that the "normal" videos are always shown first
+    let videos = normalVariation ? normalVariation.video_rows.map(row => ({
+        name: row.name,
+        video: row.original_video
+    })) : []
+
+    // Filter active parameters and apply their variations
     const activeParameters = allParameters.value.filter(param => param.is_active)
     const activeVariations = scenesStore.variations.filter(variation =>
         activeParameters.find(param => param._id === variation.parameter._id)
     )
 
-    console.log(activeVariations)
-    let videos = normalVariation.video_rows.map(row => ({ name: row.name, video: row.original_video }))
-
+    // Replace or add videos based on active variations
     activeVariations.forEach(variation => {
         variation.video_rows.forEach(row => {
             const videoToReplace = videos.find(v => v.name === row.name)
             if (videoToReplace) {
                 videoToReplace.video = row.replacement_video || videoToReplace.video
-            }
-            if (row.original_video.length === 0) {
+            } else if (row.original_video.length === 0) {
                 videos.push({ name: row.name, video: row.replacement_video })
             }
         })
@@ -95,7 +94,10 @@ const updateDisplayedVideos = () => {
 watch(allParameters, updateDisplayedVideos, { deep: true })
 
 // Initial call to populate displayed videos
-updateDisplayedVideos()
+onMounted(() => {
+    updateDisplayedVideos()
+})
+
 const submitChanges = async () => {
     try {
         await scenesStore.updateParametersBatch(allParameters.value)
@@ -105,6 +107,7 @@ const submitChanges = async () => {
     }
 }
 </script>
+
 
 <style lang="scss" scoped>
 .video-player {
