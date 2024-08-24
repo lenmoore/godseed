@@ -59,8 +59,11 @@ const allParameters = computed(() =>
 const displayedVideos = ref([])
 
 // Function to update displayed videos based on active parameters
-const updateDisplayedVideos = () => {
+const updateDisplayedVideos = async () => {
     const normalVariation = scenesStore.variations.find(variation => variation.parameter.name === 'normal')
+    if (!normalVariation) {
+        console.error('No normal variation found')
+    }
 
     // Ensure that the "normal" videos are always shown first
     let videos = normalVariation ? normalVariation.video_rows.map(row => ({
@@ -88,6 +91,7 @@ const updateDisplayedVideos = () => {
 
     // Update the ref for displayed videos
     displayedVideos.value = videos.map(v => v.video)
+    await nextTick() // Ensure DOM updates with "Generating..."
 }
 
 // Watch for changes in allParameters to update displayed videos
