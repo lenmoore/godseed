@@ -41,7 +41,7 @@
     </div>
 </template>
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useScenesStore } from '@/stores/sceneStore.js'
 
 const scenesStore = useScenesStore()
@@ -94,8 +94,10 @@ const updateDisplayedVideos = () => {
 watch(allParameters, updateDisplayedVideos, { deep: true })
 
 // Initial call to populate displayed videos
-onMounted(() => {
+onMounted(async () => {
     updateDisplayedVideos()
+    await nextTick() // Ensure DOM updates with "Generating..."
+
 })
 
 const submitChanges = async () => {
