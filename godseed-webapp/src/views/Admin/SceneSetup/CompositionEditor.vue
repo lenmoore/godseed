@@ -75,7 +75,7 @@ onMounted(async () => {
     await scenesStore.fetchScenes()
     scenes.value = await Promise.all(
         scenesStore.scenes
-            .filter(scene => scene.era.name === eraName.value)
+            .filter(scene => scene?.era?.name === eraName.value)
             .map(async scene => {
                 const image = new Image()
                 const imageURL = `${apiBaseUrl}${scene.image_URL}`

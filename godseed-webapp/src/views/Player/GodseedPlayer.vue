@@ -150,7 +150,7 @@ const updateActiveParameters = () => {
 // Function to update scenes based on the current active parameters
 const updateScenes = () => {
     scenes.value = scenesStore.scenes
-        .filter(scene => scene.era.name === eraName.value)
+        .filter(scene => scene.era?.name === eraName.value)
         .map(scene => ({
             ...scene,
             displayVideos: getFilteredVideos(scene)
