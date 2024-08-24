@@ -108,6 +108,15 @@ export const useScenesStore = defineStore('scenesStore', {
         console.error('Failed to update variation:', error)
       }
     },
+    async deleteVariation(id) {
+      try {
+        await http.delete(`/variations/${id}`)
+
+
+      } catch (error) {
+        console.error('Failed to update variation:', error)
+      }
+    },
 
     async fetchVariationsByEra(eraName) {
       try {

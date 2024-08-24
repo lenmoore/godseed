@@ -18,6 +18,7 @@
                                 ? 'active'
                                 : ' '
                         ]"
+                        style="font-size: 1.5rem;"
                         @click="setActiveVariation(index)"
                     >
                         {{ variation.parameter && variation.parameter.name || 'Unnamed' }}
@@ -29,13 +30,14 @@
                 <button
                     v-if="availableParameters.length"
                     class="py-2 px-4 bg-gray-700 text-gray-300 rounded-md hover:bg-gray-600"
+                    style="font-size: 1.5rem;"
                     @click="showAddVariationDropdown = !showAddVariationDropdown"
                 >
                     Add Variation
                 </button>
                 <div
                     v-if="showAddVariationDropdown"
-                    class="dropdown absolute bg-gray-700 rounded-lg shadow-lg p-2"
+                    class="dropdown absolute rounded-lg shadow-lg p-2"
                 >
                     <div v-if="variations.length === 0">
                         <button @click="addVariation(normalParameter)">
@@ -47,6 +49,7 @@
                             v-for="parameter in availableParameters"
                             :key="parameter._id"
                             class="block text-gray-200 hover:text-white px-4 py-2"
+                            style="font-size: 1.5rem; background-color: black"
                             @click="addVariation(parameter)"
                         >
                             {{ parameter.name }}
@@ -83,11 +86,13 @@
                         ]"
                         :disabled="row.disabledEditingOriginal"
                         placeholder="Row Name"
+                        style="font-size: 1.5rem;"
                     />
                     <select
                         v-model="row.original_video"
                         :disabled="!isNormalVariation"
                         class="px-3 py-2 bg-black text-gray-500 rounded-md border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
+                        style="font-size: 1.5rem;"
                     >
                         <option v-for="video in allUploadedVideos" :key="video" :value="video">
                             {{ video }}
@@ -100,6 +105,7 @@
                         <select
                             v-model="row.replacement_video"
                             class="px-3 py-2 bg-gray-700 text-gray-200 rounded-md border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
+                            style="font-size: 1.5rem;"
                         >
                             <option v-for="video in allUploadedVideos" :key="video" :value="video">
                                 {{ video }}
@@ -119,6 +125,7 @@
                         <button
                             :disabled="rowIndex === 0"
                             class="arrow-button"
+                            style="background-color: blue"
                             @click="moveRowUp(rowIndex)"
                         >
                             ▲
@@ -126,6 +133,7 @@
                         <button
                             :disabled="rowIndex === getVideoRowsForCurrentVariation.length - 1"
                             class="arrow-button"
+                            style="background-color: blue"
                             @click="moveRowDown(rowIndex)"
                         >
                             ▼
@@ -138,6 +146,7 @@
                 <button
                     v-if="isNormalVariation"
                     class="py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 mr-4"
+                    style="font-size: 1.5rem;"
                     @click="addRow"
                 >
                     Add Row
@@ -150,6 +159,7 @@
                     :class="[
                         'py-2 px-4 rounded-md save-btn',
                     ]"
+                    style="font-size: 1.5rem;"
                     @click="saveVariation"
                 >
                     {{ saveButtonText }}
@@ -410,7 +420,7 @@ const saveVariation = async () => {
 }
 
 .save-btn {
-    background-color: purple;
+    background-color: green;
 
     &:hover {
         background-color: #bd04bd;
