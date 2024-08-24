@@ -208,8 +208,8 @@ watch(activeParameters, applySpecialEffects, { deep: true })
 .godseed-player {
     border: 1px solid rgba(255, 255, 255, 0.25);
     position: relative;
-    width: 3840px; /* UHD width */
-    height: 2160px; /* UHD height */
+    width: 2560px; /* 2K width */
+    height: 1440px; /* 2K height */
     overflow: hidden;
 
     &.two-k {

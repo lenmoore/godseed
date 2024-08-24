@@ -234,19 +234,11 @@ onBeforeUnmount(() => {
 <style scoped>
 .composition-editor {
     position: relative;
-    width: 3840px; /* UHD width */
-    height: 2160px; /* UHD height */
+
+    width: 2560px; /* 2K width */
+    height: 1440px; /* 2K height */
     border: 1px solid #ccc;
 
-    &.two-k {
-        width: 2560px; /* 2K width */
-        height: 1440px; /* 2K height */
-    }
-
-    &.full-hd {
-        width: 1920px; /* Full HD width */
-        height: 1080px; /* Full HD height */
-    }
 }
 
 .scene {
