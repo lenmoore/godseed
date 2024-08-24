@@ -43,6 +43,39 @@
                     @change="handleImageUpload"
                 />
             </div>
+
+            <!--            zIndex , coordX, coordY-->
+            <div class="mb-4">
+                <label class="block text-gray-200 font-bold mb-2">Z Index:</label>
+                <input
+                    v-model.number="scene.zIndex"
+                    class="w-full px-3 py-2 bg-gray-700 text-gray-200 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
+                    required
+                    type="number"
+                />
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-gray-200 font-bold mb-2">X Coordinate:</label>
+                <input
+                    v-model.number="scene.coordX"
+                    class="w-full px-3 py-2 bg-gray-700 text-gray-200 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
+                    required
+                    type="number"
+                />
+
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-gray-200 font-bold mb-2">Y Coordinate:</label>
+                <input
+                    v-model.number="scene.coordY"
+                    class="w-full px-3 py-2 bg-gray-700 text-gray-200 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
+                    required
+                    type="number"
+                />
+            </div>
+
             <div class="mb-4">
                 <label class="block text-gray-200 font-bold mb-2">Gravity</label>
                 <input
