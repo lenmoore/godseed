@@ -17,6 +17,8 @@
             <div class="input-row">
                 <label for="videos">Upload Videos:</label>
                 <input accept="video/*" multiple type="file" @change="handleVideoUpload" />
+                <div v-if="videosFinished" style="color: lightgreen;">done</div>
+                <div v-else-if="videosLoading">uploading</div>
             </div>
             <div class="input-row">
                 <label for="coordX">X Coordinate:</label>
@@ -58,6 +60,8 @@ const scene = ref({
     displayHeight: 0
 })
 
+const videosFinished = ref(false)
+const videosLoading = ref(false)
 const handleImageUpload = async (event) => {
     const file = event.target.files[0]
     const reader = new FileReader()
@@ -86,16 +90,17 @@ const handleImageUpload = async (event) => {
 const handleVideoUpload = async (event) => {
     const files = event.target.files
     const uploadedVideos = []
-
+    videosLoading.value = true
     for (let i = 0; i < files.length; i++) {
         try {
             const videoUrl = await scenesStore.uploadVideo(files[i])
             uploadedVideos.push(videoUrl)
+            videosFinished.value = i === files.length - 1
         } catch (error) {
             console.error(`Error uploading video ${files[i].name}:`, error)
         }
     }
-
+    videosLoading.value = false
     scene.value.uploaded_videos = uploadedVideos
 }
 
@@ -130,12 +135,25 @@ const submitScene = async () => {
     display: flex;
     flex-direction: column;
     border: 1px solid #ccc;
-    width: 40rem;
+    width: 80rem;
 
     .input-row {
         display: flex;
         align-items: center;
         justify-content: space-between;
+        height: 3rem;
+        margin-bottom: 0.5rem;
+        background-color: #2d2d2d;
+
+        label {
+            font-size: 2rem;
+        }
+
+        input {
+            height: 3rem;
+            font-size: 2rem;
+            width: 80%;
+        }
     }
 }
 </style>

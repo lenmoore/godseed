@@ -20,10 +20,11 @@ onMounted(async () => {
                 v-for="era in eras"
                 :key="era._id"
                 class="era-item"
+                style="font-size: 1.5rem"
             >
                 <router-link
+                    :class="{ 'active-era-link': era.name === $route.params.era }"
                     :to="{ name: 'era-canvas', params: { era: era.name }}"
-                    active-class="active-era-link"
                     class="era-link"
                 >
                     {{ era.name }}
@@ -46,14 +47,18 @@ onMounted(async () => {
 }
 
 .era-item {
-    width: 10rem;
+    background-color: darkgray;
+    color: blue;
     font-size: 0.75rem;
+    margin-right: 1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    margin-left: 1rem;
 }
 
 .era-link {
     text-decoration: none;
     color: inherit;
-    padding: 0.5rem;
     display: block;
     text-align: center;
 }

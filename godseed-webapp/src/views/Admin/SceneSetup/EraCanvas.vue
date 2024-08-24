@@ -2,7 +2,8 @@
     <div>
         <div class="buttons-wrapper">
             <div class="toggle">
-                <button @click="showCompositionEditor = !showCompositionEditor">
+                <button style="background-color: #4caf50; font-size: 2rem;"
+                        @click="showCompositionEditor = !showCompositionEditor">
                     {{ showCompositionEditor ? 'Hide' : 'Show' }} composition editor
                 </button>
                 <div v-if="showCompositionEditor">
@@ -18,7 +19,9 @@
                     <CompositionEditor />
                 </div>
             </div>
-            <button v-if="!addingScene" @click="addingScene=true">Add scene</button>
+            <button v-if="!addingScene" style="background-color: yellow; color: black; font-size: 2rem;"
+                    @click="addingScene=true">+ Add scene
+            </button>
         </div>
         <AddScene v-if="addingScene" :era-name="eraName" @sceneAdded="refreshScenes" />
 
