@@ -209,7 +209,7 @@ watch(activeParameters, applySpecialEffects, { deep: true })
 .scene {
     position: absolute;
     bottom: 0; /* Start from the bottom */
-    transition: transform 10s linear; /* Smooth downward movement */
+    transition: transform 30s ease-in-out; /* Smooth downward movement */
 }
 
 .scene-video {
