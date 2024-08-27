@@ -230,8 +230,20 @@ watch(activeParameters, applySpecialEffects, { deep: true })
     0% {
         transform: translateY(0) translateX(0);
     }
+    20% {
+        transform: translateY(40px) translateX(17px); /* Adjust values for more or less movement */
+    }
+    35% {
+        transform: translateY(-20px) translateX(17px); /* Adjust values for more or less movement */
+    }
     50% {
         transform: translateY(-20px) translateX(10px); /* Adjust values for more or less movement */
+    }
+    65% {
+        transform: translateY(-20px) translateX(17px); /* Adjust values for more or less movement */
+    }
+    80% {
+        transform: translateY(40px) translateX(17px); /* Adjust values for more or less movement */
     }
     100% {
         transform: translateY(0) translateX(0);
