@@ -15,7 +15,7 @@
         <div
             v-for="(scene, index) in scenes"
             :key="scene._id"
-            :class="['scene', isGravityDownActive ? `gravity-down-${index % 5}` : '' ]"
+            :class="['scene', isGravityDownActive ? `gravity-down-${index % 5}` : '', gravityUpIsActive && scene.gravity === true ? 'gravity-up' : '' ]"
             :style="{
         left: scene.coordX + 'px',
         top: scene.coordY + 'px',
@@ -62,7 +62,7 @@ const normalParameterId = ref('')
 const isGravityDownActive = ref(false) // State to control the gravity effect
 const currentStateIsCreated = ref(false)
 const isGenerating = ref(false) // State to control the "Generating..." text
-
+const gravityUpIsActive = ref(false)
 const widthClass = computed(() => {
     console.log(eraName)
     if (eraName.value.toString() === '1920') {
@@ -78,29 +78,8 @@ const specialParameters = {
     light_mode: (isActive) => {
         document.documentElement.style.filter = isActive ? 'invert(1)' : 'invert(0)'
     },
-    gravity_down: (isActive) => {
-        if (isActive) {
-            let count = 1
-            document.querySelectorAll('.scene').forEach(scene => {
-                scene.classList.add(`gravity-down-${count}`)
-                count++
-
-                console.log(scene)
-                if (count === 4) {
-                    count = 1
-                }
-                scene.classList.add(`gravity-down-${count}`)
-                count++
-            })
-
-        } else {
-            document.querySelectorAll('.scene').forEach(scene => {
-                scene.classList.remove('gravity-down-1')
-                scene.classList.remove('gravity-down-2')
-                scene.classList.remove('gravity-down-3')
-                scene.classList.remove('gravity-down-4')
-            })
-        }
+    gravity_up: (isActive) => {
+        gravityUpIsActive.value = isActive
     }
     // Add more special parameters here in the future
 }
@@ -246,4 +225,21 @@ watch(activeParameters, applySpecialEffects, { deep: true })
     color: red;
     font-size: 6rem;
 }
+
+@keyframes float {
+    0% {
+        transform: translateY(0) translateX(0);
+    }
+    50% {
+        transform: translateY(-20px) translateX(10px); /* Adjust values for more or less movement */
+    }
+    100% {
+        transform: translateY(0) translateX(0);
+    }
+}
+
+.gravity-up {
+    animation: float 5s ease-in-out infinite; /* Apply the float animation */
+}
+
 </style>
