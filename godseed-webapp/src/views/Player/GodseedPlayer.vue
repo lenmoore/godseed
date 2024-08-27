@@ -209,7 +209,7 @@ watch(activeParameters, applySpecialEffects, { deep: true })
 .scene {
     position: absolute;
     bottom: 0; /* Start from the bottom */
-    transition: transform 30s ease-in-out; /* Smooth downward movement */
+    transition: transform 10s ease-in-out; /* Smooth downward movement */
 }
 
 .scene-video {
@@ -251,7 +251,7 @@ watch(activeParameters, applySpecialEffects, { deep: true })
 }
 
 .gravity-up {
-    animation: float 5s ease-in-out infinite; /* Apply the float animation */
+    animation: float 30s ease-in-out infinite; /* Apply the float animation */
 }
 
 </style>
