@@ -15,7 +15,9 @@
         <div
             v-for="(scene, index) in scenes"
             :key="scene._id"
-            :class="['scene', isGravityDownActive ? `gravity-down-${index % 5}` : '', gravityUpIsActive && scene.gravity === true ? 'gravity-up' : '' ]"
+            :class="['scene', isGravityDownActive ? `gravity-down-${index % 5}` : '',
+                gravityUpIsActive && scene.gravity === true ? `gravity-up-${index % 5 + 1}` : ''
+            ]"
             :style="{
         left: scene.coordX + 'px',
         top: scene.coordY + 'px',
@@ -226,24 +228,120 @@ watch(activeParameters, applySpecialEffects, { deep: true })
     font-size: 6rem;
 }
 
-@keyframes float {
+@keyframes float-1 {
     0% {
         transform: translateY(0) translateX(0);
     }
     20% {
-        transform: translateY(40px) translateX(17px); /* Adjust values for more or less movement */
+        transform: translateY(40px) translateX(17px);
     }
     35% {
-        transform: translateY(-20px) translateX(17px); /* Adjust values for more or less movement */
+        transform: translateY(-20px) translateX(17px);
     }
     50% {
-        transform: translateY(-20px) translateX(10px); /* Adjust values for more or less movement */
+        transform: translateY(-20px) translateX(10px);
     }
     65% {
-        transform: translateY(-20px) translateX(17px); /* Adjust values for more or less movement */
+        transform: translateY(-20px) translateX(17px);
     }
     80% {
-        transform: translateY(40px) translateX(17px); /* Adjust values for more or less movement */
+        transform: translateY(40px) translateX(17px);
+    }
+    100% {
+        transform: translateY(0) translateX(0);
+    }
+}
+
+@keyframes float-2 {
+    0% {
+        transform: translateY(0) translateX(0);
+    }
+    20% {
+        transform: translateY(30px) translateX(-10px);
+    }
+    35% {
+        transform: translateY(-25px) translateX(20px);
+    }
+    50% {
+        transform: translateY(-15px) translateX(5px);
+    }
+    65% {
+        transform: translateY(-25px) translateX(20px);
+    }
+    80% {
+        transform: translateY(30px) translateX(-10px);
+    }
+    100% {
+        transform: translateY(0) translateX(0);
+    }
+}
+
+@keyframes float-3 {
+    0% {
+        transform: translateY(0) translateX(0);
+    }
+    20% {
+        transform: translateY(50px) translateX(20px);
+    }
+    35% {
+        transform: translateY(-15px) translateX(-15px);
+    }
+    50% {
+        transform: translateY(-30px) translateX(15px);
+    }
+    65% {
+        transform: translateY(-15px) translateX(-15px);
+    }
+    80% {
+        transform: translateY(50px) translateX(20px);
+    }
+    100% {
+        transform: translateY(0) translateX(0);
+    }
+}
+
+@keyframes float-4 {
+    0% {
+        transform: translateY(0) translateX(0);
+    }
+    20% {
+        transform: translateY(45px) translateX(-5px);
+    }
+    35% {
+        transform: translateY(-20px) translateX(25px);
+    }
+    50% {
+        transform: translateY(-35px) translateX(-5px);
+    }
+    65% {
+        transform: translateY(-20px) translateX(25px);
+    }
+    80% {
+        transform: translateY(45px) translateX(-5px);
+    }
+    100% {
+        transform: translateY(0) translateX(0);
+    }
+}
+
+@keyframes float-5 {
+    0% {
+        transform: translateY(0) translateX(0);
+    }
+    20% {
+        transform: translateY(35px) translateX(15px);
+    }
+    35% {
+        transform: translateY(-25px) translateX(-20px);
+    }
+    50% {
+        transform: translateY(-10px) translateX(5px);
+    }
+    65% {
+        transform: translateY(-25px) translateX(-20px);
+    }
+    80% {
+        transform: translateY(35px) translateX(15px);
     }
     100% {
         transform: translateY(0) translateX(0);
@@ -252,6 +350,26 @@ watch(activeParameters, applySpecialEffects, { deep: true })
 
 .gravity-up {
     animation: float 30s ease-in-out infinite; /* Apply the float animation */
+}
+
+.gravity-up-1 {
+    animation: float-1 30s ease-in-out infinite;
+}
+
+.gravity-up-2 {
+    animation: float-2 32s ease-in-out infinite;
+}
+
+.gravity-up-3 {
+    animation: float-3 28s ease-in-out infinite;
+}
+
+.gravity-up-4 {
+    animation: float-4 35s ease-in-out infinite;
+}
+
+.gravity-up-5 {
+    animation: float-5 31s ease-in-out infinite;
 }
 
 </style>
