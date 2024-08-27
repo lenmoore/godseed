@@ -6,7 +6,7 @@ console.log(import.meta.env.VITE_API_BASE_URL) // Add this line in your componen
 </script>
 
 <template>
-    <div>
+    <div style="background-color: #181818">
         <a href="/params" style="font-size: 1.5rem; background-color: #2c3e50">Toggle parameters</a>
         -|-
         <a href="/scenes">Edit scenes</a>

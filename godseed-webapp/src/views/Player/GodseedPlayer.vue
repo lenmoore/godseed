@@ -10,6 +10,7 @@
         ref="canvas"
         :class="widthClass"
         class="godseed-player"
+        style="background-color: #181818; !important;"
     >
         <div
             v-for="(scene, index) in scenes"
@@ -165,7 +166,7 @@ const updateScenes = () => {
 // Function to apply special effects based on active parameters
 const applySpecialEffects = () => {
     for (const [paramName, effectFn] of Object.entries(specialParameters)) {
-        const isActive = activeParameters.value.some(param => param.name === paramName)
+        const isActive = activeParameters.value.some(param => param.name.includes(paramName))
         effectFn(isActive)
     }
 }
