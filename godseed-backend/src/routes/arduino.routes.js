@@ -11,9 +11,7 @@ router.post('/create', async (req, res) => {
     console.log(req.body)
 
     // Fetch the current state
-    let state = await State.findOne({
-      created: true
-    })
+    let state = await State.findOne({})
 
     if (!state) {
       // If no state exists, create a new one
