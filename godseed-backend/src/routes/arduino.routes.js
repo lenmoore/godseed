@@ -23,7 +23,7 @@ router.post('/create', async (req, res) => {
     if (!state.created) {
       // If `created = false`, set `createConfirmed = true`
       state.createConfirmed = true
-      // state.created = true
+      state.created = true
     } else if (state.created && !state.showConfirm) {
       // If `created = true` and `showConfirm = false`, set `showConfirm = true`
       state.showConfirm = true
