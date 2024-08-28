@@ -1,33 +1,32 @@
 <template>
-    <div v-if="!currentStateIsCreated && !isGenerating" class="instructions">
-        <p>Choose parameters by inserting jacks. Then, press the blue button to seed your world.</p>
-    </div>
-    <div v-else-if="showConfirmDestroyWorld">
-        <div>
-            To create a new world, you must destroy the old one.
+    <div>
+        <div v-if="!currentStateIsCreated" class="instructions">
+            <p>Choose parameters by inserting jacks. Then, press the blue button to seed your world.</p>
         </div>
-        <div>Add parameters by inserting jacks.</div>
-        <div>
-            Press the button again to confirm.
+        <div v-else-if="showConfirmDestroyWorld" class="instructions confirm-destroy">
+            <div>
+                To create a new world, you must <strong>destroy the old one</strong>.
+            </div>
+            <div>Add parameters by inserting jacks.</div>
+            <div>
+                <strong>Press the button again</strong> to confirm.
+            </div>
         </div>
-    </div>
-    <div v-else-if="isGenerating" class="generating-wrapper">
-        <p>Generating...</p>
-    </div>
-    <div
-        v-else
-        ref="canvas"
-        :class="widthClass"
-        class="godseed-player"
-        style="background-color: #181818; !important;"
-    >
+
         <div
-            v-for="(scene, index) in scenes"
-            :key="scene._id"
-            :class="['scene', isGravityDownActive ? `gravity-down-${index % 5}` : '',
+            v-if="currentStateIsCreated"
+            ref="canvas"
+            :class="widthClass"
+            class="godseed-player"
+            style="background-color: #181818; !important;"
+        >
+            <div
+                v-for="(scene, index) in scenes"
+                :key="scene._id"
+                :class="['scene', isGravityDownActive ? `gravity-down-${index % 5}` : '',
                 gravityUpIsActive && scene.gravity === true ? `gravity-up-${index % 5 + 1}` : ''
             ]"
-            :style="{
+                :style="{
         left: scene.coordX + 'px',
         top: scene.coordY + 'px',
         zIndex: scene.zIndex,
@@ -35,26 +34,29 @@
         height: scene.displayHeight + 'px',
         position: 'absolute',
       }"
-        >
-            <video
-                v-for="(video, index) in scene.displayVideos"
-                :key="video.video"
-                :style="{
+            >
+                <video
+                    v-for="(video, index) in scene.displayVideos"
+                    :key="video.video"
+                    :style="{
           width: '100%',
           height: '100%',
           position: 'absolute',
         }"
-                autoplay
-                class="scene-video"
-                loop
-                muted
-                playsinline
-            >
-                <source :key="video.video" :src="`${apiBaseUrl}${video.video}`" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
+                    autoplay
+                    class="scene-video"
+                    loop
+                    muted
+                    playsinline
+                >
+                    <source :key="video.video" :src="`${apiBaseUrl}${video.video}`" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
         </div>
+
     </div>
+
 </template>
 
 <script setup>
@@ -96,6 +98,7 @@ const specialParameters = {
 }
 
 const showConfirmDestroyWorld = ref(false)
+const createConfirmed = ref(false)
 
 onMounted(async () => {
     console.log(apiBaseUrl)
@@ -113,29 +116,15 @@ onMounted(async () => {
     setInterval(async () => {
         console.log('Fetching if status is created')
         const status = await http.get('/arduino/status')
-        const wasCreated = currentStateIsCreated.value
+        createConfirmed.value = status.data.state.createConfirmed
         currentStateIsCreated.value = status.data.state.created
-
-        if (currentStateIsCreated.value && !wasCreated) {
-            // If the state just changed to created, show "Generating..." for 10 seconds
-            // isGenerating.value = true
-            showConfirmDestroyWorld.value = true
-            await nextTick() // Ensure DOM updates with "Generating..."
-
-        } else if (currentStateIsCreated.value && wasCreated) {
-            setTimeout(async () => {
-                isGenerating.value = false
-                await nextTick() // Ensure DOM updates before scenes load
-                updateScenes() // Update scenes based on the current state
-                await nextTick() // Ensure DOM updates before scenes load
-            }, 1000)
-        }
+        showConfirmDestroyWorld.value = status.data.state.showConfirm
 
         await scenesStore.fetchParameters()
         updateActiveParameters()
 
-        await nextTick()
-    }, 300)
+        await nextTick() // Ensure DOM updates before scenes load
+    }, 200)
 })
 
 // Function to update active parameters
@@ -239,6 +228,22 @@ watch(activeParameters, applySpecialEffects, { deep: true })
     align-items: center;
     justify-content: center;
     padding: 3rem;
+
+    strong {
+        color: red;
+    }
+
+    div {
+        padding-bottom: 1rem;
+    }
+
+    flex-direction: column;
+}
+
+.confirm-destroy {
+    position: absolute;
+    z-index: 999999;
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
 .generating-wrapper {

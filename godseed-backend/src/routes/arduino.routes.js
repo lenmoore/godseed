@@ -10,19 +10,25 @@ router.post('/create', async (req, res) => {
     console.log('create route hit')
     console.log(req.body)
 
-    // Check if state already exists with created = true but createConfirmed is false
-    let state = await State.findOne({ created: true, createConfirmed: { $ne: true } })
+    // Fetch the current state
+    let state = await State.findOne({})
 
     if (!state) {
-      // If no state is found with created = true, create a new one or update an existing one
-      state = await State.findOneAndUpdate(
-        { created: false },
-        { created: true },
-        { new: true }
-      )
-    } else {
-      // If a state is found with created = true and createConfirmed is still false, set createConfirmed = true
+      // If no state exists, create a new one
+      state = new State()
+    }
+
+    if (!state.created) {
+      // If `created = false`, set `createConfirmed = true`
       state.createConfirmed = true
+    } else if (state.created && !state.showConfirm) {
+      // If `created = true` and `showConfirm = false`, set `showConfirm = true`
+      state.showConfirm = true
+    } else if (state.showConfirm) {
+      // If `showConfirm = true`, set `created = true` and `createConfirmed = true`
+      state.created = true
+      state.createConfirmed = true
+      state.showConfirm = false // Optionally reset showConfirm if no longer needed
     }
 
     const { parameters } = req.body
@@ -39,10 +45,6 @@ router.post('/create', async (req, res) => {
       )
     }
 
-    if (!state) {
-      return res.status(404).send({ message: 'State not found' })
-    }
-
     // Save the state
     await state.save()
     res.status(201).send(state)
@@ -51,6 +53,7 @@ router.post('/create', async (req, res) => {
     res.status(400).send({ error: error.message })
   }
 })
+
 
 // Route to create the initial state
 router.post('/create-initial-state', async (req, res) => {
