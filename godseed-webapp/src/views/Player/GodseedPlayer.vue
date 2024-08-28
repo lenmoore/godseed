@@ -1,6 +1,15 @@
 <template>
     <div v-if="!currentStateIsCreated && !isGenerating" class="instructions">
-        <p>Choose parameters by inserting jacks. Then, press the [colour] button to seed your world.</p>
+        <p>Choose parameters by inserting jacks. Then, press the blue button to seed your world.</p>
+    </div>
+    <div v-else-if="showConfirmDestroyWorld">
+        <div>
+            To create a new world, you must destroy the old one.
+        </div>
+        <div>Add parameters by inserting jacks.</div>
+        <div>
+            Press the button again to confirm.
+        </div>
     </div>
     <div v-else-if="isGenerating" class="generating-wrapper">
         <p>Generating...</p>
@@ -86,6 +95,8 @@ const specialParameters = {
     // Add more special parameters here in the future
 }
 
+const showConfirmDestroyWorld = ref(false)
+
 onMounted(async () => {
     console.log(apiBaseUrl)
     await scenesStore.fetchScenes()
@@ -107,23 +118,24 @@ onMounted(async () => {
 
         if (currentStateIsCreated.value && !wasCreated) {
             // If the state just changed to created, show "Generating..." for 10 seconds
-            isGenerating.value = true
+            // isGenerating.value = true
+            showConfirmDestroyWorld.value = true
             await nextTick() // Ensure DOM updates with "Generating..."
+
+        } else if (currentStateIsCreated.value && wasCreated) {
             setTimeout(async () => {
                 isGenerating.value = false
                 await nextTick() // Ensure DOM updates before scenes load
                 updateScenes() // Update scenes based on the current state
                 await nextTick() // Ensure DOM updates before scenes load
             }, 1000)
-        } else if (!currentStateIsCreated.value) {
-            isGenerating.value = false
         }
 
         await scenesStore.fetchParameters()
         updateActiveParameters()
 
-        await nextTick() // Ensure DOM updates before scenes load
-    }, 3000) // 3 seconds
+        await nextTick()
+    }, 300)
 })
 
 // Function to update active parameters
@@ -221,6 +233,12 @@ watch(activeParameters, applySpecialEffects, { deep: true })
 
 .instructions {
     font-size: 6rem;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
 }
 
 .generating-wrapper {
@@ -230,123 +248,115 @@ watch(activeParameters, applySpecialEffects, { deep: true })
 
 @keyframes float-1 {
     0% {
-        transform: translateY(0) translateX(0);
+        transform: translateY(0);
     }
     20% {
-        transform: translateY(40px) translateX(17px);
+        transform: translateY(2px);
     }
     35% {
-        transform: translateY(-20px) translateX(17px);
+        transform: translateY(4px);
     }
     50% {
-        transform: translateY(-20px) translateX(10px);
+        transform: translateY(7px);
     }
     65% {
-        transform: translateY(-20px) translateX(17px);
+        transform: translateY(8px);
     }
     80% {
-        transform: translateY(40px) translateX(17px);
+        transform: translateY(11px);
     }
     100% {
-        transform: translateY(0) translateX(0);
+        transform: translateY(13px);
     }
 }
 
 @keyframes float-2 {
     0% {
-        transform: translateY(0) translateX(0);
+        transform: translateY(0);
     }
-    20% {
-        transform: translateY(30px) translateX(-10px);
+    12% {
+        transform: translateY(1px);
     }
-    35% {
-        transform: translateY(-25px) translateX(20px);
+    22% {
+        transform: translateY(2px);
     }
-    50% {
-        transform: translateY(-15px) translateX(5px);
+    44% {
+        transform: translateY(3px);
     }
     65% {
-        transform: translateY(-25px) translateX(20px);
+        transform: translateY(4px);
     }
-    80% {
-        transform: translateY(30px) translateX(-10px);
+    89% {
+        transform: translateY(15px);
     }
     100% {
-        transform: translateY(0) translateX(0);
+        transform: translateY(60px);
     }
 }
 
 @keyframes float-3 {
     0% {
-        transform: translateY(0) translateX(0);
+        transform: translateY(0);
+    }
+    3% {
+        transform: translateY(8px);
     }
     20% {
-        transform: translateY(50px) translateX(20px);
+        transform: translateY(9px);
     }
-    35% {
-        transform: translateY(-15px) translateX(-15px);
+    45% {
+        transform: translateY(3px);
     }
-    50% {
-        transform: translateY(-30px) translateX(15px);
+    60% {
+        transform: translateY(4px);
     }
-    65% {
-        transform: translateY(-15px) translateX(-15px);
-    }
-    80% {
-        transform: translateY(50px) translateX(20px);
+    75% {
+        transform: translateY(50px);
     }
     100% {
-        transform: translateY(0) translateX(0);
+        transform: translateY(66px);
     }
 }
 
 @keyframes float-4 {
     0% {
-        transform: translateY(0) translateX(0);
+        transform: translateY(0);
     }
     20% {
-        transform: translateY(45px) translateX(-5px);
+        transform: translateY(4px);
     }
-    35% {
-        transform: translateY(-20px) translateX(25px);
+    40% {
+        transform: translateY(9px);
     }
-    50% {
-        transform: translateY(-35px) translateX(-5px);
-    }
-    65% {
-        transform: translateY(-20px) translateX(25px);
+    60% {
+        transform: translateY(11px);
     }
     80% {
-        transform: translateY(45px) translateX(-5px);
+        transform: translateY(14px);
     }
     100% {
-        transform: translateY(0) translateX(0);
+        transform: translateY(18px);
     }
 }
 
 @keyframes float-5 {
     0% {
-        transform: translateY(0) translateX(0);
+        transform: translateY(0);
     }
-    20% {
-        transform: translateY(35px) translateX(15px);
-    }
-    35% {
-        transform: translateY(-25px) translateX(-20px);
+    25% {
+        transform: translateY(1px);
     }
     50% {
-        transform: translateY(-10px) translateX(5px);
+        transform: translateY(2px);
     }
-    65% {
-        transform: translateY(-25px) translateX(-20px);
-    }
-    80% {
-        transform: translateY(35px) translateX(15px);
+    75% {
+        transform: translateY(3px);
     }
     100% {
-        transform: translateY(0) translateX(0);
+        transform: translateY(4px);
     }
 }
+
 
 .gravity-up {
     animation: float 30s ease-in-out infinite; /* Apply the float animation */
