@@ -124,7 +124,7 @@ onMounted(async () => {
         updateActiveParameters()
 
         await nextTick() // Ensure DOM updates before scenes load
-    }, 200)
+    }, 1000)
 })
 
 // Function to update active parameters
