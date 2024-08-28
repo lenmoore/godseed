@@ -4,11 +4,26 @@ import Parameter from '../models/parameter.schema.js'
 
 const router = express.Router()
 
-
+// Route to create the state with created = true initially
 router.post('/create', async (req, res) => {
   try {
     console.log('create route hit')
     console.log(req.body)
+
+    // Check if state already exists with created = true but createConfirmed is false
+    let state = await State.findOne({ created: true, createConfirmed: { $ne: true } })
+
+    if (!state) {
+      // If no state is found with created = true, create a new one or update an existing one
+      state = await State.findOneAndUpdate(
+        { created: false },
+        { created: true },
+        { new: true }
+      )
+    } else {
+      // If a state is found with created = true and createConfirmed is still false, set createConfirmed = true
+      state.createConfirmed = true
+    }
 
     const { parameters } = req.body
 
@@ -22,26 +37,17 @@ router.post('/create', async (req, res) => {
         { is_active: is_active },
         { new: true }
       )
-
     }
-
-    // After updating all parameters, set the state to created = true
-    const state = await State.findOneAndUpdate(
-      { created: false },
-      { created: true },
-      { new: true }
-    )
-
 
     if (!state) {
       return res.status(404).send({ message: 'State not found' })
     }
 
-    // save
+    // Save the state
     await state.save()
     res.status(201).send(state)
   } catch (error) {
-    console.error('Error creating scene:', error)
+    console.error('Error creating state:', error)
     res.status(400).send({ error: error.message })
   }
 })
@@ -53,7 +59,7 @@ router.post('/create-initial-state', async (req, res) => {
     if (await State.findOne({ created: true })) {
       return res.status(400).send({ error: 'Initial state already exists' })
     }
-    const state = new State({ created: false })
+    const state = new State({ created: true })
     await state.save()
     res.status(201).send(state)
   } catch (error) {
@@ -62,16 +68,16 @@ router.post('/create-initial-state', async (req, res) => {
   }
 })
 
-// Route to destroy the state (assuming you want to delete the document)
+// Route to destroy the state (assuming you want to reset the state)
 router.post('/destroy', async (req, res) => {
   try {
     console.log('destroy route hit')
     console.log(req.body)
 
-    // Assuming you want to delete the state document
+    // Reset the state by setting created to false and createConfirmed to false
     const state = await State.findOneAndUpdate(
       { created: true },
-      { created: false },
+      { created: false, createConfirmed: false },
       { new: true }
     )
 

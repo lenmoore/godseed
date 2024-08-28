@@ -4,6 +4,10 @@ const stateSchema = new mongoose.Schema({
   created: {
     type: Boolean,
     default: false
+  },
+  createConfirmed: {
+    type: Boolean,
+    default: false
   }
 })
 

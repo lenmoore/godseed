@@ -20,14 +20,12 @@
         <div v-if="!continuousUpdates" class="buttons">
             {{ currentStateIsCreated ? 'Animations are shown' : 'Animations are hidden' }}
             <button
-                :disabled="currentStateIsCreated"
                 class="create-button"
                 @click="clickCreate"
             >
                 Create
             </button>
             <button
-                :disabled="!currentStateIsCreated"
                 class="destroy-button"
                 @click="clickDestroy"
             >
@@ -85,7 +83,7 @@ const clickCreate = async () => {
     console.log('Create')
     currentStateIsCreated.value = true
 
-    await http.post('/arduino/create-initial-state')
+    // await http.post('/arduino/create-initial-state')
     await http.post('/arduino/create', { parameters: parametersWithoutNormal.value })
 }
 
