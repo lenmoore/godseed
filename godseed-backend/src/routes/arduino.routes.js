@@ -11,7 +11,9 @@ router.post('/create', async (req, res) => {
     console.log(req.body)
 
     // Fetch the current state
-    let state = await State.findOne({})
+    let state = await State.findOne({
+      created: true
+    })
 
     if (!state) {
       // If no state exists, create a new one
@@ -21,7 +23,7 @@ router.post('/create', async (req, res) => {
     if (!state.created) {
       // If `created = false`, set `createConfirmed = true`
       state.createConfirmed = true
-      state.created = true
+      // state.created = true
     } else if (state.created && !state.showConfirm) {
       // If `created = true` and `showConfirm = false`, set `showConfirm = true`
       state.showConfirm = true
