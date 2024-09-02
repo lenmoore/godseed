@@ -7,7 +7,7 @@
             <audio
                 v-if="eraName === 'neolithic'"
                 autoplay
-                src="/godseed main theme idle 2.mp3"
+                src="/idle.mp3"
             ></audio>
             <span v-if="showItIsWhatItIs">
                 <img alt="" height="auto" src="/itiswhatitis.png" width="2000px">
@@ -58,8 +58,8 @@
             ref="canvas"
             class="godseed-player"
         >
-            <audio v-if="eraName === 'neolithic' && playerActive" autoplay
-                   src="/godseed main theme animations 2.mp3"></audio>
+            <audio v-if="eraName === 'neolithic'" autoplay
+                   src="/main.mp3"></audio>
             <div
                 v-for="(scene, index) in scenes"
                 :key="scene._id"
