@@ -20,7 +20,7 @@ const startCountdown = () => {
             await updateStandbyInAPI(true)
             console.log('Standby set to true')
         }
-    }, 1000)
+    }, 180000)
 }
 
 // Function to update the `showStandby` status in the API
@@ -72,7 +72,6 @@ onMounted(() => {
 
 <template>
     <div>
-        <div>Time since last update: {{ (Date.now() - lastUpdateTime) / 1000 }} seconds</div>
         <div>Show Standby: {{ stateStore.showStandby }}</div>
         <div>Show ItIsWhatItIs: {{ stateStore.showItIsWhatItIs }}</div>
         <div>Show All Animations: {{ stateStore.showAllAnimations }}</div>

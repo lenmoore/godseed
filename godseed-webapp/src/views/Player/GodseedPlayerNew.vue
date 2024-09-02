@@ -8,9 +8,11 @@
                 Create a new world in your image, you already know what this one's like.
             </span>
             <span v-else-if="showGeneratingWorld">
+                <audio autoplay src="/Microwave.mp3"></audio>
                 show generating world, play microwave
             </span>
             <span v-else-if="showDestructionAnimation">
+                <audio autoplay src="/shutdown.mp3"></audio>
                showDestructionAnimation, TV shutdown
             </span>
             <span v-else-if="showCivilisationWasDestroyed">
@@ -23,6 +25,7 @@
             </span>
 
             <span v-else-if="showStandby">
+                            <audio autoplay src="/idle.mp3"></audio>
                 (standby)
                 Create a new world in your image.
                 <br>
@@ -132,7 +135,7 @@ watch(showAllAnimations, (value) => {
         setTimeout(() => {
             showGeneratingWorld.value = false
             playerActive.value = true
-        }, 4000)
+        }, 14000)
     }
 })
 
