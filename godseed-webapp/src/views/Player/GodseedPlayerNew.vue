@@ -4,13 +4,11 @@
         <div class="description">
 
             <span v-if="showItIsWhatItIs">
-                <img alt="" src="/itiswhatitis.png">
-                It is what it is.
-                Create a new world in your image, you already know what this one's like.
+                <img alt="" height="auto" src="/itiswhatitis.png" width="2000px">
             </span>
             <span v-else-if="showGeneratingWorld">
                 <audio autoplay src="/Microwave.mp3"></audio>
-                <img alt="" src="/creating.png">
+                <img alt="" height="auto" src="/creating.png" width="2000px">
             </span>
             <span v-else-if="showDestructionAnimation">
                 <audio autoplay src="/shutdown.mp3"></audio>
@@ -28,7 +26,7 @@
             <span v-else-if="showStandby">
 <!--             todo this will be something else
                <audio autoplay src="/idle.mp3"></audio>-->
-                <img alt="" src="/standby.png">
+                <img alt="" height="auto" src="/standby.png" width="2000px">
             </span>
         </div>
         <div
