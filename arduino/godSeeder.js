@@ -62,6 +62,7 @@ try {
         try {
           statusObject.created = true
           statusObject.showAllAnimations = true
+          statusObject.showStandby = false
           await axios.put(statusUpdateUrl, statusObject)
           console.log('PUT: /arduino/status')
         } catch (error) {
@@ -70,6 +71,7 @@ try {
       } else if (dataString === 'DESTROY') {
         statusObject.created = false
         statusObject.showAllAnimations = false
+        statusObject.showStandby = false
         statusObject.showCivilisationWasDestroyed = true
         console.log('DESTROY command received')
         try {

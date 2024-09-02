@@ -13,7 +13,6 @@ router.post('/update-params', async (req, res) => {
     for (const param of parameters) {
       const { name, is_active } = param
 
-
       // find it
       const parameter = await Parameter.findOne({ name: name })
       // compare is_active
@@ -24,7 +23,7 @@ router.post('/update-params', async (req, res) => {
           { is_active: is_active },
           { new: true }
         )
-
+        console.log('should update standby to false')
         await State.findOneAndUpdate(
           { name: 'STATE' },
           { showStandby: false },
