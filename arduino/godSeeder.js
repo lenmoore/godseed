@@ -2,30 +2,30 @@ import SerialPortPkg from 'serialport'
 import ReadlinePkg from '@serialport/parser-readline'
 import axios from 'axios'
 
-// first add
-// node checkPorts.js
-// node godSeeder.js
 const { SerialPort } = SerialPortPkg
 const { ReadlineParser } = ReadlinePkg
 
-const portPath = '/dev/tty.usbmodem11101' // Use the correct port path
+const portPath = 'COM1' // Change to COM1 for your specific setup
 console.log(`Using port path: ${portPath}`)
 const apiBaseUrl = 'http://3.65.248.203/api' // Use the correct API base URL
 
+const paramsBatchUpdateUrl = apiBaseUrl + 'arduino/update-params'
+const statusUpdateUrl = apiBaseUrl + 'arduino/status'
+
+const statusObject = {
+  showAllAnimations: false,
+  showCivilisationWasDestroyed: false,
+  created: false
+}
 try {
   const port = new SerialPort({ path: portPath, baudRate: 9600 })
 
   const parser = port.pipe(new ReadlineParser({ delimiter: '\n' }))
   console.log('hello world!')
-  parser.on('data', async (data) => {
-    const dataString = data.toString('utf8').trim() // Convert the Buffer to a string and trim whitespace
-    console.log('Received:', dataString)
 
+  // Function to handle sending API requests based on parsed data
+  const sendStateUpdate = async (parsedData) => {
     try {
-      // First, try parsing as JSON
-      const parsedData = JSON.parse(dataString)
-
-      // Handle the parsed JSON data here
       const parameters = Object.keys(parsedData).map(key => ({
         name: key,
         is_active: parsedData[key]
@@ -33,47 +33,51 @@ try {
 
       const parametersWithoutNormal = parameters.filter(param => param.name !== 'normal')
 
-      console.log('Should be sending this:')
-      console.log(parametersWithoutNormal)
-
-      if (dataString === 'ITISWHATITIS') {
-        console.log('it is what it is')
-      }
-
-      if (dataString === 'CREATE') {
-        console.log('create')
-      }
-
-      if (dataString === 'DESTROY') {
-        console.log('destroy')
-      }
-
-      // Send API requests
+      // Send the parameters update request
       try {
-        await axios.post(`${apiBaseUrl}/arduino/create-initial-state`)
-        console.log('Sent: /arduino/create-initial-state')
+        await axios.post(paramsBatchUpdateUrl, { parameters: parametersWithoutNormal })
       } catch (error) {
-        console.error('Error sending /arduino/create-initial-state:', error.message, '. It is probably because there already is an active state.')
+        console.error('Error sending params:', error.message)
       }
+    } catch (error) {
+      console.error('Failed to send params:', error.message)
+    }
+  }
 
-      try {
-        await axios.post(`${apiBaseUrl}/arduino/create`, { parameters: parametersWithoutNormal })
-        console.log('Sent: /arduino/create')
-      } catch (error) {
-        console.error('Error sending /arduino/create:', error.message, '. It is probably because there already is an active state.')
-      }
+  parser.on('data', async (data) => {
+    const dataString = data.toString('utf8').trim() // Convert the Buffer to a string and trim whitespace
+    console.log('Received:', dataString)
+
+    try {
+      // Attempt to parse the data as JSON
+      const parsedData = JSON.parse(dataString)
+
+      // If parsed successfully, send the state update to the server
+      await sendStateUpdate(parsedData)
 
     } catch (error) {
-      if (dataString === 'DESTROY') {
-        console.log('Destroy button pressed, sending destroy request...')
+      if (dataString === 'CREATE') {
         try {
-          await axios.post(`${apiBaseUrl}/arduino/destroy`)
-          console.log('Sent: /arduino/destroy')
+          statusObject.created = true
+          statusObject.showAllAnimations = true
+          await axios.put(statusUpdateUrl, statusObject)
+          console.log('PUT: /arduino/status')
         } catch (error) {
-          console.error('Error sending /arduino/destroy:', error.message, '. It is probably because there are no more active states to remove.')
+          console.error('Error sending /arduino/create:', error.message)
+        }
+      } else if (dataString === 'DESTROY') {
+        statusObject.created = false
+        statusObject.showAllAnimations = false
+        statusObject.showCivilisationWasDestroyed = true
+        console.log('DESTROY command received')
+        try {
+          await axios.put(statusUpdateUrl, statusObject)
+          console.log('PUT: /arduino/status')
+        } catch (error) {
+          console.error('Error sending /arduino/destroy:', error.message)
         }
       } else {
-        console.error('Error parsing JSON:', error.message)
+        console.error('Error parsing JSON or handling known command:', error.message)
       }
     }
   })
