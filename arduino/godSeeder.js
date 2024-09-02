@@ -16,7 +16,7 @@ try {
   const port = new SerialPort({ path: portPath, baudRate: 9600 })
 
   const parser = port.pipe(new ReadlineParser({ delimiter: '\n' }))
-
+  console.log('hello world!')
   parser.on('data', async (data) => {
     const dataString = data.toString('utf8').trim() // Convert the Buffer to a string and trim whitespace
     console.log('Received:', dataString)
@@ -47,7 +47,7 @@ try {
       if (dataString === 'DESTROY') {
         console.log('destroy')
       }
-      
+
       // Send API requests
       try {
         await axios.post(`${apiBaseUrl}/arduino/create-initial-state`)
