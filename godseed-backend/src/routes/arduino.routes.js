@@ -12,11 +12,10 @@ router.put('/update-params', async (req, res) => {
 
     // Iterate over each parameter in the request body
     for (const param of parameters) {
-      const { name, is_active } = param
+      const { receivedName, is_active } = param
 
       // find it
-      const parameter = await Parameter.findOne({ name: name.startsWith(name) }
-      )
+      const parameter = await Parameter.findOne({ name: new RegExp('^' + receivedName) })
 
       // compare is_active
       console.log(parameter)
