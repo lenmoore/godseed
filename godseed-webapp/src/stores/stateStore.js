@@ -57,6 +57,7 @@ export const useStateStore = defineStore('stateStore', {
       // if no jacks are inserted, we will show standby
       this.makeEverythingFalse()
       this.showStandby = true
+      this.showAllAnimations = true
       await this.updateState()
     },
     async updateDevMode() {
@@ -88,6 +89,7 @@ export const useStateStore = defineStore('stateStore', {
     },
     async destroyPushed() {
       this.makeEverythingFalse()
+      this.civilisationCounter++
       this.showCivilisationWasDestroyed = true
       await this.updateState()
     },

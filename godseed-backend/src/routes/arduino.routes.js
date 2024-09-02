@@ -24,7 +24,7 @@ router.put('/update-params', async (req, res) => {
         console.log('should update standby to false')
         await State.findOneAndUpdate(
           { name: 'STATE' },
-          { showStandby: false },
+          { showStandby: false, showAllAnimations: true },
           { new: true }  // This option returns the updated document
         )
       }

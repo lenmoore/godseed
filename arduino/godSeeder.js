@@ -65,6 +65,7 @@ try {
           statusObject.created = true
           statusObject.showAllAnimations = true
           statusObject.showStandby = false
+          statusObject.showCivilisationWasDestroyed = false
           await axios.put(statusUpdateUrl, statusObject)
           console.log('PUT: /arduino/status')
         } catch (error) {

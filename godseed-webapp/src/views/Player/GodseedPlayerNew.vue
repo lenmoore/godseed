@@ -31,7 +31,7 @@
             </span>
         </div>
         <div
-            v-if="showAllAnimations || showStandby"
+            v-if="showAllAnimations"
             ref="canvas"
             class="godseed-player"
             style="background-color: #181818; !important;"
@@ -251,9 +251,11 @@ setInterval(fetchParametersAndUpdate, 3000)
 
 // Watch for changes in active parameters to apply effects
 watch(activeParameters, applySpecialEffects, { deep: true })
-watch(() => scenesStore.parameters, () => {
+watch(() => scenesStore.parameters, async () => {
     updateActiveParameters()
     updateScenes()  // Re-run the update to switch out the videos
+
+    await nextTick() // Ensure DOM updates before scenes load
 }, { deep: true })
 
 </script>
