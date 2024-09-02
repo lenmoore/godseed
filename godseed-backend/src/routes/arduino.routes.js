@@ -8,7 +8,6 @@ router.put('/update-params', async (req, res) => {
   try {
 
     const { parameters } = req.body
-    console.log(parameters)
 
     // Iterate over each parameter in the request body
     for (const param of parameters) {
@@ -20,7 +19,6 @@ router.put('/update-params', async (req, res) => {
       )
 
       // compare is_active first
-      console.log(parameter)
       if (parameter && parameter.is_active !== is_active) {
         // update showStandby
         console.log('should update standby to false')
