@@ -50,6 +50,7 @@ export const useStateStore = defineStore('stateStore', {
       this.makeEverythingFalse()
       this.showStandby = false
       this.created = true
+      this.showAllAnimations = true
       await this.updateState()
     },
     async activateStandby() {
@@ -93,6 +94,7 @@ export const useStateStore = defineStore('stateStore', {
     async anyChangeDetected() {
       this.makeEverythingFalse()
       this.showStandby = false
+      this.showAllAnimations = true
       await this.updateState()
     },
     async updateState() {
