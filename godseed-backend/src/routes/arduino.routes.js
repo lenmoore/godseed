@@ -13,12 +13,24 @@ router.post('/update-params', async (req, res) => {
     for (const param of parameters) {
       const { name, is_active } = param
 
-      // Find each parameter by name and update its is_active status
-      await Parameter.findOneAndUpdate(
-        { name: new RegExp(`^${name}`) }, // Matches documents where 'name' starts with the value of 'name'
-        { is_active: is_active },
-        { new: true }
-      )
+
+      // find it
+      const parameter = await Parameter.findOne({ name: name })
+      // compare is_active
+      if (parameter.is_active !== is_active) {
+        // update it
+        await Parameter.findOneAndUpdate(
+          { name: name },
+          { is_active: is_active },
+          { new: true }
+        )
+
+        await State.findOneAndUpdate(
+          { name: 'STATE' },
+          { showStandby: false },
+          { new: true }  // This option returns the updated document
+        )
+      }
     }
 
     res.status(200).send({ message: 'Parameters updated' })

@@ -7,6 +7,7 @@ import GodseedPlayer from '@/views/Player/GodseedPlayer.vue'
 import ParamsActivator from '@/views/Player/ParamsActivator.vue'
 import GodseedPlayerNew from '@/views/Player/GodseedPlayerNew.vue'
 import ParamsActivatorNew from '@/views/Player/ParamsActivatorNew.vue'
+import AdminStatus from '@/views/Admin/AdminStatus.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -24,6 +25,10 @@ const router = createRouter({
       component: ParamsActivatorNew
     },
 
+    {
+      path: '/status',
+      component: AdminStatus
+    },
     {
       path: '/godseed/:eraName',
       name: 'godseed-player',

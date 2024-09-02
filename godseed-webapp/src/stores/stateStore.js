@@ -52,6 +52,12 @@ export const useStateStore = defineStore('stateStore', {
       this.created = true
       await this.updateState()
     },
+    async activateStandby() {
+      // if no jacks are inserted, we will show standby
+      this.makeEverythingFalse()
+      this.showStandby = true
+      await this.updateState()
+    },
     async updateDevMode() {
       // toggle development mode and make everything else false
       console.log('dev mode')
@@ -84,13 +90,20 @@ export const useStateStore = defineStore('stateStore', {
       this.showCivilisationWasDestroyed = true
       await this.updateState()
     },
+    async isIdle() {
+      this.makeEverythingFalse()
+      this.showStandby = true
+      await this.updateState()
+    },
     async anyChangeDetected() {
-
+      this.makeEverythingFalse()
+      this.showStandby = false
+      await this.updateState()
     },
     async updateState() {
       try {
         const body = {
-          // showStandby: this.showStandby,
+          showStandby: this.showStandby,
           showItIsWhatItIs: this.showItIsWhatItIs,
           showAllAnimations: this.showAllAnimations,
           showCivilisationWasDestroyed: this.showCivilisationWasDestroyed,
