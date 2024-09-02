@@ -5,9 +5,9 @@ import axios from 'axios'
 const { SerialPort } = SerialPortPkg
 const { ReadlineParser } = ReadlinePkg
 
-const portPath = 'COM1' // Change to COM1 for your specific setup
+const portPath = 'COM3' // Change to COM1 for your specific setup
 console.log(`Using port path: ${portPath}`)
-const apiBaseUrl = 'http://3.65.248.203/api' // Use the correct API base URL
+const apiBaseUrl = 'http://3.65.248.203/api/' // Use the correct API base URL
 
 const paramsBatchUpdateUrl = apiBaseUrl + 'arduino/update-params'
 const statusUpdateUrl = apiBaseUrl + 'arduino/status'
@@ -17,6 +17,7 @@ const statusObject = {
   showCivilisationWasDestroyed: false,
   created: false
 }
+
 try {
   const port = new SerialPort({ path: portPath, baudRate: 9600 })
 
@@ -52,6 +53,7 @@ try {
       // Attempt to parse the data as JSON
       const parsedData = JSON.parse(dataString)
 
+      console.log('parsing data')
       // If parsed successfully, send the state update to the server
       await sendStateUpdate(parsedData)
 
