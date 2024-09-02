@@ -2,13 +2,8 @@
     <div>
         New Godseed player
         <div class="description">
-            <span v-if="showStandby">
-                (standby)
-                Create a new world in your image.
-                <br>
-                Interact with Godseed to set parameters for your world.
-            </span>
-            <span v-else-if="showItIsWhatItIs">
+
+            <span v-if="showItIsWhatItIs">
                 It is what it is.
                 Create a new world in your image, you already know what this one's like.
             </span>
@@ -25,6 +20,13 @@
             </span>
             <span v-else-if="developmentMode">
                 development mode
+            </span>
+
+            <span v-else-if="showStandby">
+                (standby)
+                Create a new world in your image.
+                <br>
+                Interact with Godseed to set parameters for your world.
             </span>
         </div>
         <div
@@ -67,9 +69,7 @@
                 </video>
             </div>
         </div>
-
     </div>
-
 </template>
 
 <script setup>
@@ -101,7 +101,7 @@ const specialParameters = {
 
 const showConfirmDestroyWorld = ref(false)
 
-const showStandby = ref(true)
+const showStandby = ref(false)
 const showItIsWhatItIs = ref(false)
 
 const showCivilisationWasDestroyed = ref(false)
@@ -136,28 +136,6 @@ watch(showAllAnimations, (value) => {
     }
 })
 
-let lastChangeTime = null
-watch(
-    [playerActive],
-    (newValues, oldValues) => {
-        console.log('Detected changes in watched properties:', newValues, oldValues)
-        lastChangeTime = Date.now()
-        if (showStandby.value) {
-            showStandby.value = false  // Reset standby if it's currently active
-        }
-    },
-    { deep: true }
-)
-
-
-// Periodic check to update showStandby based on time delta
-const checkInactivity = () => {
-    const currentTime = Date.now()
-    const timeDelta = currentTime - lastChangeTime
-    if (timeDelta > 10000) {  // 10 seconds in milliseconds
-        showStandby.value = true
-    }
-}
 
 onMounted(async () => {
     console.log(apiBaseUrl)
@@ -179,7 +157,7 @@ onMounted(async () => {
         currentStateIsCreated.value = status.data.state.created
         showConfirmDestroyWorld.value = status.data.state.showConfirm
 
-        // showStandby.value = status.data.state.showStandby
+        showStandby.value = status.data.state.showStandby
         showItIsWhatItIs.value = status.data.state.showItIsWhatItIs
         showAllAnimations.value = status.data.state.showAllAnimations
         showCivilisationWasDestroyed.value = status.data.state.showCivilisationWasDestroyed
@@ -195,7 +173,6 @@ onMounted(async () => {
         await nextTick() // Ensure DOM updates before scenes load
     }, 500)
 
-    setInterval(checkInactivity, 1000)  // Check every second
 
 })
 

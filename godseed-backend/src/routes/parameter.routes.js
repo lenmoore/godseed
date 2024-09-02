@@ -1,5 +1,6 @@
 import express from 'express'
 import Parameter from '../models/parameter.schema.js'
+import State from '../models/state.schema.js'
 
 const router = express.Router()
 
@@ -44,6 +45,11 @@ router.put('/:id', async (req, res) => {
     if (!parameter) {
       return res.status(404).send('Parameter not found')
     }
+    await State.findOneAndUpdate(
+      { name: 'STATE' },
+      { showStandby: false },
+      { new: true }  // This option returns the updated document
+    )
     res.status(200).send(parameter)
   } catch (error) {
     res.status(400).send(error)

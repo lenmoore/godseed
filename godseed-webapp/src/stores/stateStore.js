@@ -4,7 +4,7 @@ import http from '@/stores/http.js'
 
 export const useStateStore = defineStore('stateStore', {
   state: () => ({
-    showStandby: true,
+    showStandby: false,
     showItIsWhatItIs: false,
     showAllAnimations: false,
     showCivilisationWasDestroyed: false,
@@ -47,11 +47,10 @@ export const useStateStore = defineStore('stateStore', {
     },
     async jackInserted() {
       // if any jack is inserted, we will show that parameter's videos
-      if (this.showItIsWhatItIs) {
-        this.makeEverythingFalse()
-        this.showStandby = true
-        await this.updateState()
-      }
+      this.makeEverythingFalse()
+      this.showStandby = false
+      this.created = true
+      await this.updateState()
     },
     async updateDevMode() {
       // toggle development mode and make everything else false
@@ -66,6 +65,7 @@ export const useStateStore = defineStore('stateStore', {
       // only show it is what it is
       this.makeEverythingFalse()
       this.showItIsWhatItIs = true
+      this.showStandby = false
       await this.updateState()
     },
     async createPushed() {
@@ -84,10 +84,13 @@ export const useStateStore = defineStore('stateStore', {
       this.showCivilisationWasDestroyed = true
       await this.updateState()
     },
+    async anyChangeDetected() {
+
+    },
     async updateState() {
       try {
         const body = {
-          showStandby: this.showStandby,
+          // showStandby: this.showStandby,
           showItIsWhatItIs: this.showItIsWhatItIs,
           showAllAnimations: this.showAllAnimations,
           showCivilisationWasDestroyed: this.showCivilisationWasDestroyed,
