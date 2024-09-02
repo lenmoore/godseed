@@ -26,11 +26,12 @@
             <span v-else-if="showStandby">
 <!--             todo this will be something else
                <audio autoplay src="/idle.mp3"></audio>-->
+                standby
                 <img alt="" height="auto" src="/standby.png" width="2000px">
             </span>
         </div>
         <div
-            v-if="playerActive && !showCivilisationWasDestroyed && !showGeneratingWorld"
+            v-if="showAllAnimations"
             ref="canvas"
             class="godseed-player"
             style="background-color: #181818; !important;"
@@ -193,7 +194,6 @@ const updateScenes = () => {
     // Force videos to change in the template
     scenes.value = [...scenes.value]
 }
-
 
 // Function to apply special effects based on active parameters
 const applySpecialEffects = () => {
