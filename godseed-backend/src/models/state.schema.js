@@ -7,7 +7,7 @@ const stateSchema = new mongoose.Schema({
   },
   showStandby: {
     type: Boolean,
-    default: true
+    default: false
   },
   showItIsWhatItIs: {
     type: Boolean,

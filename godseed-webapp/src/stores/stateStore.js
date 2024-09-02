@@ -90,11 +90,6 @@ export const useStateStore = defineStore('stateStore', {
       this.showCivilisationWasDestroyed = true
       await this.updateState()
     },
-    async isIdle() {
-      this.makeEverythingFalse()
-      this.showStandby = true
-      await this.updateState()
-    },
     async anyChangeDetected() {
       this.makeEverythingFalse()
       this.showStandby = false
@@ -103,7 +98,7 @@ export const useStateStore = defineStore('stateStore', {
     async updateState() {
       try {
         const body = {
-          showStandby: this.showStandby,
+          showStandby: !this.showStandby ? false : null,
           showItIsWhatItIs: this.showItIsWhatItIs,
           showAllAnimations: this.showAllAnimations,
           showCivilisationWasDestroyed: this.showCivilisationWasDestroyed,
