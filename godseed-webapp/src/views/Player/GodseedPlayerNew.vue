@@ -4,7 +4,11 @@
     >
         New Godseed player
         <div class="description">
-            <audio v-if="eraName === 'neolithic'" autoplay src="/godseed main theme idle 2.mp3"></audio>
+            <audio
+                v-if="eraName === 'neolithic'"
+                autoplay
+                src="/godseed main theme idle 2.mp3"
+            ></audio>
             <span v-if="showItIsWhatItIs">
                 <img alt="" height="auto" src="/itiswhatitis.png" width="2000px">
             </span>
@@ -12,12 +16,20 @@
                 <audio v-if="eraName === 'neolithic'" autoplay src="/Microwave.mp3"></audio>
                 <img alt="" height="auto" src="/creating.png" width="2000px">
             </span>
-            <span v-else-if="showDestructionAnimation">
-                <audio v-if="eraName === 'neolithic'" autoplay src="/shutdown.mp3"></audio>
+
+            <span
+                v-if="showDestructionAnimation"
+            >
+                animation
+                <audio
+                    v-if="eraName === 'neolithic'"
+                    autoplay src="/shutdown.mp3"
+                ></audio>
                 <video autoplay src="/tvshutdown.mov"></video>
             </span>
-            <div v-else-if="showCivilisationWasDestroyed"
-                 style="font-size: 2rem;
+            <div
+                v-else-if="showCivilisationWasDestroyedYee"
+                style="font-size: 2rem;
                 display: flex; align-items: center;
                 justify-content: center; position: absolute;
                 height: 100%; width: 100%; background-color: rgba(0, 0, 0, 0.5)
@@ -124,12 +136,14 @@ const created = ref(false)
 const showConfirm = ref(false)
 const createConfirmed = ref(false)
 const showDestructionAnimation = ref(false)
-
+const showCivilisationWasDestroyedYee = ref(false)
 watch(showCivilisationWasDestroyed, (value) => {
+    console.log(value)
     if (value) {//show animation for 4s
         showDestructionAnimation.value = true
         setTimeout(() => {
             showDestructionAnimation.value = false
+            showCivilisationWasDestroyedYee.value = true
         }, 4000)
     }
 })
@@ -139,8 +153,8 @@ const showGeneratingWorld = ref(false)
 const playerActive = ref(false)
 
 
-watch(showAllAnimations, (value) => {
-    if (value) {//show animation for 4s
+watch(showAllAnimations, (value, oldValue) => {
+    if (value && value !== oldValue) {//show animation for 4s
         showGeneratingWorld.value = true
         setTimeout(() => {
             showGeneratingWorld.value = false
