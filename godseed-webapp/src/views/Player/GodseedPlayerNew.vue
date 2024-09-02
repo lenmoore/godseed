@@ -12,7 +12,7 @@
             </span>
             <span v-else-if="showDestructionAnimation">
                 <audio autoplay src="/shutdown.mp3"></audio>
-                <video autoplay src="/tvshutdown.mov"></video>
+                <video autoplay src="/tvshutdown.mov" style="width: 100%; height: auto;"></video>
             </span>
             <span v-else-if="showCivilisationWasDestroyed">
                 Civilisation number {{ civilisationCounter }} was destroyed. <br>
@@ -36,6 +36,8 @@
             class="godseed-player"
             style="background-color: #181818; !important;"
         >
+
+            <!--            audio will be here -->
             <div
                 v-for="(scene, index) in scenes"
                 :key="scene._id"
@@ -55,10 +57,10 @@
                     v-for="(video, index) in scene.displayVideos"
                     :key="video.video"
                     :style="{
-          width: '100%',
-          height: '100%',
-          position: 'absolute',
-        }"
+                      width: '100%',
+                      height: '100%',
+                      position: 'absolute',
+                    }"
                     autoplay
                     class="scene-video"
                     loop
@@ -177,13 +179,11 @@ onMounted(async () => {
 
 })
 
-// Function to update active parameters
 const updateActiveParameters = () => {
     activeParameters.value = scenesStore.parameters.filter(param => param.is_active)
     applySpecialEffects()
 }
 
-// Function to update scenes based on the current active parameters
 const updateScenes = () => {
     scenes.value = scenesStore.scenes
         .filter(scene => scene.era?.name === eraName.value)
@@ -191,7 +191,8 @@ const updateScenes = () => {
             ...scene,
             displayVideos: getFilteredVideos(scene)
         }))
-    // Force videos to change in the template
+
+    // Trigger reactivity to force re-render
     scenes.value = [...scenes.value]
 }
 
@@ -212,7 +213,6 @@ const getFilteredVideos = (scene) => {
             (videoRow) => ({ ...videoRow, video: videoRow.original_video })
         )] : []
 
-        console.log(displayVideos)
         activeParameters.value.forEach(param => {
             const variation = scene.variations?.find(variation => variation.parameter === param._id)
             if (variation) {
@@ -221,12 +221,11 @@ const getFilteredVideos = (scene) => {
                     if (videoToReplace) {
                         videoToReplace.video = row.replacement_video || videoToReplace.video
                     }
-                    if (row.original_video.length === 0) {
+                    if (!videoToReplace && row.replacement_video) {
                         displayVideos.push({ name: row.name, video: row.replacement_video })
                     }
                 })
             }
-
         })
 
         return displayVideos
@@ -235,8 +234,27 @@ const getFilteredVideos = (scene) => {
     return []
 }
 
+const lastFetchedParameters = ref([])
+
+const fetchParametersAndUpdate = async () => {
+    await scenesStore.fetchParameters()
+    if (JSON.stringify(lastFetchedParameters.value) !== JSON.stringify(scenesStore.parameters)) {
+        lastFetchedParameters.value = [...scenesStore.parameters]
+        updateActiveParameters()
+        updateScenes()
+    }
+}
+
+// Call this function in your interval
+setInterval(fetchParametersAndUpdate, 3000)
+
+
 // Watch for changes in active parameters to apply effects
 watch(activeParameters, applySpecialEffects, { deep: true })
+watch(() => scenesStore.parameters, () => {
+    updateActiveParameters()
+    updateScenes()  // Re-run the update to switch out the videos
+}, { deep: true })
 
 </script>
 
