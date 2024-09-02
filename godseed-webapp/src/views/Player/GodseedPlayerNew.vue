@@ -13,6 +13,7 @@
             </span>
             <span v-else-if="showDestructionAnimation">
                 <audio autoplay src="/shutdown.mp3"></audio>
+                <video autoplay src="/tvshutdown.mov"></video>
                showDestructionAnimation, TV shutdown
             </span>
             <span v-else-if="showCivilisationWasDestroyed">
@@ -25,7 +26,8 @@
             </span>
 
             <span v-else-if="showStandby">
-                            <audio autoplay src="/idle.mp3"></audio>
+<!--             todo this will be something else
+               <audio autoplay src="/idle.mp3"></audio>-->
                 (standby)
                 Create a new world in your image.
                 <br>
@@ -33,7 +35,7 @@
             </span>
         </div>
         <div
-            v-if="playerActive"
+            v-if="playerActive && !showCivilisationWasDestroyed && !showGeneratingWorld"
             ref="canvas"
             class="godseed-player"
             style="background-color: #181818; !important;"
