@@ -190,18 +190,10 @@ const updateScenes = () => {
             ...scene,
             displayVideos: getFilteredVideos(scene)
         }))
-
     // Force videos to change in the template
-    function shuffleArray(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]]
-        }
-        return array
-    }
-
-    scenes.value = [shuffleArray(...scenes.value)]
+    scenes.value = [...scenes.value]
 }
+
 
 // Function to apply special effects based on active parameters
 const applySpecialEffects = () => {
