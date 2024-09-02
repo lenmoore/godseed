@@ -23,7 +23,7 @@
                 development mode
             </span>
 
-            <span v-else-if="showStandby">
+            <span v-else-if="showStandby" style="position: absolute; background-color: rgba(0, 0, 0, 0.5)">
 <!--             todo this will be something else
                <audio autoplay src="/idle.mp3"></audio>-->
                 standby
@@ -31,7 +31,7 @@
             </span>
         </div>
         <div
-            v-if="showAllAnimations"
+            v-if="showAllAnimations || showStandby"
             ref="canvas"
             class="godseed-player"
             style="background-color: #181818; !important;"

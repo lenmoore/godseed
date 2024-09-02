@@ -4,10 +4,11 @@ import Parameter from '../models/parameter.schema.js'
 
 const router = express.Router()
 
-router.post('/update-params', async (req, res) => {
+router.put('/update-params', async (req, res) => {
   try {
 
     const { parameters } = req.body
+    console.log(parameters)
 
     // Iterate over each parameter in the request body
     for (const param of parameters) {
@@ -16,10 +17,11 @@ router.post('/update-params', async (req, res) => {
       // find it
       const parameter = await Parameter.findOne({ name: name })
       // compare is_active
+      console.log(parameter)
       if (parameter && parameter.is_active !== is_active) {
         // update it
         await Parameter.findOneAndUpdate(
-          { name: name },
+          { name: name.startsWith(name) },
           { is_active: is_active },
           { new: true }
         )

@@ -32,12 +32,13 @@ try {
         name: key,
         is_active: parsedData[key]
       }))
+      console.log(parameters)
 
       const parametersWithoutNormal = parameters.filter(param => param.name !== 'normal')
 
       // Send the parameters update request
       try {
-        await axios.post(paramsBatchUpdateUrl, { parameters: parametersWithoutNormal })
+        await axios.put(paramsBatchUpdateUrl, { parameters: parametersWithoutNormal })
       } catch (error) {
         console.error('Error sending params:', error.message)
       }
