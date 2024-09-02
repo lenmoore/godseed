@@ -4,17 +4,17 @@
         <div class="description">
 
             <span v-if="showItIsWhatItIs">
+                <img alt="" src="/itiswhatitis.png">
                 It is what it is.
                 Create a new world in your image, you already know what this one's like.
             </span>
             <span v-else-if="showGeneratingWorld">
                 <audio autoplay src="/Microwave.mp3"></audio>
-                show generating world, play microwave
+                <img alt="" src="/creating.png">
             </span>
             <span v-else-if="showDestructionAnimation">
                 <audio autoplay src="/shutdown.mp3"></audio>
                 <video autoplay src="/tvshutdown.mov"></video>
-               showDestructionAnimation, TV shutdown
             </span>
             <span v-else-if="showCivilisationWasDestroyed">
                 Civilisation number {{ civilisationCounter }} was destroyed. <br>
@@ -28,10 +28,7 @@
             <span v-else-if="showStandby">
 <!--             todo this will be something else
                <audio autoplay src="/idle.mp3"></audio>-->
-                (standby)
-                Create a new world in your image.
-                <br>
-                Interact with Godseed to set parameters for your world.
+                <img alt="" src="/standby.png">
             </span>
         </div>
         <div
