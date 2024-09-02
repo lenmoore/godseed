@@ -17,7 +17,7 @@ router.post('/update-params', async (req, res) => {
       // find it
       const parameter = await Parameter.findOne({ name: name })
       // compare is_active
-      if (parameter.is_active !== is_active) {
+      if (parameter && parameter.is_active !== is_active) {
         // update it
         await Parameter.findOneAndUpdate(
           { name: name },
