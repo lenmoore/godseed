@@ -1,7 +1,21 @@
 <template>
     <div>
-        <h1>Parameters List</h1>
-        Green = active
+        <h1>Godseed globe emulator</h1>
+        <br>
+
+
+        {{ developmentMode ? 'Currently activating animations automatically' : 'Current using the Godseed logic' }}
+        <button
+            :class="developmentMode ? 'bg-green':'br-orange'"
+            class="developer-mode-btn"
+            @click="toggleDevelopmentMode"
+        >
+            {{ developmentMode ? 'Enter Godseed mode' : 'Make updates automatic' }}
+        </button>
+        <br>
+        Green = active.
+
+
         <section>
             <ul>
                 <li
@@ -17,8 +31,7 @@
 
         <!--        <button @click="createInitialState">create initial state</button>-->
 
-        <div v-if="!continuousUpdates" class="buttons">
-            {{ currentStateIsCreated ? 'Animations are shown' : 'Animations are hidden' }}
+        <div class="buttons">
             <button
                 class="create-button"
                 @click="clickCreate"
@@ -32,59 +45,87 @@
                 Destroy
             </button>
         </div>
+        <div style="margin-top: 10rem;">
+            <label for="cont-updates" style="padding: 1rem; background-color: lightpink; color: black;">
+                Activates automatically
+                <input id="cont-updates" v-model="continuousUpdates" type="checkbox" />
+            </label>
+        </div>
     </div>
 </template>
 
 <script setup>
 import { onMounted, ref, toRefs } from 'vue'
 import { useSetupStore } from '@/stores/setupStore.js'
+import { useStateStore } from '@/stores/stateStore.js'
 import http from '@/stores/http.js'
 
 const setupStore = useSetupStore()
+const stateStore = useStateStore()
 const { parametersWithoutNormal } = toRefs(setupStore)
 
 const continuousUpdates = ref(false)
 const currentStateIsCreated = ref(false)
 
+const developmentMode = ref(false)
 onMounted(async () => {
     try {
         await setupStore.fetchParametersExceptNormal()
         const status = await http.get('/arduino/status')
         console.log(status)
-        currentStateIsCreated.value = status.data.state.created
+        developmentMode.value = status.data.state.developmentMode
     } catch (error) {
         console.error('Error fetching parameters on mount:', error)
     }
 })
 
+const toggleDevelopmentMode = async () => {
+    developmentMode.value = !developmentMode.value
+    try {
+        await stateStore.updateDevMode()
+    } catch (error) {
+        console.error('Error updating development mode:', error)
+    }
+}
+
 const toggleParameter = async (parameter) => {
     parameter.is_active = !parameter.is_active
-    if (continuousUpdates.value) {
+    try {
+        await setupStore.updateParameter(parameter._id, { is_active: parameter.is_active })
+    } catch (error) {
+        console.error('Error updating parameter:', error)
+    }
 
-        try {
-            await setupStore.updateParameter(parameter._id, { is_active: parameter.is_active })
-        } catch (error) {
-            console.error('Error updating parameter:', error)
-        }
+    await checkParametersAndUpdateState()
+}
+
+const checkParametersAndUpdateState = async () => {
+    const anyActive = parametersWithoutNormal.value.some(param => param.is_active)
+    if (!anyActive) {
+        await stateStore.noJacksEntered()
     } else {
-        console.log('Do nothing')
+        await stateStore.jackInserted()
     }
 }
 
 
 const clickCreate = async () => {
-    console.log('Create')
-    currentStateIsCreated.value = true
+    console.log('Create pushed')
 
-    // await http.post('/arduino/create-initial-state')
-    await http.post('/arduino/create', { parameters: parametersWithoutNormal.value })
+    try {
+        await stateStore.createPushed()
+    } catch (error) {
+        console.error('Error:', error)
+    }
 }
 
 const clickDestroy = async () => {
-    console.log('Destroy')
-    currentStateIsCreated.value = false
-
-    await http.post('/arduino/destroy')
+    console.log('Destroy pushed')
+    try {
+        await stateStore.destroyPushed()
+    } catch (error) {
+        console.error('Error:', error)
+    }
 }
 </script>
 

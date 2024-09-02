@@ -25,7 +25,6 @@ try {
       // First, try parsing as JSON
       const parsedData = JSON.parse(dataString)
 
-      console.log('Create button pressed, sending create requests...')
       // Handle the parsed JSON data here
       const parameters = Object.keys(parsedData).map(key => ({
         name: key,
@@ -37,6 +36,18 @@ try {
       console.log('Should be sending this:')
       console.log(parametersWithoutNormal)
 
+      if (dataString === 'ITISWHATITIS') {
+        console.log('it is what it is')
+      }
+
+      if (dataString === 'CREATE') {
+        console.log('create')
+      }
+
+      if (dataString === 'DESTROY') {
+        console.log('destroy')
+      }
+      
       // Send API requests
       try {
         await axios.post(`${apiBaseUrl}/arduino/create-initial-state`)

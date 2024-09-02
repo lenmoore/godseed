@@ -4,33 +4,8 @@ import Parameter from '../models/parameter.schema.js'
 
 const router = express.Router()
 
-// Route to create the state with created = true initially
-router.post('/create', async (req, res) => {
+router.post('/update-params', async (req, res) => {
   try {
-    console.log('create route hit')
-    console.log(req.body)
-
-    // Fetch the current state
-    let state = await State.findOne({})
-
-    if (!state) {
-      // If no state exists, create a new one
-      state = new State()
-    }
-
-    if (!state.created) {
-      // If `created = false`, set `createConfirmed = true`
-      state.createConfirmed = true
-      state.created = true
-    } else if (state.created && !state.showConfirm) {
-      // If `created = true` and `showConfirm = false`, set `showConfirm = true`
-      state.showConfirm = true
-    } else if (state.showConfirm) {
-      // If `showConfirm = true`, set `created = true` and `createConfirmed = true`
-      state.created = true
-      state.createConfirmed = true
-      state.showConfirm = false // Optionally reset showConfirm if no longer needed
-    }
 
     const { parameters } = req.body
 
@@ -46,52 +21,9 @@ router.post('/create', async (req, res) => {
       )
     }
 
-    // Save the state
-    await state.save()
-    res.status(201).send(state)
+    res.status(200).send({ message: 'Parameters updated' })
   } catch (error) {
     console.error('Error creating state:', error)
-    res.status(400).send({ error: error.message })
-  }
-})
-
-
-// Route to create the initial state
-router.post('/create-initial-state', async (req, res) => {
-  try {
-    console.log('create initial state')
-    if (await State.findOne({ created: true })) {
-      return res.status(400).send({ error: 'Initial state already exists' })
-    }
-    const state = new State({ created: true })
-    await state.save()
-    res.status(201).send(state)
-  } catch (error) {
-    console.error('Error creating initial state:', error)
-    res.status(400).send({ error: error.message })
-  }
-})
-
-// Route to destroy the state (assuming you want to reset the state)
-router.post('/destroy', async (req, res) => {
-  try {
-    console.log('destroy route hit')
-    console.log(req.body)
-
-    // Reset the state by setting created to false and createConfirmed to false
-    const state = await State.findOneAndUpdate(
-      { created: true },
-      { created: false, createConfirmed: false },
-      { new: true }
-    )
-
-    if (!state) {
-      return res.status(404).send({ message: 'State not found' })
-    }
-
-    res.status(200).send({ message: 'State destroyed successfully' })
-  } catch (error) {
-    console.error('Error destroying state:', error)
     res.status(400).send({ error: error.message })
   }
 })
@@ -99,9 +31,57 @@ router.post('/destroy', async (req, res) => {
 // Route to get the status of the state
 router.get('/status', async (req, res) => {
   try {
-    console.log('status route hit')
-    const state = await State.findOne({})
+    const state = await State.findOne({ name: 'STATE' })
 
+    if (!state) {
+      return res.status(404).send({ message: 'State not found' })
+    }
+
+    const allParameters = await Parameter.find()
+    res.status(200).send({ state, allParameters })
+  } catch (error) {
+    console.error('Error getting state status:', error)
+    res.status(400).send({ error: error.message })
+  }
+})
+
+// Route to get the status of the state
+router.post('/status', async (req, res) => {
+  try {
+
+    // create new state
+    const state = new State({
+      name: 'STATE',
+      showStandby: true,
+      showItIsWhatItIs: false,
+      showAllAnimations: false,
+      showCivilisationWasDestroyed: false,
+      civilisationCounter: 0,
+      developmentMode: false,
+      created: false,
+      showConfirm: false,
+      createConfirmed: false
+    })
+
+    // save the state
+    await state.save()
+    res.status(201).send(state)
+  } catch (error) {
+    console.error('Error getting state status:', error)
+    res.status(400).send({ error: error.message })
+  }
+})
+
+// Route to get the status of the state
+router.put('/status', async (req, res) => {
+  try {
+    const state = await State.findOneAndUpdate(
+      { name: 'STATE' },
+      req.body,
+      { new: true }  // This option returns the updated document
+    )
+
+    console.log(state)
     if (!state) {
       return res.status(404).send({ message: 'State not found' })
     }

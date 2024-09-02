@@ -5,6 +5,8 @@ import EraCanvas from '@/views/Admin/SceneSetup/EraCanvas.vue'
 import VariationsEditor from '@/views/Admin/VariationsEditor/VariationsEditor.vue'
 import GodseedPlayer from '@/views/Player/GodseedPlayer.vue'
 import ParamsActivator from '@/views/Player/ParamsActivator.vue'
+import GodseedPlayerNew from '@/views/Player/GodseedPlayerNew.vue'
+import ParamsActivatorNew from '@/views/Player/ParamsActivatorNew.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,11 +19,20 @@ const router = createRouter({
       path: '/params',
       component: ParamsActivator
     },
+    {
+      path: '/params-new',
+      component: ParamsActivatorNew
+    },
 
     {
       path: '/godseed/:eraName',
       name: 'godseed-player',
       component: GodseedPlayer
+    },
+    {
+      path: '/godseed-new/:eraName',
+      name: 'godseed-new',
+      component: GodseedPlayerNew
     },
 
     { path: '/admin', name: 'admin', component: AdminView },

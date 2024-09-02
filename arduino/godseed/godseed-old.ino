@@ -31,11 +31,9 @@ void setup() {
 }
 
 void loop() {
-  sendKeyStates();
-
   if (digitalRead(createButtonPin) == LOW) {
-      Serial.println("CREATE");
-      delay(1000); // Debounce delay
+    sendKeyStates();
+    delay(1000); // Debounce delay
   }
 
   if (digitalRead(destroyButtonPin) == LOW) {
@@ -46,7 +44,7 @@ void loop() {
 
 void sendKeyStates() {
   Serial.print("{");
-  bool isAnyKeyPressed = false;
+  
   for (int col = 0; col < COLS; col++) {
     pinMode(colPins[col], OUTPUT);
     digitalWrite(colPins[col], LOW); // Set current column low
@@ -54,10 +52,6 @@ void sendKeyStates() {
 
     for (int row = 0; row < ROWS; row++) {
       bool keyPressed = !digitalRead(rowPins[row]); // Button pressed if LOW
-        if ( keyPressed) {
-        isAnyKeyPressed = true;
-
-        }
       Serial.print("\"");
       Serial.print(hexaKeys[row][col]);
       Serial.print("\": ");
@@ -73,7 +67,4 @@ void sendKeyStates() {
   }
 
   Serial.println("}");
-  if (!isAnyKeyPressed) {
-  Serial.println("ITISWHATITIS");
-  }
 }
