@@ -75,9 +75,6 @@ const toggleParameter = async (parameter) => {
 const clickCreate = async () => {
     console.log('Create')
     currentStateIsCreated.value = true
-
-    // await http.post('/arduino/create-initial-state')
-    await http.post('/arduino/create', { parameters: parametersWithoutNormal.value })
 }
 
 const clickDestroy = async () => {

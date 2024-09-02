@@ -26,7 +26,6 @@ const startCountdown = () => {
 // Function to update the `showStandby` status in the API
 const updateStandbyInAPI = async (status) => {
     try {
-        // Assuming `jackInserted` updates the standby status in the backend
         await stateStore.activateStandby() // Replace with your store's API update method
     } catch (error) {
         console.error('Failed to update standby status:', error)

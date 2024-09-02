@@ -15,7 +15,8 @@ const statusUpdateUrl = apiBaseUrl + 'arduino/status'
 const statusObject = {
   showAllAnimations: false,
   showCivilisationWasDestroyed: false,
-  created: false
+  created: false,
+  showStandby: false
 }
 
 try {
@@ -66,7 +67,6 @@ try {
           await axios.put(statusUpdateUrl, statusObject)
           console.log('PUT: /arduino/status')
         } catch (error) {
-          console.error('Error sending /arduino/create:', error.message)
         }
       } else if (dataString === 'DESTROY') {
         statusObject.created = false

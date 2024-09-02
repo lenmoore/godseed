@@ -58,31 +58,31 @@ router.get('/status', async (req, res) => {
 })
 
 // Route to get the status of the state
-router.post('/status', async (req, res) => {
-  try {
-
-    // create new state
-    const state = new State({
-      name: 'STATE',
-      showStandby: true,
-      showItIsWhatItIs: false,
-      showAllAnimations: false,
-      showCivilisationWasDestroyed: false,
-      civilisationCounter: 42,
-      developmentMode: false,
-      created: false,
-      showConfirm: false,
-      createConfirmed: false
-    })
-
-    // save the state
-    await state.save()
-    res.status(201).send(state)
-  } catch (error) {
-    console.error('Error getting state status:', error)
-    res.status(400).send({ error: error.message })
-  }
-})
+// router.post('/status', async (req, res) => {
+//   try {
+//
+//     // create new state
+//     const state = new State({
+//       name: 'STATE',
+//       showStandby: true,
+//       showItIsWhatItIs: false,
+//       showAllAnimations: false,
+//       showCivilisationWasDestroyed: false,
+//       civilisationCounter: 42,
+//       developmentMode: false,
+//       created: false,
+//       showConfirm: false,
+//       createConfirmed: false
+//     })
+//
+//     // save the state
+//     await state.save()
+//     res.status(201).send(state)
+//   } catch (error) {
+//     console.error('Error getting state status:', error)
+//     res.status(400).send({ error: error.message })
+//   }
+// })
 
 // Route to get the status of the state
 router.put('/status', async (req, res) => {
