@@ -1,26 +1,24 @@
 <script setup>
 import { useStateStore } from '@/stores/stateStore.js'
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, watch } from 'vue'
 
 const stateStore = useStateStore()
-const lastUpdateTime = ref(Date.now())
-const countdownInterval = ref(null)
 
-// Function to start the 10-second countdown
-const startCountdown = () => {
-    if (countdownInterval.value) clearInterval(countdownInterval.value)
+// Function to check the timer and handle standby mode
+const checkTimerAndUpdate = () => {
+    const interval = setInterval(async () => {
+        const currentTime = Date.now()
+        const storedTime = parseInt(localStorage.getItem('timer'), 10)
 
-    countdownInterval.value = setInterval(async () => {
-        const timePassed = (Date.now() - lastUpdateTime.value) / 1000
-        console.log(`Time passed: ${timePassed} seconds`)
-
-        if (timePassed >= 10) {
-            clearInterval(countdownInterval.value)
-            stateStore.showStandby = true
-            await updateStandbyInAPI(true)
-            console.log('Standby set to true')
+        if (!isNaN(storedTime) && currentTime >= storedTime) {
+            clearInterval(interval)
+            if (!stateStore.showStandby) {
+                stateStore.showStandby = true
+                await updateStandbyInAPI(true)
+                console.log('Standby set to true and API updated')
+            }
         }
-    }, 180000)
+    }, 1000)
 }
 
 // Function to update the `showStandby` status in the API
@@ -32,36 +30,16 @@ const updateStandbyInAPI = async (status) => {
     }
 }
 
-// Function to watch for standby changes in the API
-const watchStandbyInAPI = async () => {
-    setInterval(async () => {
-        try {
-            await stateStore.fetchState()
-            if (stateStore.showStandby === false && countdownInterval.value === null) {
-                lastUpdateTime.value = Date.now() // Reset the time if standby becomes false
-                startCountdown() // Restart countdown
-                console.log('Standby set to false, countdown restarted')
-            }
-        } catch (error) {
-            console.error('Failed to fetch state:', error)
-        }
-    }, 3000)
-}
-
 onMounted(() => {
-    // Start watching the API for changes
-    watchStandbyInAPI()
+    checkTimerAndUpdate() // Start checking the timer when the component is mounted
 
     // Watch for changes in the showStandby status locally
     watch(
         () => stateStore.showStandby,
-        (newStatus) => {
-            if (!newStatus) {
-                lastUpdateTime.value = Date.now()
-                startCountdown()
-            } else {
-                clearInterval(countdownInterval.value)
-                countdownInterval.value = null
+        async (newStatus) => {
+            if (newStatus) {
+                // The timer reached its limit, and standby mode has been activated
+                await updateStandbyInAPI(true)
             }
         }
     )

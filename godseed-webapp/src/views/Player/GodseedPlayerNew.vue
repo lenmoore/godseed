@@ -1,24 +1,35 @@
 <template>
-    <div>
+    <div
+        style="background-color: #181818; !important;"
+    >
         New Godseed player
         <div class="description">
-
+            <audio v-if="eraName === 'neolithic'" autoplay src="/godseed main theme idle 2.mp3"></audio>
             <span v-if="showItIsWhatItIs">
                 <img alt="" height="auto" src="/itiswhatitis.png" width="2000px">
             </span>
             <span v-else-if="showGeneratingWorld">
-                <audio autoplay src="/Microwave.mp3"></audio>
+                <audio v-if="eraName === 'neolithic'" autoplay src="/Microwave.mp3"></audio>
                 <img alt="" height="auto" src="/creating.png" width="2000px">
             </span>
             <span v-else-if="showDestructionAnimation">
-                <audio autoplay src="/shutdown.mp3"></audio>
-                <video autoplay src="/tvshutdown.mov" style="width: 100%; height: auto;"></video>
+                <audio v-if="eraName === 'neolithic'" autoplay src="/shutdown.mp3"></audio>
+                <video autoplay src="/tvshutdown.mov"></video>
             </span>
-            <span v-else-if="showCivilisationWasDestroyed">
-                Civilisation number {{ civilisationCounter }} was destroyed. <br>
-                Update parameters to model a new civilisation. <br>
-                Push the create button to see the world unfold.
-            </span>
+            <div v-else-if="showCivilisationWasDestroyed"
+                 style="font-size: 2rem;
+                display: flex; align-items: center;
+                justify-content: center; position: absolute;
+                height: 100%; width: 100%; background-color: rgba(0, 0, 0, 0.5)
+">
+                <div>
+                    Civilisation number {{ civilisationCounter }} was destroyed. <br>
+                    Update parameters to model a new civilisation. <br>
+
+                    Push the <span style="color: deepskyblue">create</span> button to see the world unfold.
+
+                </div>
+            </div>
             <span v-else-if="developmentMode">
                 development mode
             </span>
@@ -34,10 +45,9 @@
             v-if="showAllAnimations"
             ref="canvas"
             class="godseed-player"
-            style="background-color: #181818; !important;"
         >
-
-            <!--            audio will be here -->
+            <audio v-if="eraName === 'neolithic' && playerActive" autoplay
+                   src="/godseed main theme animations 2.mp3"></audio>
             <div
                 v-for="(scene, index) in scenes"
                 :key="scene._id"

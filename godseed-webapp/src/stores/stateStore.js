@@ -45,11 +45,14 @@ export const useStateStore = defineStore('stateStore', {
         console.error('Failed to create initial state:', error)
       }
     },
+    setLocalStorageTimerForThreeMinutesFromNow() {
+      localStorage.setItem('timer', Date.now() + 180000)
+    },
     async jackInserted() {
       // if any jack is inserted, we will show that parameter's videos
       this.makeEverythingFalse()
       this.showStandby = false
-      this.created = true
+      this.created = false
       this.showAllAnimations = true
       await this.updateState()
     },
@@ -102,7 +105,7 @@ export const useStateStore = defineStore('stateStore', {
     async updateState() {
       try {
         const body = {
-          showStandby: !this.showStandby ? false : null,
+          showStandby: this.showStandby,
           showItIsWhatItIs: this.showItIsWhatItIs,
           showAllAnimations: this.showAllAnimations,
           showCivilisationWasDestroyed: this.showCivilisationWasDestroyed,
@@ -124,6 +127,10 @@ export const useStateStore = defineStore('stateStore', {
         this.created = state.created
         this.showConfirm = state.showConfirm
         this.createConfirmed = state.createConfirmed
+
+        if (body.showStandby !== state.showStandby) {
+          this.setLocalStorageTimerForThreeMinutesFromNow()
+        }
 
       } catch (error) {
         console.error('Failed to update state:', error)
