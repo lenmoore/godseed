@@ -17,10 +17,10 @@ router.put('/update-params', async (req, res) => {
       // find it
       const parameter = await Parameter.findOne({ name: new RegExp('^' + receivedName) })
 
-      // compare is_active
+      // compare is_active first
       console.log(parameter)
       if (parameter && parameter.is_active !== is_active) {
-        // update it
+        // update showStandby
         console.log('should update standby to false')
         await State.findOneAndUpdate(
           { name: 'STATE' },
@@ -29,6 +29,7 @@ router.put('/update-params', async (req, res) => {
         )
       }
 
+      // then update it
       await Parameter.findOneAndUpdate(
         { name: parameter.name },
         { is_active: is_active },
