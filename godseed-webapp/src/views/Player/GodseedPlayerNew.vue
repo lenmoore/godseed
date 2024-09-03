@@ -1,13 +1,15 @@
 <template>
   <div style="background-color: #181818; height: 100%; width: 100%;">
+
+    <button
+        v-if="!buttonHidden"
+        style="z-index: 2229909000; height: 20rem; width: 20rem;"
+        @click="hideButton"
+    >
+      click me
+    </button>
     <div v-if="soundPlayer">
-      <button
-          v-if="!buttonHidden"
-          style="z-index: 2229909000; height: 20rem; width: 20rem;"
-          @click="hideButton"
-      >
-        click me to make sounds work
-      </button>
+
 
     </div>
     <div v-if="buttonHidden">
@@ -119,7 +121,7 @@ const hideButton = () => {
     backgroundSound.value.play().catch(console.error)
   }
 
-  if (shouldPlayMainSound.value && mainSound.value) {
+  if (soundPlayer && shouldPlayMainSound.value && mainSound.value) {
     mainSound.value.play().catch(console.error)
   }
 }
