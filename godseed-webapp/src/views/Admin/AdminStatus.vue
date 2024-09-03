@@ -49,6 +49,13 @@ onMounted(() => {
 
 <template>
     <div style="font-size: 2rem;">
+
+        <audio
+            autoplay
+            loop
+            src="/idle.mp3"
+        ></audio>
+
         <div>Show Standby: {{ stateStore.showStandby }}</div>
         <div>Show ItIsWhatItIs: {{ stateStore.showItIsWhatItIs }}</div>
         <div>Show All Animations: {{ stateStore.showAllAnimations }}</div>

@@ -6,12 +6,6 @@
         <div
             v-if="eraName === 'neolithic'"
         >
-            <audio
-                autoplay
-                loop
-                src="/idle.mp3"
-            ></audio>
-
 
             <audio v-if="showAllAnimations || playerActive || created" autoplay
                    src="/main.mp3"></audio>
