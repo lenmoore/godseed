@@ -107,7 +107,9 @@ const microwaveSound = ref(null)
 const shutdownSound = ref(null)
 const destructionVideo = ref(null)
 
-const soundPlayer = eraName.toString() === 'neolithic';
+const soundPlayer = eraName.value === 'neolithic';
+console.log(soundPlayer);
+console.log(eraName);
 
 const hideButton = () => {
   buttonHidden.value = true
