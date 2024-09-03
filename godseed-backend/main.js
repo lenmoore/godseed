@@ -21,11 +21,7 @@ app.use('/uploads', express.static('uploads')) // To serve uploaded files static
 
 console.log(process.env.MONGODB_URI)
 // MongoDB connection
-mongoose.connect(process.env.MONGODB_URI, {
-    serverSelectionTimeoutMS: 30000, // 30 seconds
-    socketTimeoutMS: 45000, // 45 seconds
-
-})
+mongoose.connect(process.env.MONGODB_URI, {})
     .then(() => console.log('MongoDB connected!'))
     .catch(err => console.error('MongoDB connection error:', err))
 
