@@ -14,24 +14,27 @@
         </div>
 
         <div class="description">
-            <span v-if="showItIsWhatItIs">
+            <span v-show="showItIsWhatItIs">
                 <img alt="" height="auto" src="/itiswhatitis.png" width="2000px">
             </span>
-            <span v-else-if="showGeneratingWorld">
+            <span v-show="showGeneratingWorld">
                 <audio ref="microwaveSound" src="/Microwave.mp3"></audio>
                 <img alt="" height="auto" src="/creating.png" width="2000px">
             </span>
-            <div v-else-if="showDestructionAnimation">
+            <div v-show="showCivilisationWasDestroyed">
                 <audio ref="shutdownSound" src="/shutdown.mp3"></audio>
-                <video ref="destructionVideo" src="/tvshutdown.mov" @ended="onDestructionAnimationEnd"></video>
+                <video ref="destructionVideo" src="/tvshutdown.mov"
+                       style="position: absolute; left: 0; width: 2000px; height: auto; height: auto"
+                       @ended="onDestructionAnimationEnd"></video>
 
-                <div style="position: absolute; top: 20rem;">
+                <div style="position: absolute;">
                     Civilisation number {{ civilisationCounter }} was destroyed.
                 </div>
-                <img alt="" src="/destroyed.png">
+                <img alt="" src="/destroyed.png"
+                     style="position: absolute; left: 0; max-width: 2000px"
+                >
             </div>
-            <span v-else-if="developmentMode">development mode</span>
-            <span v-else-if="showStandby" style="position: absolute; background-color: rgba(0, 0, 0, 0.5)">
+            <span v-show="showStandby" style="position: absolute; background-color: rgba(0, 0, 0, 0.5)">
                 <img alt="" height="auto" src="/standby.png" width="2000px">
             </span>
         </div>
@@ -142,6 +145,8 @@ const playDestructionAnimation = () => {
     nextTick(() => {
         if (shutdownSound.value) shutdownSound.value.play().catch(console.error)
         if (destructionVideo.value) {
+            // quiet the main sound
+            if (mainSound.value) mainSound.value.volume = 0.1
             destructionVideo.value.play().catch(error => {
                 console.error('Error playing destruction video:', error)
             })
@@ -161,8 +166,14 @@ const onDestructionAnimationEnd = () => {
 
 watch(showAllAnimations, (value, oldValue) => {
     if (value && value !== oldValue) {
+
+
+        // play generating sounds
+        if (microwaveSound.value) microwaveSound.value.play().catch(console.error)
         showGeneratingWorld.value = true
+
         setTimeout(() => {
+            if (mainSound.value) mainSound.value.play().catch(console.error)
             showGeneratingWorld.value = false
             playerActive.value = true
         }, 14000)
