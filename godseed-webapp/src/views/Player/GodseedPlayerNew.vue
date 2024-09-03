@@ -51,7 +51,7 @@ background-color: #181818"
             </span>
             </div>
 
-            <div v-if="showAllAnimations && buttonHidden" ref="canvas" class="godseed-player">
+            <div v-if="playerActive && buttonHidden" ref="canvas" class="godseed-player">
                 <div
                     v-for="(scene, index) in scenes"
                     :key="scene._id"
