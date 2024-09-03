@@ -329,5 +329,23 @@ html, body {
     z-index: 1199191919;
     position: absolute;
     background-color: #181818;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
+
+    video {
+        position: relative;
+        z-index: 1199191920;
+        width: 100%;
+        height: auto;
+    }
+
+    img {
+        position: relative;
+        width: 100%;
+        height: auto;
+    }
 }
 </style>
