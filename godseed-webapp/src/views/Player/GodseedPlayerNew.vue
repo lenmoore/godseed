@@ -307,10 +307,6 @@ watch(() => scenesStore.parameters, async () => {
 
 <style scoped>
 
-:root {
-    --color-background: #181818;
-
-}
 
 html, body {
     background-color: #181818 !important;
