@@ -2,6 +2,7 @@
     <div
         style="background-color: #181818; !important;"
     >
+        <button v-if="!buttonHidden" @click="hideButton"></button>
         <div
             v-if="eraName === 'neolithic'"
         >
@@ -12,7 +13,7 @@
             ></audio>
 
 
-            <audio v-if="showAllAnimations || created" autoplay
+            <audio v-if="showAllAnimations || playerActive || created" autoplay
                    src="/main.mp3"></audio>
 
         </div>
@@ -117,6 +118,11 @@ const normalParameterId = ref('')
 const isGravityDownActive = ref(false) // State to control the gravity effect
 const currentStateIsCreated = ref(false)
 const gravityUpIsActive = ref(false)
+
+const buttonHidden = ref(false)
+const hideButton = () => {
+    buttonHidden.value = true
+}
 
 const specialParameters = {
     light_mode: (isActive) => {
