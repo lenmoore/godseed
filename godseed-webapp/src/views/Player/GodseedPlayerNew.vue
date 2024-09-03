@@ -20,7 +20,7 @@
                 <img alt="" height="auto" src="/itiswhatitis.png" width="2000px">
             </span>
             <span v-show="showGeneratingWorld">
-                <audio ref="microwaveSound" src="/Microwave.mp3"></audio>
+                <audio ref="createdSound" src="/microwave.mp3"></audio>
                 <img alt="" height="auto" src="/creating.png" width="2000px">
             </span>
             <div v-show="showCivilisationWasDestroyed" style="
