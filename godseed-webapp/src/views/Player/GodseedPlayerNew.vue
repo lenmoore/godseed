@@ -338,6 +338,7 @@ html, body {
     video {
         position: relative;
         width: 100%;
+        z-index: 1199191920;
         height: auto;
     }
 
