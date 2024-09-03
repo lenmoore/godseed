@@ -3,12 +3,22 @@
         style="background-color: #181818; !important;"
     >
         New Godseed player
-        <div class="description">
+
+        <div
+            v-if="eraName === 'neolithic'"
+        >
             <audio
-                v-if="eraName === 'neolithic'"
                 autoplay
+                loop
                 src="/idle.mp3"
             ></audio>
+
+
+            <audio v-if="showAllAnimations || created" autoplay
+                   src="/main.mp3"></audio>
+
+        </div>
+        <div class="description">
             <span v-if="showItIsWhatItIs">
                 <img alt="" height="auto" src="/itiswhatitis.png" width="2000px">
             </span>
@@ -18,12 +28,12 @@
             </span>
 
             <span
-                v-if="showDestructionAnimation"
+                v-else-if="showDestructionAnimation"
             >
-                animation
                 <audio
                     v-if="eraName === 'neolithic'"
-                    autoplay src="/shutdown.mp3"
+                    autoplay
+                    src="/shutdown.mp3"
                 ></audio>
                 <video autoplay src="/tvshutdown.mov"></video>
             </span>
@@ -31,16 +41,14 @@
                 v-else-if="showCivilisationWasDestroyedYee"
                 style="font-size: 2rem;
                 display: flex; align-items: center;
-                justify-content: center; position: absolute;
-                height: 100%; width: 100%; background-color: rgba(0, 0, 0, 0.5)
+                justify-content: center;
+                flex-direction: column;
+                height: 100%; width: 100%; color: white;
 ">
-                <div>
-                    Civilisation number {{ civilisationCounter }} was destroyed. <br>
-                    Update parameters to model a new civilisation. <br>
-
-                    Push the <span style="color: deepskyblue">create</span> button to see the world unfold.
-
+                <div style="position: absolute; top: 20rem;">
+                    Civilisation number {{ civilisationCounter }} was destroyed.
                 </div>
+                <img alt="" src="/destroyed.png">
             </div>
             <span v-else-if="developmentMode">
                 development mode
@@ -58,8 +66,6 @@
             ref="canvas"
             class="godseed-player"
         >
-            <audio v-if="eraName === 'neolithic'" autoplay
-                   src="/main.mp3"></audio>
             <div
                 v-for="(scene, index) in scenes"
                 :key="scene._id"
@@ -137,13 +143,17 @@ const showConfirm = ref(false)
 const createConfirmed = ref(false)
 const showDestructionAnimation = ref(false)
 const showCivilisationWasDestroyedYee = ref(false)
-watch(showCivilisationWasDestroyed, (value) => {
+watch(showCivilisationWasDestroyed, async (value) => {
     console.log(value)
     if (value) {//show animation for 4s
         showDestructionAnimation.value = true
-        setTimeout(() => {
+        await nextTick() // Ensure DOM updates before scenes load
+
+        setTimeout(async () => {
             showDestructionAnimation.value = false
             showCivilisationWasDestroyedYee.value = true
+
+            await nextTick() // Ensure DOM updates before scenes load
         }, 4000)
     }
 })
