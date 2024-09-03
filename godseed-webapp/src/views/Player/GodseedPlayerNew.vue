@@ -10,51 +10,54 @@
             </button>
 
         </div>
-        <div v-if="eraName === 'neolithic'">
-            <audio ref="backgroundSound" src="/idle.mp3"></audio>
-            <audio ref="mainSound" src="/main.mp3"></audio>
-        </div>
+        <div v-if="buttonHidden">
+            <div v-if="eraName === 'neolithic'">
+                <audio ref="backgroundSound" src="/idle.mp3"></audio>
+                <audio ref="mainSound" src="/main.mp3"></audio>
+            </div>
 
-        <div class="description">
+            <div class="description">
             <span v-show="showItIsWhatItIs">
                 <img alt="" height="auto" src="/itiswhatitis.png" width="2000px">
             </span>
-            <span v-show="showGeneratingWorld">
-                <audio ref="createdSound" src="/microwave.mp3"></audio>
+                <span v-show="showGeneratingWorld">
+                <audio ref="microwaveSound" src="/microwave.mp3"></audio>
                 <img alt="" height="auto" src="/creating.png" width="2000px">
             </span>
-            <div v-show="showCivilisationWasDestroyed" style="
-                display: flex;
-                flex-direction:column;
-                align-items: center;
-                justify-content: center;
+                <div v-show="showCivilisationWasDestroyed"
+                     style="
+                    display: flex;
+                    flex-direction:column;
+                    align-items: center;
+                    justify-content: center;
                 ">
-                <audio ref="shutdownSound" src="/shutdown.mp3"></audio>
-                <video
-                    ref="destructionVideo" src="/tvshutdown.mov"
-                    style="position: absolute; left: 0; width: 2000px; height: auto; height: auto"
-                    @ended="onDestructionAnimationEnd"></video>
+                    <audio ref="shutdownSound" src="/shutdown.mp3"></audio>
 
-                <div style="position: absolute;">
-                    Civilisation number {{ civilisationCounter }} was destroyed.
-                </div>
-                <img ref="destroyedImage" alt="" src="/destroyed.png"
-                     style="position: absolute; display: none; left: 0; max-width: 2000px;
+                    <video
+                        ref="destructionVideo" src="/tvshutdown.mov"
+                        style="position: absolute; left: 0; width: 2000px; height: auto; height: auto"
+                        @ended="onDestructionAnimationEnd"></video>
+
+                    <div style="position: absolute;">
+                        Civilisation number {{ civilisationCounter }} was destroyed.
+                    </div>
+                    <img ref="destroyedImage" alt="" src="/destroyed.png"
+                         style="position: absolute; display: none; left: 0; max-width: 2000px;
 background-color: #181818"
-                >
-            </div>
-            <span v-show="showStandby" style="position: absolute; background-color: rgba(0, 0, 0, 0.5)">
+                    >
+                </div>
+                <span v-show="showStandby" style="position: absolute; background-color: rgba(0, 0, 0, 0.5)">
                 <img alt="" height="auto" src="/standby.png" width="2000px">
             </span>
-        </div>
+            </div>
 
-        <div v-if="showAllAnimations && buttonHidden" ref="canvas" class="godseed-player">
-            <div
-                v-for="(scene, index) in scenes"
-                :key="scene._id"
-                :class="['scene', isGravityDownActive ? `gravity-down-${index % 5}` : '',
+            <div v-if="showAllAnimations && buttonHidden" ref="canvas" class="godseed-player">
+                <div
+                    v-for="(scene, index) in scenes"
+                    :key="scene._id"
+                    :class="['scene', isGravityDownActive ? `gravity-down-${index % 5}` : '',
                 gravityUpIsActive && scene.gravity === true ? `gravity-up-${index % 5 + 1}` : '']"
-                :style="{
+                    :style="{
                     left: scene.coordX + 'px',
                     top: scene.coordY + 'px',
                     zIndex: scene.zIndex,
@@ -62,25 +65,26 @@ background-color: #181818"
                     height: scene.displayHeight + 'px',
                     position: 'absolute',
                 }"
-            >
-                <div v-if="scene.displayVideos.length === 0">videos</div>
-                <video
-                    v-for="(video, index) in scene.displayVideos"
-                    :key="video.video"
-                    :style="{
+                >
+                    <div v-if="scene.displayVideos.length === 0">videos</div>
+                    <video
+                        v-for="(video, index) in scene.displayVideos"
+                        :key="video.video"
+                        :style="{
                         width: '100%',
                         height: '100%',
                         position: 'absolute',
                     }"
-                    autoplay
-                    class="scene-video"
-                    loop
-                    muted
-                    playsinline
-                >
-                    <source :src="`${apiBaseUrl}${video.video}`" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
+                        autoplay
+                        class="scene-video"
+                        loop
+                        muted
+                        playsinline
+                    >
+                        <source :src="`${apiBaseUrl}${video.video}`" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
             </div>
         </div>
     </div>
