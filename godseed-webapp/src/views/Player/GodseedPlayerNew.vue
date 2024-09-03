@@ -36,7 +36,6 @@
           </div>
           <img ref="destroyedImage" alt="" src="/destroyed.png"
                style="position: absolute; display: none;
-                            background-color: #181818
                         "
           >
         </div>
@@ -151,6 +150,7 @@ const playDestructionAnimation = () => {
   showGeneratingWorld.value = false
   showDestructionAnimation.value = true
   mainSound.value.volume = 0.1
+  destructionVideo.value.style.display = 'block'
 
   if (shutdownSound.value) shutdownSound.value.play().catch(console.error)
 
@@ -180,6 +180,7 @@ const onDestructionAnimationEnd = () => {
   showDestructionAnimation.value = false
   if (mainSound.value) mainSound.value.volume = 1
   destroyedImage.value.style.display = 'block'
+  destructionVideo.value.style.display = 'none'
 }
 
 watch(created, (value, oldValue) => {
@@ -360,7 +361,7 @@ html, body {
 
   img {
     position: relative;
-    z-index: 1199191919;
+    z-index: 1199191918;
     width: 100%;
     height: auto;
   }
