@@ -141,11 +141,10 @@ const shouldPlayBackground = ref(false)
 const shouldPlayMainSound = ref(false)
 
 const playDestructionAnimation = () => {
+    if (shutdownSound.value) shutdownSound.value.play().catch(console.error)
     showDestructionAnimation.value = true
     nextTick(() => {
-        if (shutdownSound.value) shutdownSound.value.play().catch(console.error)
         if (destructionVideo.value) {
-            // quiet the main sound
             if (mainSound.value) mainSound.value.volume = 0.1
             destructionVideo.value.play().catch(error => {
                 console.error('Error playing destruction video:', error)
@@ -162,15 +161,14 @@ watch(showCivilisationWasDestroyed, (value) => {
 
 const onDestructionAnimationEnd = () => {
     showDestructionAnimation.value = false
+    if (mainSound.value) mainSound.value.volume = 1
 }
 
 watch(showAllAnimations, (value, oldValue) => {
     if (value && value !== oldValue) {
-
-
         // play generating sounds
-        if (microwaveSound.value) microwaveSound.value.play().catch(console.error)
         showGeneratingWorld.value = true
+        if (microwaveSound.value) microwaveSound.value.play().catch(console.error)
 
         setTimeout(() => {
             if (mainSound.value) mainSound.value.play().catch(console.error)

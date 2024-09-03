@@ -96,6 +96,9 @@ router.get('/status', async (req, res) => {
 // Route to get the status of the state
 router.put('/status', async (req, res) => {
   try {
+    if (req.body.created || req.body.showAllAnimations) {
+      req.body.showCivilisationWasDestroyed = false
+    }
     const state = await State.findOneAndUpdate(
       { name: 'STATE' },
       req.body,
