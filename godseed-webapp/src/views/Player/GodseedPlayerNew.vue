@@ -23,9 +23,10 @@
             </span>
             <div v-show="showCivilisationWasDestroyed">
                 <audio ref="shutdownSound" src="/shutdown.mp3"></audio>
-                <video ref="destructionVideo" src="/tvshutdown.mov"
-                       style="position: absolute; left: 0; width: 2000px; height: auto; height: auto"
-                       @ended="onDestructionAnimationEnd"></video>
+                <video
+                    ref="destructionVideo" src="/tvshutdown.mov"
+                    style="position: absolute; left: 0; width: 2000px; height: auto; height: auto"
+                    @ended="onDestructionAnimationEnd"></video>
 
                 <div style="position: absolute;">
                     Civilisation number {{ civilisationCounter }} was destroyed.
