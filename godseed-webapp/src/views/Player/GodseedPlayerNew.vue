@@ -178,7 +178,7 @@ watch(created, (value, oldValue) => {
             showGeneratingWorld.value = false
             showAllAnimations.value = true
             playerActive.value = true
-            
+
             mainSound.value.volume = 1
             nextTick()
         }, 14000)
@@ -302,8 +302,14 @@ watch(() => scenesStore.parameters, async () => {
 
 <style scoped>
 
+// overwrite --color-background variable
+:root {
+    --color-background: #181818;
+
+}
+
 html, body {
-    background-color: #181818;
+    background-color: #181818 !important;
     overflow: hidden; /* Hide scrollbars */
     height: 100vh;
     width: 100vw;
