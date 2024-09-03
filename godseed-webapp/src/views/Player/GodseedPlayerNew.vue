@@ -175,6 +175,7 @@ watch(created, (value, oldValue) => {
         setTimeout(() => {
             if (mainSound.value) mainSound.value.play().catch(console.error)
             showGeneratingWorld.value = false
+            showAllAnimations.value = true
             playerActive.value = true
         }, 14000)
     }
