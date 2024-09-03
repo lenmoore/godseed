@@ -155,17 +155,20 @@ const shouldPlayMainSound = ref(false)
 
 const playDestructionAnimation = () => {
     showGeneratingWorld.value = false
+    showDestructionAnimation.value = true
     mainSound.value.volume = 0.1
 
+    nextTick()
     if (shutdownSound.value) shutdownSound.value.play().catch(console.error)
-    showDestructionAnimation.value = true
-    nextTick(() => {
-        if (destructionVideo.value) {
-            destructionVideo.value.play().catch(error => {
-                console.error('Error playing destruction video:', error)
-            })
-        }
-    })
+    if (destructionVideo.value) {
+
+        nextTick()
+        destructionVideo.value.play().catch(error => {
+            console.error('Error playing destruction video:', error)
+        })
+
+        nextTick()
+    }
 }
 
 watch(showCivilisationWasDestroyed, (value) => {
@@ -226,6 +229,7 @@ onMounted(async () => {
         showItIsWhatItIs.value = status.data.state.showItIsWhatItIs
         showAllAnimations.value = status.data.state.showAllAnimations
         showCivilisationWasDestroyed.value = status.data.state.showCivilisationWasDestroyed
+        console.log('showCivilisationWasDestroyed', showCivilisationWasDestroyed.value)
         civilisationCounter.value = status.data.state.civilisationCounter
         developmentMode.value = status.data.state.developmentMode
         created.value = status.data.state.created
