@@ -14,8 +14,8 @@
     </div>
     <div v-if="buttonHidden">
       <div v-if="soundPlayer">
-        <audio ref="backgroundSound" src="/idle.mp3"></audio>
-        <audio ref="mainSound" src="/main.mp3"></audio>
+        <audio ref="backgroundSound" loop src="/idle.mp3"></audio>
+        <audio ref="mainSound" loop src="/main.mp3"></audio>
       </div>
 
       <div class="description">
