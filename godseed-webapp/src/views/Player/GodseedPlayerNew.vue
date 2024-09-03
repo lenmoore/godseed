@@ -1,10 +1,16 @@
 <template>
     <div style="background-color: #181818;">
-        <button v-if="!buttonHidden" @click="hideButton"></button>
+        <button
+            v-if="!buttonHidden"
+            style="z-index: 2229909000; height: 20rem; width: 20rem;"
+            @click="hideButton"
+        >
+            click me to make sounds work
+        </button>
 
         <div v-if="eraName === 'neolithic'">
-            <audio v-if="shouldPlayBackground" ref="mainSound" autoplay src="/idle.mp3"></audio>
-            <audio v-if="shouldPlayMainSound" ref="mainSound" autoplay src="/main.mp3"></audio>
+            <audio ref="backgroundSound" src="/idle.mp3"></audio>
+            <audio ref="mainSound" src="/main.mp3"></audio>
         </div>
 
         <div class="description">
@@ -12,28 +18,25 @@
                 <img alt="" height="auto" src="/itiswhatitis.png" width="2000px">
             </span>
             <span v-else-if="showGeneratingWorld">
-                <audio v-if="eraName === 'neolithic'" ref="microwaveSound" autoplay src="/Microwave.mp3"></audio>
+                <audio ref="microwaveSound" src="/Microwave.mp3"></audio>
                 <img alt="" height="auto" src="/creating.png" width="2000px">
             </span>
-            <span v-else-if="showDestructionAnimation">
-                <audio v-if="eraName === 'neolithic'" ref="shutdownSound" autoplay src="/shutdown.mp3"></audio>
-                <video autoplay src="/tvshutdown.mov"></video>
-            </span>
-            <div v-else-if="showCivilisationWasDestroyedYee"
-                 style="font-size: 2rem; display: flex; align-items: center; justify-content: center; flex-direction: column; height: 100%; width: 100%; color: white;">
-                <div style="position: absolute; top: 20rem;">Civilisation number {{ civilisationCounter }} was
-                    destroyed.
+            <div v-else-if="showDestructionAnimation">
+                <audio ref="shutdownSound" src="/shutdown.mp3"></audio>
+                <video ref="destructionVideo" src="/tvshutdown.mov" @ended="onDestructionAnimationEnd"></video>
+
+                <div style="position: absolute; top: 20rem;">
+                    Civilisation number {{ civilisationCounter }} was destroyed.
                 </div>
                 <img alt="" src="/destroyed.png">
             </div>
             <span v-else-if="developmentMode">development mode</span>
             <span v-else-if="showStandby" style="position: absolute; background-color: rgba(0, 0, 0, 0.5)">
-                standby
                 <img alt="" height="auto" src="/standby.png" width="2000px">
             </span>
         </div>
 
-        <div v-if="showAllAnimations" ref="canvas" class="godseed-player">
+        <div v-if="showAllAnimations && buttonHidden" ref="canvas" class="godseed-player">
             <div
                 v-for="(scene, index) in scenes"
                 :key="scene._id"
@@ -48,6 +51,7 @@
                     position: 'absolute',
                 }"
             >
+                <div v-if="scene.displayVideos.length === 0">videos</div>
                 <video
                     v-for="(video, index) in scene.displayVideos"
                     :key="video.video"
@@ -83,12 +87,28 @@ const scenesStore = useScenesStore()
 const scenes = ref([])
 const activeParameters = ref([])
 const normalParameterId = ref('')
-const isGravityDownActive = ref(false) // State to control the gravity effect
-const currentStateIsCreated = ref(false)
+const isGravityDownActive = ref(false)
 const gravityUpIsActive = ref(false)
 const buttonHidden = ref(false)
+
+// Refs for media elements
+const backgroundSound = ref(null)
+const mainSound = ref(null)
+const microwaveSound = ref(null)
+const shutdownSound = ref(null)
+const destructionVideo = ref(null)
+
 const hideButton = () => {
     buttonHidden.value = true
+
+    // Trigger sounds manually once the button is clicked
+    if (shouldPlayBackground.value && backgroundSound.value) {
+        backgroundSound.value.play().catch(console.error)
+    }
+
+    if (shouldPlayMainSound.value && mainSound.value) {
+        mainSound.value.play().catch(console.error)
+    }
 }
 
 const specialParameters = {
@@ -98,7 +118,6 @@ const specialParameters = {
     gravity_up: (isActive) => {
         gravityUpIsActive.value = isActive
     }
-    // Add more special parameters here in the future
 }
 
 const showConfirmDestroyWorld = ref(false)
@@ -111,7 +130,6 @@ const created = ref(false)
 const showConfirm = ref(false)
 const createConfirmed = ref(false)
 const showDestructionAnimation = ref(false)
-const showCivilisationWasDestroyedYee = ref(false)
 const showAllAnimations = ref(false)
 const showGeneratingWorld = ref(false)
 const playerActive = ref(false)
@@ -119,18 +137,27 @@ const playerActive = ref(false)
 const shouldPlayBackground = ref(false)
 const shouldPlayMainSound = ref(false)
 
-watch(showCivilisationWasDestroyed, async (value) => {
-    if (value) {
-        showDestructionAnimation.value = true
-        await nextTick()
+const playDestructionAnimation = () => {
+    showDestructionAnimation.value = true
+    nextTick(() => {
+        if (shutdownSound.value) shutdownSound.value.play().catch(console.error)
+        if (destructionVideo.value) {
+            destructionVideo.value.play().catch(error => {
+                console.error('Error playing destruction video:', error)
+            })
+        }
+    })
+}
 
-        setTimeout(async () => {
-            showDestructionAnimation.value = false
-            showCivilisationWasDestroyedYee.value = true
-            await nextTick()
-        }, 4000)
+watch(showCivilisationWasDestroyed, (value) => {
+    if (value) {
+        playDestructionAnimation()
     }
 })
+
+const onDestructionAnimationEnd = () => {
+    showDestructionAnimation.value = false
+}
 
 watch(showAllAnimations, (value, oldValue) => {
     if (value && value !== oldValue) {
@@ -138,7 +165,6 @@ watch(showAllAnimations, (value, oldValue) => {
         setTimeout(() => {
             showGeneratingWorld.value = false
             playerActive.value = true
-            showCivilisationWasDestroyedYee.value = false
         }, 14000)
     }
 })
@@ -151,15 +177,17 @@ onMounted(async () => {
     updateActiveParameters()
     updateScenes()
 
-    // just wait 3 seconds to start playing main sound
+    // Trigger background sound after 3 seconds
     setTimeout(() => {
         shouldPlayBackground.value = true
+        if (buttonHidden.value && backgroundSound.value) {
+            backgroundSound.value.play().catch(console.error)
+        }
     }, 3000)
 
     setInterval(async () => {
         const status = await http.get('/arduino/status')
         createConfirmed.value = status.data.state.createConfirmed
-        currentStateIsCreated.value = status.data.state.created
         showConfirmDestroyWorld.value = status.data.state.showConfirm
         showStandby.value = status.data.state.showStandby
         showItIsWhatItIs.value = status.data.state.showItIsWhatItIs
@@ -176,6 +204,9 @@ onMounted(async () => {
 
         // Trigger main sound only when the world is created
         shouldPlayMainSound.value = created.value
+        if (shouldPlayMainSound.value && buttonHidden.value && mainSound.value) {
+            mainSound.value.play().catch(console.error)
+        }
 
         await nextTick()
     }, 500)

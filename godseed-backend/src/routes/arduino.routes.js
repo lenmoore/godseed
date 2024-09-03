@@ -19,19 +19,19 @@ router.put('/update-params', async (req, res) => {
       )
 
       // compare is_active first
-      // if (parameter && parameter.is_active !== is_active) {
-      //   // update showStandby
-      //   console.log('should update standby to false')
-      //   await State.findOneAndUpdate(
-      //     { name: 'STATE' },
-      //     {
-      //       showStandby: false,
-      //       showAllAnimations: true,
-      //       created: false
-      //     },
-      //     { new: true }  // This option returns the updated document
-      //   )
-      // }
+      if (parameter && parameter.is_active !== is_active) {
+        // update showStandby
+        console.log('should update standby to false')
+        await State.findOneAndUpdate(
+          { name: 'STATE' },
+          {
+            showStandby: false,
+            showAllAnimations: true,
+            created: false
+          },
+          { new: true }  // This option returns the updated document
+        )
+      }
 
       // then update it
       await Parameter.findOneAndUpdate(

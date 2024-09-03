@@ -8,7 +8,7 @@ export const useStateStore = defineStore('stateStore', {
     showItIsWhatItIs: false,
     showAllAnimations: false,
     showCivilisationWasDestroyed: false,
-    civilisationCounter: 42,
+    civilisationCounter: null,
     developmentMode: false,
     created: false,
     showConfirm: false,
@@ -86,6 +86,7 @@ export const useStateStore = defineStore('stateStore', {
       this.makeEverythingFalse()
       this.created = true
       this.showAllAnimations = true
+      this.showCivilisationWasDestroyed = false
       this.civilisationCounter++
       await this.updateState()
 
