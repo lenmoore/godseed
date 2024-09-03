@@ -20,7 +20,7 @@
             <span v-show="showItIsWhatItIs">
                 <img alt="" height="auto" src="/itiswhatitis.png" width="2000px">
             </span>
-                <span v-show="showGeneratingWorld">
+                <span v-show="showGeneratingWorld" class="create-wrapper">
                 <audio ref="microwaveSound" src="/microwave.mp3"></audio>
                 <img alt="" height="auto" src="/creating.png" width="2000px">
             </span>
@@ -328,6 +328,17 @@ html, body {
     * {
         overflow: hidden !important; /* Hide scrollbars */
     }
+}
+
+.create-wrapper {
+    z-index: 1199191919;
+    position: absolute;
+    background-color: #181818;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
 }
 
 .destruction-wrapper {
