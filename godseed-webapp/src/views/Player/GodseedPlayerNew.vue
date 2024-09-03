@@ -184,7 +184,9 @@ watch(showCivilisationWasDestroyed, (value) => {
 const destroyedImage = ref(null)
 const onDestructionAnimationEnd = () => {
   showDestructionAnimation.value = false
-  if (soundPlayer && mainSound.value) mainSound.value.volume = 1
+  if (soundPlayer && mainSound.value) {
+    mainSound.value.volume = 1
+  }
   destroyedImage.value.style.display = 'block'
   destructionVideo.value.style.display = 'none'
 }

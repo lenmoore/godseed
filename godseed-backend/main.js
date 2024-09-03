@@ -22,12 +22,12 @@ app.use('/uploads', express.static('uploads')) // To serve uploaded files static
 console.log(process.env.MONGODB_URI)
 // MongoDB connection
 mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
+    serverSelectionTimeoutMS: 30000, // 30 seconds
+    socketTimeoutMS: 45000, // 45 seconds
 
 })
-  .then(() => console.log('MongoDB connected!'))
-  .catch(err => console.error('MongoDB connection error:', err))
+    .then(() => console.log('MongoDB connected!'))
+    .catch(err => console.error('MongoDB connection error:', err))
 
 // Use routes with /api prefix
 app.use('/api/parameters', parameterRoutes)
@@ -39,5 +39,5 @@ app.use('/api/arduino', arduinoRoutes)
 
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`)
+    console.log(`Server is running on port ${PORT}`)
 })
