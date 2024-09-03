@@ -165,7 +165,7 @@ const onDestructionAnimationEnd = () => {
     if (mainSound.value) mainSound.value.volume = 1
 }
 
-watch(showAllAnimations, (value, oldValue) => {
+watch(created, (value, oldValue) => {
     if (value && value !== oldValue) {
         // play generating sounds
         showGeneratingWorld.value = true

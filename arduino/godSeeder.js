@@ -63,7 +63,7 @@ try {
       if (dataString === 'CREATE') {
         try {
           statusObject.created = true
-          statusObject.showAllAnimations = true
+          statusObject.showAllAnimations = false
           statusObject.showStandby = false
           statusObject.showCivilisationWasDestroyed = false
           await axios.put(statusUpdateUrl, statusObject)
