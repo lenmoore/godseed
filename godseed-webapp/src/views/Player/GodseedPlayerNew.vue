@@ -1,6 +1,6 @@
 <template>
   <div style="background-color: #181818; height: 100%; width: 100%;">
-    <div v-if="eraName === 'neolithic'">
+    <div v-if="soundPlayer">
       <button
           v-if="!buttonHidden"
           style="z-index: 2229909000; height: 20rem; width: 20rem;"
@@ -11,7 +11,7 @@
 
     </div>
     <div v-if="buttonHidden">
-      <div v-if="eraName === 'neolithic'">
+      <div v-if="soundPlayer">
         <audio ref="backgroundSound" src="/idle.mp3"></audio>
         <audio ref="mainSound" src="/main.mp3"></audio>
       </div>
@@ -107,11 +107,13 @@ const microwaveSound = ref(null)
 const shutdownSound = ref(null)
 const destructionVideo = ref(null)
 
+const soundPlayer = eraName.toString() === 'neolithic';
+
 const hideButton = () => {
   buttonHidden.value = true
 
   // Trigger sounds manually once the button is clicked
-  if (shouldPlayBackground.value && backgroundSound.value) {
+  if (soundPlayer && shouldPlayBackground.value && backgroundSound.value) {
     backgroundSound.value.play().catch(console.error)
   }
 
@@ -152,7 +154,7 @@ const playDestructionAnimation = () => {
   mainSound.value.volume = 0.1
   destructionVideo.value.style.display = 'block'
 
-  if (shutdownSound.value) shutdownSound.value.play().catch(console.error)
+  if (soundPlayer && shutdownSound.value) shutdownSound.value.play().catch(console.error)
 
   nextTick()
   if (destructionVideo.value) {
@@ -178,7 +180,7 @@ watch(showCivilisationWasDestroyed, (value) => {
 const destroyedImage = ref(null)
 const onDestructionAnimationEnd = () => {
   showDestructionAnimation.value = false
-  if (mainSound.value) mainSound.value.volume = 1
+  if (soundPlayer && mainSound.value) mainSound.value.volume = 1
   destroyedImage.value.style.display = 'block'
   destructionVideo.value.style.display = 'none'
 }
@@ -187,7 +189,7 @@ watch(created, (value, oldValue) => {
   if (value && value !== oldValue) {
     // play generating sounds
     showGeneratingWorld.value = true
-    if (microwaveSound.value) microwaveSound.value.play().catch(console.error)
+    if (soundPlayer && microwaveSound.value) microwaveSound.value.play().catch(console.error)
 
     setTimeout(() => {
       nextTick()
@@ -195,7 +197,9 @@ watch(created, (value, oldValue) => {
       showAllAnimations.value = true
       playerActive.value = true
 
-      mainSound.value.volume = 1
+      if (soundPlayer) {
+        mainSound.value.volume = 1
+      }
       nextTick()
     }, 14000)
   }
@@ -208,14 +212,16 @@ onMounted(async () => {
 
   updateActiveParameters()
   updateScenes()
-  if (shouldPlayMainSound.value && mainSound.value) {
+  if (soundPlayer && shouldPlayMainSound.value && mainSound.value) {
     mainSound.value.play().catch(console.error)
     mainSound.value.volume = 1
   }
   // Trigger background sound after 3 seconds
   setTimeout(() => {
-    shouldPlayBackground.value = true
-    if (buttonHidden.value && backgroundSound.value) {
+    if (soundPlayer) {
+      shouldPlayBackground.value = true
+    }
+    if (soundPlayer && buttonHidden.value && backgroundSound.value) {
       backgroundSound.value.play().catch(console.error)
     }
   }, 3000)
@@ -238,11 +244,14 @@ onMounted(async () => {
     await scenesStore.fetchParameters()
     updateActiveParameters()
 
-    // Trigger main sound only when the world is created
-    shouldPlayMainSound.value = created.value
-    if (shouldPlayMainSound.value && buttonHidden.value && mainSound.value) {
-      mainSound.value.play().catch(console.error)
+    if (soundPlayer) {
+      shouldPlayMainSound.value = created.value
+      if (shouldPlayMainSound.value && buttonHidden.value && mainSound.value) {
+        mainSound.value.play().catch(console.error)
+      }
     }
+    // Trigger main sound only when the world is created
+
 
     await nextTick()
   }, 500)
