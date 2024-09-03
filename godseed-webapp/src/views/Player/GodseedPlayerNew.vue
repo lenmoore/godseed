@@ -302,7 +302,6 @@ watch(() => scenesStore.parameters, async () => {
 
 <style scoped>
 
-// overwrite --color-background variable
 :root {
     --color-background: #181818;
 
