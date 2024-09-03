@@ -24,7 +24,7 @@
                 <audio ref="microwaveSound" src="/microwave.mp3"></audio>
                 <img alt="" height="auto" src="/creating.png" width="2000px">
             </span>
-                <div v-show="showCivilisationWasDestroyed">
+                <div v-show="showCivilisationWasDestroyed" class="destruction-wrapper">
                     <audio ref="shutdownSound" src="/shutdown.mp3"></audio>
 
                     <video
@@ -323,5 +323,11 @@ html, body {
     overflow: hidden; /* Hide scrollbars */
     height: 100vh;
     width: 100vw;
+}
+
+.destruction-wrapper {
+    z-index: 1199191919;
+    position: absolute;
+    background-color: #181818;
 }
 </style>
