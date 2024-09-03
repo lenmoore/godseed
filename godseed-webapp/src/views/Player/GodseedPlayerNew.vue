@@ -1,13 +1,15 @@
 <template>
     <div style="background-color: #181818; height: 100%; width: 100%;">
-        <button
-            v-if="!buttonHidden"
-            style="z-index: 2229909000; height: 20rem; width: 20rem;"
-            @click="hideButton"
-        >
-            click me to make sounds work
-        </button>
+        <div v-if="eraName === 'neolithic'">
+            <button
+                v-if="!buttonHidden"
+                style="z-index: 2229909000; height: 20rem; width: 20rem;"
+                @click="hideButton"
+            >
+                click me to make sounds work
+            </button>
 
+        </div>
         <div v-if="eraName === 'neolithic'">
             <audio ref="backgroundSound" src="/idle.mp3"></audio>
             <audio ref="mainSound" src="/main.mp3"></audio>
