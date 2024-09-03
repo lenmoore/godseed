@@ -1,5 +1,5 @@
 <template>
-    <div style="background-color: #181818;">
+    <div style="background-color: #181818; height: 100%; width: 100%;">
         <button
             v-if="!buttonHidden"
             style="z-index: 2229909000; height: 20rem; width: 20rem;"
@@ -142,6 +142,7 @@ const shouldPlayBackground = ref(false)
 const shouldPlayMainSound = ref(false)
 
 const playDestructionAnimation = () => {
+    showGeneratingWorld.value = false
     if (shutdownSound.value) shutdownSound.value.play().catch(console.error)
     showDestructionAnimation.value = true
     nextTick(() => {
@@ -292,5 +293,9 @@ watch(() => scenesStore.parameters, async () => {
 </script>
 
 <style scoped>
-/* Your existing CSS styles */
+
+html {
+    background-color: #181818;
+    overflow: hidden; /* Hide scrollbars */
+}
 </style>
