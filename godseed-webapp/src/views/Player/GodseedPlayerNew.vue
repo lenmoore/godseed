@@ -31,8 +31,9 @@
                 <div style="position: absolute;">
                     Civilisation number {{ civilisationCounter }} was destroyed.
                 </div>
-                <img alt="" src="/destroyed.png"
-                     style="position: absolute; left: 0; max-width: 2000px"
+                <img ref="destroyedImage" alt="" src="/destroyed.png"
+                     style="position: absolute; display: none; left: 0; max-width: 2000px;
+background-color: #181818"
                 >
             </div>
             <span v-show="showStandby" style="position: absolute; background-color: rgba(0, 0, 0, 0.5)">
@@ -162,9 +163,11 @@ watch(showCivilisationWasDestroyed, (value) => {
     }
 })
 
+const destroyedImage = ref(null)
 const onDestructionAnimationEnd = () => {
     showDestructionAnimation.value = false
     if (mainSound.value) mainSound.value.volume = 1
+    destroyedImage.value.style.display = 'block'
 }
 
 watch(created, (value, oldValue) => {
