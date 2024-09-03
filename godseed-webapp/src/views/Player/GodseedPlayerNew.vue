@@ -36,7 +36,8 @@
                     </div>
                     <img ref="destroyedImage" alt="" src="/destroyed.png"
                          style="position: absolute; display: none;
-background-color: #181818"
+                            background-color: #181818
+                        "
                     >
                 </div>
                 <span v-show="showStandby" style="position: absolute; background-color: rgba(0, 0, 0, 0.5)">
@@ -342,7 +343,6 @@ html, body {
     video {
         position: relative;
         width: 100%;
-        z-index: 1199191920;
         height: auto;
     }
 
