@@ -143,11 +143,12 @@ const shouldPlayMainSound = ref(false)
 
 const playDestructionAnimation = () => {
     showGeneratingWorld.value = false
+    mainSound.value.volume = 0.1
+
     if (shutdownSound.value) shutdownSound.value.play().catch(console.error)
     showDestructionAnimation.value = true
     nextTick(() => {
         if (destructionVideo.value) {
-            if (mainSound.value) mainSound.value.volume = 0.1
             destructionVideo.value.play().catch(error => {
                 console.error('Error playing destruction video:', error)
             })
@@ -174,11 +175,11 @@ watch(created, (value, oldValue) => {
 
         setTimeout(() => {
             nextTick()
-            if (mainSound.value) mainSound.value.play().catch(console.error)
-            nextTick()
             showGeneratingWorld.value = false
             showAllAnimations.value = true
             playerActive.value = true
+            
+            mainSound.value.volume = 1
             nextTick()
         }, 14000)
     }
@@ -191,7 +192,10 @@ onMounted(async () => {
 
     updateActiveParameters()
     updateScenes()
-
+    if (shouldPlayMainSound.value && mainSound.value) {
+        mainSound.value.play().catch(console.error)
+        mainSound.value.volume = 1
+    }
     // Trigger background sound after 3 seconds
     setTimeout(() => {
         shouldPlayBackground.value = true
