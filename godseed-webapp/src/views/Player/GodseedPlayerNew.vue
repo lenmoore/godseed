@@ -320,9 +320,13 @@ watch(() => scenesStore.parameters, async () => {
 
 html, body {
     background-color: #181818 !important;
-    overflow: hidden; /* Hide scrollbars */
+    overflow: hidden !important; /* Hide scrollbars */
     height: 100vh;
     width: 100vw;
+
+    * {
+        overflow: hidden !important; /* Hide scrollbars */
+    }
 }
 
 .destruction-wrapper {
