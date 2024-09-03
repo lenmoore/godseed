@@ -294,8 +294,10 @@ watch(() => scenesStore.parameters, async () => {
 
 <style scoped>
 
-html {
+html, body {
     background-color: #181818;
     overflow: hidden; /* Hide scrollbars */
+    height: 100vh;
+    width: 100vw;
 }
 </style>
