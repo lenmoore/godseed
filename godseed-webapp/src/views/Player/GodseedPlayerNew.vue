@@ -169,6 +169,7 @@ watch(showAllAnimations, (value, oldValue) => {
         setTimeout(() => {
             showGeneratingWorld.value = false
             playerActive.value = true
+            showCivilisationWasDestroyedYee.value = false
         }, 14000)
     }
 })
@@ -198,6 +199,9 @@ onMounted(async () => {
         showItIsWhatItIs.value = status.data.state.showItIsWhatItIs
         showAllAnimations.value = status.data.state.showAllAnimations
         showCivilisationWasDestroyed.value = status.data.state.showCivilisationWasDestroyed
+        if (!showCivilisationWasDestroyed) {
+            showCivilisationWasDestroyedYee.value = false
+        }
         civilisationCounter.value = status.data.state.civilisationCounter
         developmentMode.value = status.data.state.developmentMode
         created.value = status.data.state.created
