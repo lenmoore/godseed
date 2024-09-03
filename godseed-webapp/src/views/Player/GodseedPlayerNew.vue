@@ -173,10 +173,13 @@ watch(created, (value, oldValue) => {
         if (microwaveSound.value) microwaveSound.value.play().catch(console.error)
 
         setTimeout(() => {
+            nextTick()
             if (mainSound.value) mainSound.value.play().catch(console.error)
+            nextTick()
             showGeneratingWorld.value = false
             showAllAnimations.value = true
             playerActive.value = true
+            nextTick()
         }, 14000)
     }
 })
