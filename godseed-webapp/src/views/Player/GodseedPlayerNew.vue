@@ -35,7 +35,7 @@
                         Civilisation number {{ civilisationCounter }} was destroyed.
                     </div>
                     <img ref="destroyedImage" alt="" src="/destroyed.png"
-                         style="position: absolute; display: none; left: 0; max-width: 2000px;
+                         style="position: absolute;
 background-color: #181818"
                     >
                 </div>
