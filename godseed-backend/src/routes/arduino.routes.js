@@ -5,62 +5,62 @@ import Parameter from '../models/parameter.schema.js'
 const router = express.Router()
 
 router.put('/update-params', async (req, res) => {
-  try {
+    try {
 
-    const { parameters } = req.body
+        const {parameters} = req.body
 
-    // Iterate over each parameter in the request body
-    for (const param of parameters) {
-      const { name, is_active } = param
+        // Iterate over each parameter in the request body
+        for (const param of parameters) {
+            const {name, is_active} = param
 
-      // find it
-      const parameter = await Parameter.findOne(
-        { name: new RegExp('^' + name) }
-      )
+            // find it
+            // const parameter = await Parameter.findOne(
+            //   { name: new RegExp('^' + name) }
+            // )
+            //
+            // // // compare is_active first
+            // if (parameter && parameter.is_active !== is_active) {
+            //   // update showStandby
+            //   console.log('should update standby to false')
+            //   await State.findOneAndUpdate(
+            //     { name: 'STATE' },
+            //     {
+            //       created: false
+            //     })
+            //
+            // }
 
-      // // compare is_active first
-      if (parameter && parameter.is_active !== is_active) {
-        // update showStandby
-        console.log('should update standby to false')
-        await State.findOneAndUpdate(
-          { name: 'STATE' },
-          {
-            created: false
-          })
+            // then update it
+            await Parameter.findOneAndUpdate(
+                {name: new RegExp('^' + name)},
+                {is_active: is_active},
+                {new: true}
+            )
+        }
 
-      }
-
-      // then update it
-      await Parameter.findOneAndUpdate(
-        { name: new RegExp('^' + name) },
-        { is_active: is_active },
-        { new: true }
-      )
+        res.status(200).send({message: 'Parameters updated'})
+    } catch (error) {
+        console.error('Error creating state:', error)
+        res.status(400).send({error: error.message})
     }
-
-    res.status(200).send({ message: 'Parameters updated' })
-  } catch (error) {
-    console.error('Error creating state:', error)
-    res.status(400).send({ error: error.message })
-  }
 })
 
 
 // Route to get the status of the state
 router.get('/status', async (req, res) => {
-  try {
-    const state = await State.findOne({ name: 'STATE' })
+    try {
+        const state = await State.findOne({name: 'STATE'})
 
-    if (!state) {
-      return res.status(404).send({ message: 'State not found' })
+        if (!state) {
+            return res.status(404).send({message: 'State not found'})
+        }
+
+        const allParameters = await Parameter.find()
+        res.status(200).send({state, allParameters})
+    } catch (error) {
+        console.error('Error getting state status:', error)
+        res.status(400).send({error: error.message})
     }
-
-    const allParameters = await Parameter.find()
-    res.status(200).send({ state, allParameters })
-  } catch (error) {
-    console.error('Error getting state status:', error)
-    res.status(400).send({ error: error.message })
-  }
 })
 
 // Route to get the status of the state
@@ -92,27 +92,27 @@ router.get('/status', async (req, res) => {
 
 // Route to get the status of the state
 router.put('/status', async (req, res) => {
-  try {
-    if (req.body.created || req.body.showAllAnimations) {
-      req.body.showCivilisationWasDestroyed = false
-    }
-    const state = await State.findOneAndUpdate(
-      { name: 'STATE' },
-      req.body,
-      { new: true }  // This option returns the updated document
-    )
+    try {
+        if (req.body.created || req.body.showAllAnimations) {
+            req.body.showCivilisationWasDestroyed = false
+        }
+        const state = await State.findOneAndUpdate(
+            {name: 'STATE'},
+            req.body,
+            {new: true}  // This option returns the updated document
+        )
 
-    console.log(state)
-    if (!state) {
-      return res.status(404).send({ message: 'State not found' })
-    }
+        console.log(state)
+        if (!state) {
+            return res.status(404).send({message: 'State not found'})
+        }
 
-    const allParameters = await Parameter.find()
-    res.status(200).send({ state, allParameters })
-  } catch (error) {
-    console.error('Error getting state status:', error)
-    res.status(400).send({ error: error.message })
-  }
+        const allParameters = await Parameter.find()
+        res.status(200).send({state, allParameters})
+    } catch (error) {
+        console.error('Error getting state status:', error)
+        res.status(400).send({error: error.message})
+    }
 })
 
 export default router
