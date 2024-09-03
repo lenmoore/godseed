@@ -23,7 +23,12 @@
                 <audio ref="microwaveSound" src="/Microwave.mp3"></audio>
                 <img alt="" height="auto" src="/creating.png" width="2000px">
             </span>
-            <div v-show="showCivilisationWasDestroyed">
+            <div v-show="showCivilisationWasDestroyed" style="
+                display: flex;
+                flex-direction:column;
+                align-items: center;
+                justify-content: center;
+                ">
                 <audio ref="shutdownSound" src="/shutdown.mp3"></audio>
                 <video
                     ref="destructionVideo" src="/tvshutdown.mov"
