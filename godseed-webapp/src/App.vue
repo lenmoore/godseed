@@ -4,11 +4,12 @@ import { RouterView, useRouter } from 'vue-router'
 const router = useRouter()
 console.log(import.meta.env.VITE_API_BASE_URL) // Add this line in your component or http.js
 
+const showNav = router.currentRoute.value.name === 'godseed-new'
 </script>
 
 <template>
     <div style="background-color: #181818">
-        <div v-if="router.currentRoute.name !== 'godseed-new'">
+        <div v-if="showNav">
             <a href="/params" style="font-size: 1.5rem; background-color: #2c3e50">Toggle parameters</a>
             -|-
             <a href="/scenes">Edit scenes</a>

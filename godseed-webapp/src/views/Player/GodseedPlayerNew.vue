@@ -2,8 +2,6 @@
     <div
         style="background-color: #181818; !important;"
     >
-        New Godseed player
-
         <div
             v-if="eraName === 'neolithic'"
         >
@@ -199,9 +197,6 @@ onMounted(async () => {
         showItIsWhatItIs.value = status.data.state.showItIsWhatItIs
         showAllAnimations.value = status.data.state.showAllAnimations
         showCivilisationWasDestroyed.value = status.data.state.showCivilisationWasDestroyed
-        if (!showCivilisationWasDestroyed) {
-            showCivilisationWasDestroyedYee.value = false
-        }
         civilisationCounter.value = status.data.state.civilisationCounter
         developmentMode.value = status.data.state.developmentMode
         created.value = status.data.state.created
