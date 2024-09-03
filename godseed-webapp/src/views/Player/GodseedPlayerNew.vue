@@ -158,21 +158,25 @@ const playDestructionAnimation = () => {
     showDestructionAnimation.value = true
     mainSound.value.volume = 0.1
 
-    nextTick()
     if (shutdownSound.value) shutdownSound.value.play().catch(console.error)
-    if (destructionVideo.value) {
 
-        nextTick()
+    nextTick()
+    if (destructionVideo.value) {
+        console.log('video has value')
         destructionVideo.value.play().catch(error => {
             console.error('Error playing destruction video:', error)
         })
 
-        nextTick()
+    } else {
+        console.log('didnt find video maybe')
     }
+    nextTick()
+
 }
 
 watch(showCivilisationWasDestroyed, (value) => {
     if (value) {
+        console.log('play destruction animation')
         playDestructionAnimation()
     }
 })
