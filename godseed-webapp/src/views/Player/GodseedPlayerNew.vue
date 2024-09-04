@@ -61,7 +61,6 @@
                     position: 'absolute',
                 }"
         >
-          <div v-if="scene.displayVideos.length === 0">videos</div>
           <video
               v-for="(video, index) in scene.displayVideos"
               :key="video.video"
